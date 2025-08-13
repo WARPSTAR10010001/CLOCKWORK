@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const app = express();
 const { errorLogger, requestLogger } = require("./actionHandler");
-const PORT = 12345;
+const PORT = 3000;
 
 app.use(express.json());
 app.use(session({
