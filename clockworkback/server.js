@@ -2,11 +2,12 @@ const express = require("express");
 const session = require("express-session");
 const app = express();
 const { errorLogger, requestLogger } = require("./actionHandler");
+require('dotenv').config();
 const PORT = 3000;
 
 app.use(express.json());
 app.use(session({
-    secret: "ein langfristig geheimer string", //muss durch env datei ersetzt werden
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
