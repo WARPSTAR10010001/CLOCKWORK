@@ -1,11 +1,16 @@
 const express = require("express");
 const session = require("express-session");
+const cors = require('cors');
 const app = express();
 const { errorLogger, requestLogger } = require("./actionHandler");
 require('dotenv').config();
-const PORT = 3000;
+const port = 3000;
 
 app.use(express.json());
+app.use(cors({
+    origin: "http://localhost:4200",
+    credentials: true
+}));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -13,17 +18,17 @@ app.use(session({
     cookie: {
         secure: false,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60,
+        maxAge: 3600000,
         sameSite: "lax"
     }
 }));
 app.use(requestLogger);
 
-const userRoutes = require("./routes/users.routes");
+const authRoutes = require("./routes/auth.routes");
 const planRoutes = require("./routes/plans.routes");
 const holidayRoutes = require("./routes/holidays.routes");
 
-app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/holidays", holidayRoutes);
 
@@ -33,4 +38,4 @@ app.get("/", (req, res) => {
 
 app.use(errorLogger);
 
-app.listen(PORT, () => console.log(`[START] CLOCKWORK läuft!`));
+app.listen(port, () => console.log(`[START] CLOCKWORK läuft!`));

@@ -38,4 +38,14 @@ router.post("/logout", (req, res) => {
     });
 });
 
+router.get("/status", (req, res) => {
+    if (req.session && req.session.user) {
+        const user = req.session.user;
+        const isAdmin = user.id === 0;
+        res.json({ loggedIn: true, isAdmin, user });
+    } else {
+        res.json({ loggedIn: false, isAdmin: false });
+    }
+});
+
 module.exports = router;
