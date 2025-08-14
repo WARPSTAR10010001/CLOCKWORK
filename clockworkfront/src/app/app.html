@@ -4,11 +4,11 @@
             <img src="cw-mono.png" height="100%" alt="logo">
             <span id="root-header">CLOCKWORK</span>
         </a>
-        <div id="nav" *ngIf="authService.isLogged()">
+        <div id="nav" *ngIf="authService.loggedIn$ | async">
             <a [routerLink]="['/plan']">Jahresübersicht</a>
             <a (click)="logout()">Abmelden</a>
         </div>
-        <div id="nav" *ngIg="!authService.isLogged()">
+        <div id="nav" *ngIf="!(authService.loggedIn$ | async)">
             <a [routerLink]="['/auth']">Anmelden</a>
         </div>
     </div>

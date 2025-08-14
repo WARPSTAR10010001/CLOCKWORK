@@ -1,0 +1,24 @@
+input {
+    width: 400px;
+    text-align: center;
+}
+
+.button-primary {
+    font-size: 2em;
+    width: 400px;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+}

@@ -1,6 +1,6 @@
 #main {
     flex: 1;
-    padding: 20px;
+    padding: 20px 40px;
 }
 
 #pagecontainer {
@@ -43,11 +43,16 @@
     align-items: center;
     font-size: 0.6em;
     gap: 30px;
-    text-decoration: underline;
 }
 
 #nav a {
     cursor: pointer;
+    text-decoration: none;
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+#nav a:hover {
+    text-decoration: underline;
 }
 
 #footer {
@@ -67,6 +72,15 @@
     display: flex;
     gap: 30px;
     margin-bottom: 10px;
+}
+
+#footer-link a {
+    text-decoration: none;
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+#footer-link a:hover {
+    text-decoration: underline;
 }
 
 #footer p {

@@ -12,7 +12,7 @@ import { AdminGuard } from './admin-guard';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'auth',
+        redirectTo: 'plan',
         pathMatch: 'full'
     },
     {
