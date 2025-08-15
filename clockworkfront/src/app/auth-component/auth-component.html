@@ -4,6 +4,8 @@
     <input type="text" [(ngModel)]="username" placeholder="Nutzername">
     <input type="password" [(ngModel)]="password" placeholder="Passwort">
     <a class="button-primary" (click)="login()">Anmelden</a>
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    @if (errorMessage !== null) {
+    <p class="error">{{ errorMessage }}</p>
+    }
   </div>
 </div>

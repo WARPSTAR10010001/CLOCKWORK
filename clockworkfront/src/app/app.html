@@ -1,26 +1,29 @@
 <div id="pagecontainer">
-    <div id="header">
-        <a id="root-link" [routerLink]="['/']">
-            <img src="cw-mono.png" height="100%" alt="logo">
-            <span id="root-header">CLOCKWORK</span>
-        </a>
-        <div id="nav" @if(authService.loggedIn$ | async)>
-            <a [routerLink]="['/plan']">Jahresübersicht</a>
-            <a (click)="logout()">Abmelden</a>
-        </div>
-        <div id="nav" @if(!(authService.loggedIn$ | async))>
-            <a [routerLink]="['/auth']">Anmelden</a>
-        </div>
+  <div id="header">
+    <a id="root-link" [routerLink]="['/']">
+      <img src="cw-mono.png" height="100%" alt="logo">
+      <span id="root-header">CLOCKWORK</span>
+    </a>
+    @if(authService.loggedIn$ | async) {
+      <div id="nav">
+        <a [routerLink]="['/plan']">Jahresübersicht</a>
+        <a (click)="logout()">Abmelden</a>
+      </div>
+    } @else {
+      <div id="nav">
+        <a [routerLink]="['/auth']">Anmelden</a>
+      </div>
+    }
+  </div>
+  <div id="main">
+    <router-outlet></router-outlet>
+  </div>
+  <div id="footer">
+    <div id="footer-link">
+      <a [routerLink]="['/wiki']">Zum Wiki</a>
+      <a [routerLink]="['/changelog']">Zum Changelog</a>
+      <a [routerLink]="['/admin']">Zum Adminpanel</a>
     </div>
-    <div id="main">
-        <router-outlet></router-outlet>
-    </div>
-    <div id="footer">
-        <div id="footer-link">
-            <a [routerLink]="['/wiki']">Zum Wiki</a>
-            <a [routerLink]="['/changelog']">Zum Changelog</a>
-            <a [routerLink]="['/admin']">Zum Adminpanel</a>
-        </div>
-        <p class="emp">V0.1 Alpha // 2025 - Rheinberger IT</p>
-    </div>
+    <p class="emp">V0.2 Alpha // 2025 - Rheinberger IT</p>
+  </div>
 </div>

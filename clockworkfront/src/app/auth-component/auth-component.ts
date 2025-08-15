@@ -25,7 +25,7 @@ export class AuthComponent {
       },
       error: (err) => {
         console.error('Login fehlgeschlagen', err);
-        this.errorMessage = 'Login fehlgeschlagen';
+        this.errorMessage = 'Login fehlgeschlagen. Bitte erneut versuchen oder einen Systemadmin kontaktieren.';
       }
     });
   }

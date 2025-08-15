@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-
 export class AuthService {
   private loggedInSubject = new BehaviorSubject<boolean>(false);
   public loggedIn$ = this.loggedInSubject.asObservable();
@@ -13,7 +12,9 @@ export class AuthService {
 
   private url = "http://localhost:3000/api/auth";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.checkStatus().subscribe();
+  }
 
   checkStatus(): Observable<{ loggedIn: boolean; admin: boolean }> {
     return this.http.get<{ loggedIn: boolean; admin: boolean }>(`${this.url}/status`, { withCredentials: true })
@@ -25,7 +26,10 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.http.post(`${this.url}/login`, { username, password }, { withCredentials: true })
-      .pipe(tap(() => this.loggedInSubject.next(true)));
+      .pipe(tap(() => {
+        this.loggedInSubject.next(true);
+        this.checkStatus().subscribe();
+      }));
   }
 
   logout(): Observable<any> {

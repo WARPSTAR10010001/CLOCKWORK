@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { BackendAccess } from '../backend-access';
 
 @Component({
   selector: 'app-year-component',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './year-component.html',
   styleUrl: './year-component.css'
 })

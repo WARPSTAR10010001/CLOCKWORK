@@ -11,22 +11,22 @@ export class BackendAccess {
   constructor(private http: HttpClient) {}
 
   getPlan(year: number, month: number): Observable<Plan> {
-    return this.http.get<Plan>(`${this.url}/${year}/${month}`);
+    return this.http.get<Plan>(`${this.url}/${year}/${month}`, { withCredentials: true });
   }
 
   getYears(): Observable<any> {
-    return this.http.get<{ years: number[] }>(`${this.url}/years`);
+    return this.http.get<{ years: number[] }>(`${this.url}/years`, { withCredentials: true });
   }
 
   newPlan(year: number, users: string[]): Observable<any> {
-    return this.http.post(`${this.url}/new`, { year, users });
+    return this.http.post(`${this.url}/new`, { year, users }, { withCredentials: true });
   }
 
   newEntry(year: number, month: number, employee: string, date: string, type: string): Observable<any> {
-    return this.http.post(`${this.url}/${year}/${month}/entry`, { employee, date, type });
+    return this.http.post(`${this.url}/${year}/${month}/entry`, { employee, date, type }, { withCredentials: true });
   }
 
   newEntries(year: number, month: number, employee: string, startDate: string, endDate: string, type: string): Observable<any> {
-    return this.http.post(`${this.url}/${year}/${month}/entries`, { employee, startDate, endDate, type });
+    return this.http.post(`${this.url}/${year}/${month}/entries`, { employee, startDate, endDate, type }, { withCredentials: true });
   }
 }

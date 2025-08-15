@@ -1,0 +1,136 @@
+{
+  "year": 2025,
+  "month": 4,
+  "users": [
+    "Dennis",
+    "Niklas",
+    "wasserflasche"
+  ],
+  "entries": {
+    "Dennis": {},
+    "Niklas": {},
+    "wasserflasche": {}
+  },
+  "days": [
+    {
+      "date": "2025-03-31",
+      "weekday": 2
+    },
+    {
+      "date": "2025-04-01",
+      "weekday": 3
+    },
+    {
+      "date": "2025-04-02",
+      "weekday": 4
+    },
+    {
+      "date": "2025-04-03",
+      "weekday": 5
+    },
+    {
+      "date": "2025-04-04",
+      "weekday": 6
+    },
+    {
+      "date": "2025-04-05",
+      "weekday": 7
+    },
+    {
+      "date": "2025-04-06",
+      "weekday": 1
+    },
+    {
+      "date": "2025-04-07",
+      "weekday": 2
+    },
+    {
+      "date": "2025-04-08",
+      "weekday": 3
+    },
+    {
+      "date": "2025-04-09",
+      "weekday": 4
+    },
+    {
+      "date": "2025-04-10",
+      "weekday": 5
+    },
+    {
+      "date": "2025-04-11",
+      "weekday": 6
+    },
+    {
+      "date": "2025-04-12",
+      "weekday": 7
+    },
+    {
+      "date": "2025-04-13",
+      "weekday": 1
+    },
+    {
+      "date": "2025-04-14",
+      "weekday": 2
+    },
+    {
+      "date": "2025-04-15",
+      "weekday": 3
+    },
+    {
+      "date": "2025-04-16",
+      "weekday": 4
+    },
+    {
+      "date": "2025-04-17",
+      "weekday": 5
+    },
+    {
+      "date": "2025-04-18",
+      "weekday": 6
+    },
+    {
+      "date": "2025-04-19",
+      "weekday": 7
+    },
+    {
+      "date": "2025-04-20",
+      "weekday": 1
+    },
+    {
+      "date": "2025-04-21",
+      "weekday": 2
+    },
+    {
+      "date": "2025-04-22",
+      "weekday": 3
+    },
+    {
+      "date": "2025-04-23",
+      "weekday": 4
+    },
+    {
+      "date": "2025-04-24",
+      "weekday": 5
+    },
+    {
+      "date": "2025-04-25",
+      "weekday": 6
+    },
+    {
+      "date": "2025-04-26",
+      "weekday": 7
+    },
+    {
+      "date": "2025-04-27",
+      "weekday": 1
+    },
+    {
+      "date": "2025-04-28",
+      "weekday": 2
+    },
+    {
+      "date": "2025-04-29",
+      "weekday": 3
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "year": 2026,
+  "month": 2,
+  "users": [
+    "Dennis",
+    "Niklas",
+    "wasserflasche"
+  ],
+  "entries": {
+    "Dennis": {},
+    "Niklas": {},
+    "wasserflasche": {}
+  },
+  "days": [
+    {
+      "date": "2026-01-31",
+      "weekday": 7
+    },
+    {
+      "date": "2026-02-01",
+      "weekday": 1
+    },
+    {
+      "date": "2026-02-02",
+      "weekday": 2
+    },
+    {
+      "date": "2026-02-03",
+      "weekday": 3
+    },
+    {
+      "date": "2026-02-04",
+      "weekday": 4
+    },
+    {
+      "date": "2026-02-05",
+      "weekday": 5
+    },
+    {
+      "date": "2026-02-06",
+      "weekday": 6
+    },
+    {
+      "date": "2026-02-07",
+      "weekday": 7
+    },
+    {
+      "date": "2026-02-08",
+      "weekday": 1
+    },
+    {
+      "date": "2026-02-09",
+      "weekday": 2
+    },
+    {
+      "date": "2026-02-10",
+      "weekday": 3
+    },
+    {
+      "date": "2026-02-11",
+      "weekday": 4
+    },
+    {
+      "date": "2026-02-12",
+      "weekday": 5
+    },
+    {
+      "date": "2026-02-13",
+      "weekday": 6
+    },
+    {
+      "date": "2026-02-14",
+      "weekday": 7
+    },
+    {
+      "date": "2026-02-15",
+      "weekday": 1
+    },
+    {
+      "date": "2026-02-16",
+      "weekday": 2
+    },
+    {
+      "date": "2026-02-17",
+      "weekday": 3
+    },
+    {
+      "date": "2026-02-18",
+      "weekday": 4
+    },
+    {
+      "date": "2026-02-19",
+      "weekday": 5
+    },
+    {
+      "date": "2026-02-20",
+      "weekday": 6
+    },
+    {
+      "date": "2026-02-21",
+      "weekday": 7
+    },
+    {
+      "date": "2026-02-22",
+      "weekday": 1
+    },
+    {
+      "date": "2026-02-23",
+      "weekday": 2
+    },
+    {
+      "date": "2026-02-24",
+      "weekday": 3
+    },
+    {
+      "date": "2026-02-25",
+      "weekday": 4
+    },
+    {
+      "date": "2026-02-26",
+      "weekday": 5
+    },
+    {
+      "date": "2026-02-27",
+      "weekday": 6
+    }
+  ]
+}
