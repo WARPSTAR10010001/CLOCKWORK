@@ -1,1 +1,8 @@
 <h1 class="emp page-header">Jahresübersicht</h1>
+<div id="result-container">
+    @for (year of years; track year) {
+        <div class="yearbox">
+            <div>{{ year }}</div>
+        </div>
+    }
+</div>

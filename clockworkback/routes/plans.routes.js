@@ -15,9 +15,7 @@ function monthFilePath(year, month) {
 }
 
 function convertNumberToMonthName(m) {
-    return [
-        "/", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"
-    ][m] || "/";
+    return ["/", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][m] || "/";
 }
 
 function isValidYear(y) {
@@ -95,10 +93,32 @@ router.post("/new", requireLogin, requireAdmin, async (req, res) => {
     }
 });
 
+router.get("/years", requireLogin, async (req, res) => {
+    try {
+        const files = await fs.readdir(PLANS_DIR);
+        const years = new Set();
+
+        files.forEach(file => {
+            const match = file.match(/^(\d{4})-\d{2}\.json$/);
+            if (match) {
+                const year = parseInt(match[1], 10);
+                if (isValidYear(year)) {
+                    years.add(year);
+                }
+            }
+        });
+
+        res.json({ years: Array.from(years).sort((a, b) => a - b) });
+    } catch (err) {
+        console.error("Fehler beim Laden der Jahre:", err);
+        res.status(500).json({ error: "Serverseitiger Fehler beim Laden der Jahre." });
+    }
+});
+
 router.post("/:year/:month/entry", requireLogin, async (req, res) => {
     const year = parseInt(req.params.year, 10);
     const month = parseInt(req.params.month, 10);
-    const { employee, date, type, note } = req.body;
+    const { employee, date, type } = req.body;
 
     if (!isValidYear(year) || !isValidMonth(month) ||
         typeof employee !== "string" || !isValidISODate(date) || typeof type !== "string") {
@@ -110,7 +130,7 @@ router.post("/:year/:month/entry", requireLogin, async (req, res) => {
         let plan = (await fs.pathExists(file)) ? await fs.readJson(file) : await createEmptyMonth(year, month, []);
         if (!plan.users.includes(employee)) plan.users.push(employee);
         if (!plan.entries[employee]) plan.entries[employee] = {};
-        plan.entries[employee][date] = { type, note };
+        plan.entries[employee][date] = { type };
 
         await fs.writeJson(file, plan, { spaces: 2 });
         res.json({ message: "Tag eingetragen.", plan });
@@ -123,7 +143,7 @@ router.post("/:year/:month/entry", requireLogin, async (req, res) => {
 router.post("/:year/:month/entries", requireLogin, async (req, res) => {
     const year = parseInt(req.params.year, 10);
     const month = parseInt(req.params.month, 10);
-    const { employee, startDate, endDate, type, note } = req.body;
+    const { employee, startDate, endDate, type } = req.body;
 
     if (!isValidYear(year) || !isValidMonth(month) ||
         typeof employee !== "string" || !isValidISODate(startDate) || !isValidISODate(endDate) || typeof type !== "string") {
@@ -146,7 +166,7 @@ router.post("/:year/:month/entries", requireLogin, async (req, res) => {
         while (current <= end) {
             const iso = current.toISOString().split("T")[0];
             if (new Date(iso).getMonth() + 1 === month) {
-                plan.entries[employee][iso] = { type, note };
+                plan.entries[employee][iso] = { type };
             }
             current.setDate(current.getDate() + 1);
         }
