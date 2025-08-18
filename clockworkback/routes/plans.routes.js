@@ -117,6 +117,31 @@ router.post("/new", requireLogin, requireAdmin, async (req, res) => {
   }
 });
 
+router.post("/:year/:month/entry/delete", requireLogin, async (req, res) => {
+  const year = parseInt(req.params.year, 10);
+  const month = parseInt(req.params.month, 10);
+  const { employee, date } = req.body;
+
+  if (!isValidYear(year) || !isValidMonth(month) ||
+      typeof employee !== "string" || !isValidISODate(date)) {
+    return res.status(400).json({ error: "Ungültige Felder." });
+  }
+
+  const file = monthFilePath(year, month);
+  try {
+    let plan = (await fs.pathExists(file)) ? await fs.readJson(file) : await createEmptyMonth(year, month, []);
+    if (plan.entries[employee] && plan.entries[employee][date]) {
+      delete plan.entries[employee][date];
+      await fs.writeJson(file, plan, { spaces: 2 });
+    }
+    res.json({ message: "Eintrag gelöscht.", plan });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Serverseitiger Fehler." });
+  }
+});
+
+
 router.get("/years", requireLogin, async (req, res) => {
   try {
     const files = await fs.readdir(PLANS_DIR);

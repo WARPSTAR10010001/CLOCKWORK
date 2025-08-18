@@ -8,7 +8,7 @@ import { Plan } from './plan';
 export class BackendAccess {
   private url = "http://localhost:3000/api/plans";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getPlan(year: number, month: number): Observable<Plan> {
     return this.http.get<Plan>(`${this.url}/${year}/${month}`, { withCredentials: true });
@@ -19,8 +19,12 @@ export class BackendAccess {
   }
 
   newPlan(year: number, users: string[], lastYearCarryOver: { [username: string]: number }, totalVacation: { [username: string]: number }): Observable<any> {
-  return this.http.post(`${this.url}/new`, { year, users, lastYearCarryOver, totalVacation }, { withCredentials: true });
-}
+    return this.http.post(`${this.url}/new`, { year, users, lastYearCarryOver, totalVacation }, { withCredentials: true });
+  }
+
+  deleteEntry(year: number, month: number, employee: string, date: string): Observable<any> {
+    return this.http.post(`${this.url}/${year}/${month}/entry/delete`, { employee, date }, { withCredentials: true });
+  }
 
 
   newEntry(year: number, month: number, employee: string, date: string, type: string): Observable<any> {

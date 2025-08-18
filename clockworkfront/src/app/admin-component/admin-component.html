@@ -5,22 +5,25 @@
         <label for="year">Jahr:</label>
         <input id="year" type="number" formControlName="year">
     </div>
-
+    <hr>
     <div formArrayName="users">
         <label>Mitarbeiter:</label>
-        <div *ngFor="let user of users.controls; let i = index" [formGroupName]="i" class="user-row">
+        @for (user of users.controls; track user) {
+        <div [formGroupName]="users.controls.indexOf(user)" class="user-row">
             <input type="text" placeholder="Name" formControlName="name">
             <input type="number" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver">
             <input type="number" placeholder="Urlaubsanspruch" formControlName="totalVacation">
-            @if (i > 0) {
-            <a class="button-action" (click)="removeUser(i)">Entfernen</a>
+
+            @if (users.controls.indexOf(user) > 0) {
+            <a class="button-action" (click)="removeUser(users.controls.indexOf(user))">Entfernen</a>
             }
         </div>
+        }
     </div>
-
     <a class="button-primary button-row" (click)="addUser()">Mitarbeiter hinzufügen</a>
     <a class="button-primary button-row" (click)="submit()">Jahresplan erstellen</a>
 </form>
 
-<div *ngIf="successMessage" class="success">{{ successMessage }}</div>
-<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+@if (errorMessage) {
+<div class="error">{{ errorMessage }}</div>
+}

@@ -2,13 +2,19 @@
   "year": 2025,
   "month": 9,
   "users": [
-    "pkjkpkplkül"
+    "WARPSTAR",
+    "Marco Manthey",
+    "Saray Ryzmanek"
   ],
   "entries": {
-    "pkjkpkplkül": {}
+    "WARPSTAR": {},
+    "Marco Manthey": {},
+    "Saray Ryzmanek": {}
   },
   "remainingVacation": {
-    "pkjkpkplkül": 0
+    "WARPSTAR": 5,
+    "Marco Manthey": 10,
+    "Saray Ryzmanek": 0
   },
   "days": [
     {

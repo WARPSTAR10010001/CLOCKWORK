@@ -1,1 +1,68 @@
 <h1 class="emp page-header">Dienstplan {{ month }}/{{ year }}</h1>
+
+@if (plan) {
+  <table class="plan-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        @for (day of plan.days; track day.date) {
+          @if (day.weekday < 6) { <!-- Mo–Fr -->
+            <th>{{ day.date.split('-')[2] }}, {{ convertNumberToWeekday(day.weekday) }}</th>
+          }
+        }
+        <th>Urlaub eingetragen</th>
+        <th>Resturlaub</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of Object.keys(plan.entries); track user) {
+        <tr>
+          <td>{{ user }}</td>
+          @for (day of plan.days; track day.date) {
+            @if (day.weekday < 6) {
+              <td>
+                @if (plan.entries[user][day.date]) {
+                  <span [ngClass]="getTypeClass(plan.entries[user][day.date].type)">
+                    {{ plan.entries[user][day.date].type }}
+                  </span>
+                  <a class="delete-entry" (click)="deleteEntry(user, day.date)">✕</a>
+                } @else {
+                  -
+                }
+              </td>
+            }
+          }
+          <td>{{ calculateVacation(user, plan.month) }}</td>
+          <td>{{ plan.usersVacationRemaining[user] }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Separate Tabelle für andere Events / Counters -->
+  <h3>Zusammenfassung / Events</h3>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Homeoffice</th>
+        <th>Krank</th>
+        <th>Lehrgänge</th>
+        <th>Gleitzeit</th>
+        <th>Allgemeine Termine</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of Object.keys(plan.entries); track user) {
+        <tr>
+          <td>{{ user }}</td>
+          <td>{{ countType(user, 'homeoffice') }}</td>
+          <td>{{ countType(user, 'krank') }}</td>
+          <td>{{ countType(user, 'lehrgang') }}</td>
+          <td>{{ countType(user, 'gleitzeit') }}</td>
+          <td>{{ countType(user, 'termin') }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

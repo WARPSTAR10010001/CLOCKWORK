@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { BackendAccess } from '../backend-access';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-panel',
@@ -16,7 +17,7 @@ export class AdminComponent {
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private backend: BackendAccess) {
+  constructor(private fb: FormBuilder, private backend: BackendAccess, private router: Router) {
     this.planForm = this.fb.group({
       year: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2100)]],
       users: this.fb.array([])
@@ -47,7 +48,6 @@ export class AdminComponent {
     }
 
     this.submitting = true;
-    this.successMessage = null;
     this.errorMessage = null;
 
     const formValue = this.planForm.value;
@@ -66,8 +66,8 @@ export class AdminComponent {
     this.backend.newPlan(payload.year, payload.users, payload.lastYearCarryOver, payload.totalVacation)
       .subscribe({
         next: (res) => {
-          this.successMessage = `Jahresplan für ${payload.year} erfolgreich erstellt!`;
           this.submitting = false;
+          this.router.navigate(['/auth']);
         },
         error: (err) => {
           console.error(err);
