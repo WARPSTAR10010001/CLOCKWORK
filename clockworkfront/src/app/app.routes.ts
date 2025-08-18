@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { YearComponent } from './year-component/year-component';
-import { InfoComponent } from './info-component/info-component';
+import { WikiComponent } from './wiki-component/wiki-component';
 import { ChangelogComponent } from './changelog-component/changelog-component';
 import { MonthComponent } from './month-component/month-component';
 import { PlanComponent } from './plan-component/plan-component';
@@ -18,12 +18,12 @@ export const routes: Routes = [
     {
         path: 'plan',
         component: YearComponent,
-        title: 'Jahresansicht - CLOCKWORK',
+        title: 'Jahresübersicht - CLOCKWORK',
         canActivate: [AuthGuard]
     },
     {
         path: 'wiki',
-        component: InfoComponent,
+        component: WikiComponent,
         title: 'Wiki - CLOCKWORK'
     },
     {
@@ -45,7 +45,7 @@ export const routes: Routes = [
     {
         path: 'plan/:year',
         component: MonthComponent,
-        title: 'Monatsansicht - CLOCKWORK',
+        title: 'Monatsübersicht - CLOCKWORK',
         canActivate: [AuthGuard]
     },
     {

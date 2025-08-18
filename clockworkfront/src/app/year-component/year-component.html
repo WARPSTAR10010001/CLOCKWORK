@@ -1,8 +1,13 @@
 <h1 class="emp page-header">Jahresübersicht</h1>
-<div id="result-container">
-    @for (year of years; track year) {
-    <div class="yearbox">
-        <p>{{ year }}</p>
-    </div>
+
+@if (years.length === 0) {
+  <div>{{ errorMessage }}</div>
+} @else {
+  <div id="result-container">
+    @for (year of years; track year.value) {
+      <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
+        <span>{{ year.value }}</span>
+      </a>
     }
-</div>
+  </div>
+}

@@ -1,0 +1,49 @@
+#result-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.year-card {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    border-radius: 12px;
+    border: 5px solid #fff;
+    color: #fff;
+    font-size: 4rem;
+    text-decoration: none;
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.year-card:hover {
+    box-shadow: 0px 0px 30px #0000003f;
+    transform: translateY(-5px);
+}
+
+.gradient-1 {
+    background: linear-gradient(120deg, #00f5d1 0%, #00d5f4 100%);
+}
+
+.gradient-2 {
+    background: radial-gradient(circle at top left, #00f5d1 0%, #00b3e6 70%, #00d5f4 100%);
+}
+
+.gradient-3 {
+    background: linear-gradient(200deg, #00c8a0 0%, #00f5d1 50%, #00d5f4 100%);
+}
+
+.gradient-4 {
+    background: radial-gradient(circle at bottom right, #00e0b0 0%, #00d5f4 60%, #0099cc 100%);
+}
+
+.gradient-5 {
+    background: linear-gradient(245deg, #00b3cc 0%, #00f5d1 40%, #00d5f4 80%);
+}
+
+.gradient-6 {
+    background: radial-gradient(circle at center, #00d5f4 0%, #00f5d1 50%, #00a3b3 100%);
+}

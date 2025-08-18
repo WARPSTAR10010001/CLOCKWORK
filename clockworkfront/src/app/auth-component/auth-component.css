@@ -25,7 +25,7 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60vh;
+    height: 50vh;
 }
 
 .error {
@@ -34,4 +34,13 @@ input {
     margin-bottom: 20px;
     width: 400px;
     text-align: center;
+}
+
+#colored {
+    height: 200px;
+    padding-bottom: 40px;
+}
+
+#login {
+    text-decoration: none;
 }

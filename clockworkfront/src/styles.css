@@ -45,6 +45,7 @@ a:hover {
 .page-header {
     font-size: 4em;
     margin: 0;
+    padding-bottom: 30px;
 }
 
 .button-primary {
