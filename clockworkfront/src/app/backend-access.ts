@@ -18,9 +18,10 @@ export class BackendAccess {
     return this.http.get<{ years: number[] }>(`${this.url}/years`, { withCredentials: true });
   }
 
-  newPlan(year: number, users: string[]): Observable<any> {
-    return this.http.post(`${this.url}/new`, { year, users }, { withCredentials: true });
-  }
+  newPlan(year: number, users: string[], lastYearCarryOver: { [username: string]: number }, totalVacation: { [username: string]: number }): Observable<any> {
+  return this.http.post(`${this.url}/new`, { year, users, lastYearCarryOver, totalVacation }, { withCredentials: true });
+}
+
 
   newEntry(year: number, month: number, employee: string, date: string, type: string): Observable<any> {
     return this.http.post(`${this.url}/${year}/${month}/entry`, { employee, date, type }, { withCredentials: true });

@@ -1,1 +1,26 @@
 <h1 class="emp page-header">Adminpanel</h1>
+
+<form [formGroup]="planForm">
+    <div>
+        <label for="year">Jahr:</label>
+        <input id="year" type="number" formControlName="year">
+    </div>
+
+    <div formArrayName="users">
+        <label>Mitarbeiter:</label>
+        <div *ngFor="let user of users.controls; let i = index" [formGroupName]="i" class="user-row">
+            <input type="text" placeholder="Name" formControlName="name">
+            <input type="number" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver">
+            <input type="number" placeholder="Urlaubsanspruch" formControlName="totalVacation">
+            @if (i > 0) {
+            <a class="button-action" (click)="removeUser(i)">Entfernen</a>
+            }
+        </div>
+    </div>
+
+    <a class="button-primary button-row" (click)="addUser()">Mitarbeiter hinzufügen</a>
+    <a class="button-primary button-row" (click)="submit()">Jahresplan erstellen</a>
+</form>
+
+<div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>

@@ -35,7 +35,6 @@ export const routes: Routes = [
         path: 'admin',
         component: AdminComponent,
         title: 'Adminpanel - CLOCKWORK',
-        canActivate: [AdminGuard]
     },
     {
         path: 'auth',

@@ -1,7 +1,7 @@
 <h1 class="emp page-header">Jahresübersicht</h1>
 
 @if (years.length === 0) {
-  <div>{{ errorMessage }}</div>
+  <div class="error">{{ errorMessage }}</div>
 } @else {
   <div id="result-container">
     @for (year of years; track year.value) {
