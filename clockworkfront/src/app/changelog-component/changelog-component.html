@@ -1,17 +1,25 @@
 <h1 class="emp page-header">Changelog</h1>
 <div id="page-content" class="text">
+    <div id="03">
+        <h2>[V0.3 Alpha // 19.08.2025]: UI-Verbesserungen & Admin-Komponente</h2>
+        <ul>
+            <li>Die Benutzeroberfläche wurde weiter überarbeitet und konsistenter gestaltet, insbesondere im Bereich Navigation und Übersicht.</li>
+            <li>Die Admin-Komponente wurde grundlegend verbessert und ist jetzt übersichtlich und einheitlich aufgebaut.</li>
+            <li>Der Backend-Zugriff (BackendAccess) sowie das Backend selbst wurden optimiert und für zukünftige Erweiterungen vorbereitet.</li>
+            <li>Es wird aktuell an einer praktikablen Lösung für die Plan-Komponente gearbeitet, um die Funktionalität und das Design für die erste Beta-Version zu sichern.</li>
+            <li>Gedanken und erste Schritte zum Deployment und Ausrollen der Beta-Version sind im Gange.</li>
+        </ul>
+        <p>Die Version V0.3 Alpha bringt spürbare Verbesserungen im UI und legt den Grundstein für einen konsistenten Admin-Bereich und ein stabiles Backend. Die Planung für die Beta-Phase hat begonnen.</p>
+    </div>
+    <hr>
     <div id="02">
         <h2>[V0.2 Alpha // 18.08.2025]: Verbesserungen & Fehlerbehebungen</h2>
         <ul>
             <li>Routing-Fehler im Frontend behoben, sodass die Benutzeroberfläche jetzt zuverlässig lädt und alle Seiten
-                korrekt angezeigt werden. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/05490726adb61a0ee2e7bfbaa8edb60f9e5d845e"
-                    target="_blank">Commit</a>)</li>
+                korrekt angezeigt werden.</li>
             <li>Template-Syntax angepasst, &#64;if statt *ngIf, um mit neuer Angular-Version kompatibel zu sein.</li>
             <li>Login-Flow verbessert: Fehlerausgaben bei falschen Logins klarer gestaltet und Navigation nach
-                erfolgreicher Anmeldung optimiert. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/8fd89ba7aad459f558b18c4813df658c18cbed46"
-                    target="_blank">Commit</a>)</li>
+                erfolgreicher Anmeldung optimiert.</li>
             <li>Authentifizierungs-Status im Header und bei Navigation zuverlässiger angezeigt.</li>
             <li>Admin-Guard und Auth-Guard überarbeitet, um unberechtigte Zugriffe besser abzufangen.</li>
             <li>Kleinere UI-Verbesserungen und Fehlerbehebungen im Jahr-/Monat-Übersicht.</li>
@@ -24,31 +32,16 @@
     <div id="01">
         <h2>[V0.1 Alpha // 15.08.2025]: Erster Release - Grundfunktionen & Struktur</h2>
         <ul>
-            <li>Initiale Backend-Struktur für Nutzerverwaltung und Dienstplanung aufgebaut (Express, Sessions, Bcrypt).
-                (<a href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/db01361e0947b1594bb21f507078aab71868f3d3"
-                    target="_blank">Commit</a>)</li>
-            <li>Server-Konfiguration: Port auf 3000 gestellt, Umgebungsvariablen mit dotenv gesichert. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/3c15b4ebf7b5669cc360005c0bff4d984bf9ea5b"
-                    target="_blank">Commit</a>, <a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/dc93cb365e4bc760815763b1b13351a8c9e921a5"
-                    target="_blank">Commit</a>)</li>
+            <li>Initiale Backend-Struktur für Nutzerverwaltung und Dienstplanung aufgebaut (Express & Sessions).</li>
+            <li>Server-Konfiguration: Port auf 3000 gestellt, Umgebungsvariablen mit dotenv gesichert.</li>
             <li>Frontend-Grundstruktur mit Angular: Komponenten & Routing für Jahr, Monat, Plan, Info, Admin und Auth
-                erstellt. Layout und Favicon hinzugefügt. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/84849aa0127de30e349df9d19c1a56404b852a0f"
-                    target="_blank">Commit</a>)</li>
+                erstellt. Layout und Favicon hinzugefügt.</li>
             <li>Authentifizierung & Admin: AuthGuard/AdminGuard, AuthService und Backend-Endpunkte für
-                Login/Logout/Status
-                implementiert. CORS aktiviert. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/46be0af99b78263121956f73451ff16dec7026c5"
-                    target="_blank">Commit</a>)</li>
+                Login/Logout/Status implementiert. CORS aktiviert.</li>
             <li>UI & Login: Login-Flow mit Observables und Navigation verbessert, Authentifizierungs-UI und Navigation
-                modernisiert. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/8fd89ba7aad459f558b18c4813df658c18cbed46"
-                    target="_blank">Commit</a>)</li>
+                modernisiert.</li>
             <li>Jahresübersicht & API: Jahr-Komponente im Frontend und API-Endpunkt für Jahre im Backend hinzugefügt,
-                Übersicht und Authentifizierung verbessert. (<a
-                    href="https://github.com/WARPSTAR10010001/CLOCKWORK/commit/05490726adb61a0ee2e7bfbaa8edb60f9e5d845e"
-                    target="_blank">Commit</a>)</li>
+                Übersicht und Authentifizierung verbessert.</li>
         </ul>
         <p>Diese Version enthält die Kernfunktionen von CLOCKWORK. Die Grundstruktur für Frontend und Backend steht und
             erlaubt erste produktive Nutzung in der Produktionsumgebung.</p>

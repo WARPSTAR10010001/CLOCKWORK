@@ -33,7 +33,7 @@ export class YearComponent implements OnInit {
       },
       error: (err) => {
         console.error('Fehler beim Laden der Jahre:', err);
-        this.errorMessage = 'Jahre konnten nicht geladen werden.';
+        this.errorMessage = 'Jahre konnten nicht geladen werden. Bitte wiederholen Sie den Anmeldevorgang oder kontaktieren Sie einen Systemadmin.';
       }
     });
   }

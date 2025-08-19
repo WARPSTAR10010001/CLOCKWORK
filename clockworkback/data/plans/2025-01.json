@@ -8,12 +8,103 @@
   ],
   "entries": {
     "WARPSTAR": {},
-    "Marco Manthey": {},
+    "Marco Manthey": {
+      "2025-01-01": {
+        "type": "vacation"
+      },
+      "2025-01-02": {
+        "type": "vacation"
+      },
+      "2025-01-03": {
+        "type": "vacation"
+      },
+      "2025-01-04": {
+        "type": "vacation"
+      },
+      "2025-01-05": {
+        "type": "vacation"
+      },
+      "2025-01-06": {
+        "type": "vacation"
+      },
+      "2025-01-07": {
+        "type": "vacation"
+      },
+      "2025-01-08": {
+        "type": "vacation"
+      },
+      "2025-01-09": {
+        "type": "vacation"
+      },
+      "2025-01-10": {
+        "type": "vacation"
+      },
+      "2025-01-11": {
+        "type": "vacation"
+      },
+      "2025-01-12": {
+        "type": "vacation"
+      },
+      "2025-01-13": {
+        "type": "vacation"
+      },
+      "2025-01-14": {
+        "type": "vacation"
+      },
+      "2025-01-15": {
+        "type": "vacation"
+      },
+      "2025-01-16": {
+        "type": "vacation"
+      },
+      "2025-01-17": {
+        "type": "vacation"
+      },
+      "2025-01-18": {
+        "type": "vacation"
+      },
+      "2025-01-19": {
+        "type": "vacation"
+      },
+      "2025-01-20": {
+        "type": "vacation"
+      },
+      "2025-01-21": {
+        "type": "vacation"
+      },
+      "2025-01-22": {
+        "type": "vacation"
+      },
+      "2025-01-23": {
+        "type": "vacation"
+      },
+      "2025-01-24": {
+        "type": "vacation"
+      },
+      "2025-01-25": {
+        "type": "vacation"
+      },
+      "2025-01-26": {
+        "type": "vacation"
+      },
+      "2025-01-27": {
+        "type": "vacation"
+      },
+      "2025-01-28": {
+        "type": "vacation"
+      },
+      "2025-01-29": {
+        "type": "vacation"
+      },
+      "2025-01-30": {
+        "type": "vacation"
+      }
+    },
     "Saray Ryzmanek": {}
   },
   "remainingVacation": {
-    "WARPSTAR": 5,
-    "Marco Manthey": 10,
+    "WARPSTAR": 0,
+    "Marco Manthey": 0,
     "Saray Ryzmanek": 0
   },
   "days": [

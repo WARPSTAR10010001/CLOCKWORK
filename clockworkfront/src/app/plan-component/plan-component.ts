@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendAccess } from '../backend-access';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 export interface Entry {
   employee: string;
@@ -18,6 +19,7 @@ export interface Plan {
 
 @Component({
   selector: 'app-plan',
+  imports: [CommonModule],
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
 })
@@ -35,8 +37,7 @@ export class PlanComponent implements OnInit {
   ngOnInit(): void {
     this.month = Number(this.activatedRoute.snapshot.paramMap.get("month"));
     this.year = Number(this.activatedRoute.snapshot.paramMap.get("year"));
-    const today = new Date();
-    this.loadPlan(today.getFullYear(), today.getMonth() + 1);
+    this.loadPlan(this.year, this.month);
   }
 
   loadPlan(year: number, month: number): void {
@@ -59,7 +60,7 @@ export class PlanComponent implements OnInit {
     const date = new Date(year, month - 1, 1);
 
     while (date.getMonth() === month - 1) {
-      const day = date.getDay(); // 0=So, 6=Sa
+      const day = date.getDay();
       if (day !== 0 && day !== 6) {
         days.push(new Date(date));
       }
@@ -69,7 +70,7 @@ export class PlanComponent implements OnInit {
     return days;
   }
 
-  getEntriesForDay(employee: string, day: Date): Entry[] {
+  getEntry(employee: string, day: Date): Entry[] {
     if (!this.plan) return [];
     const dayStr = day.toISOString().split('T')[0];
     return this.plan.entries.filter(e => e.employee === employee && e.date === dayStr);
@@ -111,5 +112,14 @@ export class PlanComponent implements OnInit {
       next: () => this.loadPlan(year, month),
       error: (err) => console.error('Fehler beim Hinzufügen mehrerer Einträge:', err)
     });
+  }
+
+  getToday(): Date {
+    return new Date();
+  }
+
+  public getEntriesForUser(user: string): any[] {
+    if (!this.plan || !this.plan.entries) return [];
+    return this.plan.entries.filter((entry: any) => entry.user === user);
   }
 }

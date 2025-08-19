@@ -1,52 +1,21 @@
-.plan-table {
+table {
+    font-size: 1.5em;
     width: 100%;
-    border-collapse: collapse;
     text-align: center;
+    border: 5px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px #0000003f;
 }
 
-.plan-table th,
-.plan-table td {
-    border: 1px solid #ccc;
-    padding: 5px;
+th, td {
+    padding: 10px 15px;
+    background-color: #f3f3f3;
+    border: 3px solid #f3f3f3;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
 }
 
-.plan-table th.weekend,
-.plan-table td.weekend {
-    background-color: #f0f0f0;
-}
-
-.type-urlaub {
-    background-color: #4caf50;
-    color: white;
-}
-
-.type-krank {
-    background-color: #ffeb3b;
-    color: black;
-}
-
-.type-homeoffice {
-    background-color: #2196f3;
-    color: white;
-}
-
-.type-lehrgang {
-    background-color: orange;
-    color: white;
-}
-
-.type-gleitzeit {
-    background-color: #e91e63;
-    color: white;
-}
-
-.type-allgemein {
-    background-color: #b3e5fc;
-    color: black;
-}
-
-.delete-link {
-    color: red;
-    cursor: pointer;
-    margin-left: 5px;
+th:hover, td:hover {
+    background-color: #dbdbdb;
+    border: 3px solid #dbdbdb;
 }

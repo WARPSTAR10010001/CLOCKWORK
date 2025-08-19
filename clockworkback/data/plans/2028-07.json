@@ -1,0 +1,139 @@
+{
+  "year": 2028,
+  "month": 7,
+  "users": [
+    "edkgüplerglküöerlke"
+  ],
+  "entries": {
+    "edkgüplerglküöerlke": {}
+  },
+  "remainingVacation": {
+    "edkgüplerglküöerlke": 0
+  },
+  "days": [
+    {
+      "date": "2028-06-30",
+      "weekday": 6
+    },
+    {
+      "date": "2028-07-01",
+      "weekday": 7
+    },
+    {
+      "date": "2028-07-02",
+      "weekday": 1
+    },
+    {
+      "date": "2028-07-03",
+      "weekday": 2
+    },
+    {
+      "date": "2028-07-04",
+      "weekday": 3
+    },
+    {
+      "date": "2028-07-05",
+      "weekday": 4
+    },
+    {
+      "date": "2028-07-06",
+      "weekday": 5
+    },
+    {
+      "date": "2028-07-07",
+      "weekday": 6
+    },
+    {
+      "date": "2028-07-08",
+      "weekday": 7
+    },
+    {
+      "date": "2028-07-09",
+      "weekday": 1
+    },
+    {
+      "date": "2028-07-10",
+      "weekday": 2
+    },
+    {
+      "date": "2028-07-11",
+      "weekday": 3
+    },
+    {
+      "date": "2028-07-12",
+      "weekday": 4
+    },
+    {
+      "date": "2028-07-13",
+      "weekday": 5
+    },
+    {
+      "date": "2028-07-14",
+      "weekday": 6
+    },
+    {
+      "date": "2028-07-15",
+      "weekday": 7
+    },
+    {
+      "date": "2028-07-16",
+      "weekday": 1
+    },
+    {
+      "date": "2028-07-17",
+      "weekday": 2
+    },
+    {
+      "date": "2028-07-18",
+      "weekday": 3
+    },
+    {
+      "date": "2028-07-19",
+      "weekday": 4
+    },
+    {
+      "date": "2028-07-20",
+      "weekday": 5
+    },
+    {
+      "date": "2028-07-21",
+      "weekday": 6
+    },
+    {
+      "date": "2028-07-22",
+      "weekday": 7
+    },
+    {
+      "date": "2028-07-23",
+      "weekday": 1
+    },
+    {
+      "date": "2028-07-24",
+      "weekday": 2
+    },
+    {
+      "date": "2028-07-25",
+      "weekday": 3
+    },
+    {
+      "date": "2028-07-26",
+      "weekday": 4
+    },
+    {
+      "date": "2028-07-27",
+      "weekday": 5
+    },
+    {
+      "date": "2028-07-28",
+      "weekday": 6
+    },
+    {
+      "date": "2028-07-29",
+      "weekday": 7
+    },
+    {
+      "date": "2028-07-30",
+      "weekday": 1
+    }
+  ]
+}

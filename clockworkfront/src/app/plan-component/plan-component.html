@@ -2,13 +2,26 @@
   } @else {
   <h1 class="emp page-header">Dienstplan {{ month }}/{{ year }}</h1>
   }
-  <div id="result-container">
-    <table>
+  <table class="plan-table">
+    <thead>
       <tr>
         <th>Name</th>
-        @for () {
-        
+        @for (day of days; track day) {
+        <th>
+          {{ day.getDate() }}<br>
+          {{ weekdays[day.getDay() - 1] }}
+        </th>
         }
       </tr>
-    </table>
-  </div>
+    </thead>
+    <tbody>
+      @for (user of plan?.users; track user) {
+      <tr>
+        <td>{{ user }}</td>
+        @for (entry of getEntriesForUser(user); track entry) {
+        <td>{{ entry.type }}</td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>

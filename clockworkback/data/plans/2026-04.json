@@ -1,0 +1,135 @@
+{
+  "year": 2026,
+  "month": 4,
+  "users": [
+    "WARPY"
+  ],
+  "entries": {
+    "WARPY": {}
+  },
+  "remainingVacation": {
+    "WARPY": 222
+  },
+  "days": [
+    {
+      "date": "2026-03-31",
+      "weekday": 3
+    },
+    {
+      "date": "2026-04-01",
+      "weekday": 4
+    },
+    {
+      "date": "2026-04-02",
+      "weekday": 5
+    },
+    {
+      "date": "2026-04-03",
+      "weekday": 6
+    },
+    {
+      "date": "2026-04-04",
+      "weekday": 7
+    },
+    {
+      "date": "2026-04-05",
+      "weekday": 1
+    },
+    {
+      "date": "2026-04-06",
+      "weekday": 2
+    },
+    {
+      "date": "2026-04-07",
+      "weekday": 3
+    },
+    {
+      "date": "2026-04-08",
+      "weekday": 4
+    },
+    {
+      "date": "2026-04-09",
+      "weekday": 5
+    },
+    {
+      "date": "2026-04-10",
+      "weekday": 6
+    },
+    {
+      "date": "2026-04-11",
+      "weekday": 7
+    },
+    {
+      "date": "2026-04-12",
+      "weekday": 1
+    },
+    {
+      "date": "2026-04-13",
+      "weekday": 2
+    },
+    {
+      "date": "2026-04-14",
+      "weekday": 3
+    },
+    {
+      "date": "2026-04-15",
+      "weekday": 4
+    },
+    {
+      "date": "2026-04-16",
+      "weekday": 5
+    },
+    {
+      "date": "2026-04-17",
+      "weekday": 6
+    },
+    {
+      "date": "2026-04-18",
+      "weekday": 7
+    },
+    {
+      "date": "2026-04-19",
+      "weekday": 1
+    },
+    {
+      "date": "2026-04-20",
+      "weekday": 2
+    },
+    {
+      "date": "2026-04-21",
+      "weekday": 3
+    },
+    {
+      "date": "2026-04-22",
+      "weekday": 4
+    },
+    {
+      "date": "2026-04-23",
+      "weekday": 5
+    },
+    {
+      "date": "2026-04-24",
+      "weekday": 6
+    },
+    {
+      "date": "2026-04-25",
+      "weekday": 7
+    },
+    {
+      "date": "2026-04-26",
+      "weekday": 1
+    },
+    {
+      "date": "2026-04-27",
+      "weekday": 2
+    },
+    {
+      "date": "2026-04-28",
+      "weekday": 3
+    },
+    {
+      "date": "2026-04-29",
+      "weekday": 4
+    }
+  ]
+}
