@@ -1,68 +1,115 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BackendAccess } from '../backend-access';
-import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+
+export interface Entry {
+  employee: string;
+  date: string;
+  type: string;
+}
+
+export interface Plan {
+  year: number;
+  month: number;
+  users: string[];
+  entries: Entry[];
+  counters: { [username: string]: number };
+}
 
 @Component({
-  selector: 'app-month-plan',
-  imports: [CommonModule],
+  selector: 'app-plan',
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
 })
-export class PlanComponent implements OnInit {
-  year!: number;
-  month!: number;
-  plan: any = { days: [], users: [], entries: {} };
-  monthSummary: any = {};
 
-  constructor(private activatedRoute: ActivatedRoute, private backend: BackendAccess) {}
+export class PlanComponent implements OnInit {
+  month!: number;
+  year!: number;
+  plan: Plan | null = null;
+  days: Date[] = [];
+  weekdays: string[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr'];
+  loading = false;
+
+  constructor(private backendAccess: BackendAccess, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.year = Number(this.activatedRoute.snapshot.paramMap.get("year"));
     this.month = Number(this.activatedRoute.snapshot.paramMap.get("month"));
-    this.loadPlan();
+    this.year = Number(this.activatedRoute.snapshot.paramMap.get("year"));
+    const today = new Date();
+    this.loadPlan(today.getFullYear(), today.getMonth() + 1);
   }
 
-  loadPlan() {
-    this.backend.getPlan(this.year, this.month).subscribe({
-      next: (res) => {
-        this.plan = res;
-        this.calculateSummary();
+  loadPlan(year: number, month: number): void {
+    this.loading = true;
+    this.backendAccess.getPlan(year, month).subscribe({
+      next: (data) => {
+        this.plan = data;
+        this.days = this.generateDays(year, month);
+        this.loading = false;
       },
-      error: (err) => console.error(err)
-    });
-  }
-
-  calculateSummary() {
-    this.monthSummary = {};
-    this.plan.users.forEach((user: string) => {
-      let vacationUsed = 0;
-      let vacationLeft = this.plan.totalVacation?.[user] ?? 0;
-      let homeoffice = 0;
-      let other = 0;
-
-      for (let day of this.plan.days) {
-        const entry = this.plan.entries[user]?.[day.date];
-        if (entry) {
-          switch(entry.type) {
-            case 'urlaub': vacationUsed++; vacationLeft--; break;
-            case 'homeoffice': homeoffice++; break;
-            default: other++; break;
-          }
-        }
+      error: (err) => {
+        console.error('Fehler beim Laden des Plans:', err);
+        this.loading = false;
       }
-      this.monthSummary[user] = { vacationUsed, vacationLeft, homeoffice, other };
     });
   }
 
-  convertWeekday(day: number) {
-    return ['So','Mo','Di','Mi','Do','Fr','Sa'][day%7];
+  private generateDays(year: number, month: number): Date[] {
+    const days: Date[] = [];
+    const date = new Date(year, month - 1, 1);
+
+    while (date.getMonth() === month - 1) {
+      const day = date.getDay(); // 0=So, 6=Sa
+      if (day !== 0 && day !== 6) {
+        days.push(new Date(date));
+      }
+      date.setDate(date.getDate() + 1);
+    }
+
+    return days;
   }
 
-  deleteEntry(user: string, date: string) {
-    this.backend.deleteEntry(this.year, this.month, user, date).subscribe({
-      next: () => this.loadPlan(),
-      error: (err) => console.error(err)
+  getEntriesForDay(employee: string, day: Date): Entry[] {
+    if (!this.plan) return [];
+    const dayStr = day.toISOString().split('T')[0];
+    return this.plan.entries.filter(e => e.employee === employee && e.date === dayStr);
+  }
+
+  addEntry(employee: string, date: Date, type: string): void {
+    if (!this.plan) return;
+    const year = this.plan.year;
+    const month = this.plan.month;
+    const isoDate = date.toISOString().split('T')[0];
+
+    this.backendAccess.newEntry(year, month, employee, isoDate, type).subscribe({
+      next: () => this.loadPlan(year, month),
+      error: (err) => console.error('Fehler beim Hinzufügen:', err)
+    });
+  }
+
+  deleteEntry(employee: string, date: Date): void {
+    if (!this.plan) return;
+    const year = this.plan.year;
+    const month = this.plan.month;
+    const isoDate = date.toISOString().split('T')[0];
+
+    this.backendAccess.deleteEntry(year, month, employee, isoDate).subscribe({
+      next: () => this.loadPlan(year, month),
+      error: (err) => console.error('Fehler beim Löschen:', err)
+    });
+  }
+
+  addEntries(employee: string, start: Date, end: Date, type: string): void {
+    if (!this.plan) return;
+    const year = this.plan.year;
+    const month = this.plan.month;
+
+    const isoStart = start.toISOString().split('T')[0];
+    const isoEnd = end.toISOString().split('T')[0];
+
+    this.backendAccess.newEntries(year, month, employee, isoStart, isoEnd, type).subscribe({
+      next: () => this.loadPlan(year, month),
+      error: (err) => console.error('Fehler beim Hinzufügen mehrerer Einträge:', err)
     });
   }
 }

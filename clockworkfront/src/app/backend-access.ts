@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Plan } from './plan';
 
 @Injectable({ providedIn: 'root' })
 
@@ -10,8 +9,8 @@ export class BackendAccess {
 
   constructor(private http: HttpClient) { }
 
-  getPlan(year: number, month: number): Observable<Plan> {
-    return this.http.get<Plan>(`${this.url}/${year}/${month}`, { withCredentials: true });
+  getPlan(year: number, month: number): Observable<any> {
+    return this.http.get<any>(`${this.url}/${year}/${month}`, { withCredentials: true });
   }
 
   getYears(): Observable<any> {
