@@ -2,6 +2,15 @@
   } @else {
   <h1 class="emp page-header">Dienstplan {{ month }}/{{ year }}</h1>
   }
+  <div id="entry-buttons">
+    <a class="button-primary u" (click)="setEntry('U')">Urlaub</a>
+    <a class="button-primary ho" (click)="setEntry('HO')">Homeoffice</a>
+    <a class="button-primary k" (click)="setEntry('K')">Krank</a>
+    <a class="button-primary lg" (click)="setEntry('LG')">Lehrgang</a>
+    <a class="button-primary gz" (click)="setEntry('GZ')">Gleitzeit</a>
+    <a class="button-primary t" (click)="setEntry('T')">Termin</a>
+    <a class="button-action" (click)="setEntry('')">Löschen</a>
+  </div>
   <table class="plan-table">
     <thead>
       <tr>
@@ -18,8 +27,10 @@
       @for (user of plan?.users; track user) {
       <tr>
         <td>{{ user }}</td>
-        @for (entry of getEntriesForUser(user); track entry) {
-        <td>{{ entry.type }}</td>
+        @for (day of days; track day) {
+        <td (click)="selectCell(user, day)" [class.selected]="isSelected(user, day)">
+          {{ getCellType(user, day) }}
+        </td>
         }
       </tr>
       }

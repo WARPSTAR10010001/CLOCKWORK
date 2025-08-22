@@ -11,8 +11,8 @@
         @for (user of users.controls; track user) {
         <div [formGroupName]="users.controls.indexOf(user)" class="user-row">
             <input type="text" placeholder="Name" formControlName="name">
-            <input type="number" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver">
-            <input type="number" placeholder="Urlaubsanspruch" formControlName="totalVacation">
+            <input type="number" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver" min="0">
+            <input type="number" placeholder="Urlaubsanspruch" formControlName="totalVacation" min="0">
 
             @if (users.controls.indexOf(user) > 0) {
             <a class="button-action" (click)="removeUser(users.controls.indexOf(user))">Entfernen</a>

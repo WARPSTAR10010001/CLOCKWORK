@@ -2,19 +2,25 @@
   "year": 2025,
   "month": 7,
   "users": [
-    "WARPSTAR",
+    "Alpay Gürüz",
     "Marco Manthey",
-    "Saray Ryzmanek"
+    "Dennis Engels",
+    "Jonas Burg",
+    "Thadäus Suchecki"
   ],
   "entries": {
-    "WARPSTAR": {},
+    "Alpay Gürüz": {},
     "Marco Manthey": {},
-    "Saray Ryzmanek": {}
+    "Dennis Engels": {},
+    "Jonas Burg": {},
+    "Thadäus Suchecki": {}
   },
   "remainingVacation": {
-    "WARPSTAR": 5,
-    "Marco Manthey": 10,
-    "Saray Ryzmanek": 0
+    "Alpay Gürüz": 5,
+    "Marco Manthey": 0,
+    "Dennis Engels": 0,
+    "Jonas Burg": 0,
+    "Thadäus Suchecki": 0
   },
   "days": [
     {

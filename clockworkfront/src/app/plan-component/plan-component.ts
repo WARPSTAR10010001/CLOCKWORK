@@ -3,18 +3,15 @@ import { BackendAccess } from '../backend-access';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-export interface Entry {
-  employee: string;
-  date: string;
-  type: string;
-}
+export interface PlanDay { date: string; weekday: number }
 
 export interface Plan {
   year: number;
   month: number;
   users: string[];
-  entries: Entry[];
-  counters: { [username: string]: number };
+  days: PlanDay[];
+  entries: { [username: string]: { [isoDate: string]: { type: string } } };
+  remainingVacation: { [username: string]: number };
 }
 
 @Component({
@@ -23,14 +20,14 @@ export interface Plan {
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
 })
-
 export class PlanComponent implements OnInit {
   month!: number;
   year!: number;
   plan: Plan | null = null;
   days: Date[] = [];
   weekdays: string[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr'];
-  loading = false;
+  selectedUser: string | null = null;
+  selectedDay: Date | null = null;
 
   constructor(private backendAccess: BackendAccess, private activatedRoute: ActivatedRoute) { }
 
@@ -41,21 +38,18 @@ export class PlanComponent implements OnInit {
   }
 
   loadPlan(year: number, month: number): void {
-    this.loading = true;
     this.backendAccess.getPlan(year, month).subscribe({
       next: (data) => {
         this.plan = data;
         this.days = this.generateDays(year, month);
-        this.loading = false;
       },
       error: (err) => {
         console.error('Fehler beim Laden des Plans:', err);
-        this.loading = false;
       }
     });
   }
 
-  private generateDays(year: number, month: number): Date[] {
+  generateDays(year: number, month: number): Date[] {
     const days: Date[] = [];
     const date = new Date(year, month - 1, 1);
 
@@ -70,21 +64,15 @@ export class PlanComponent implements OnInit {
     return days;
   }
 
-  getEntry(employee: string, day: Date): Entry[] {
-    if (!this.plan) return [];
-    const dayStr = day.toISOString().split('T')[0];
-    return this.plan.entries.filter(e => e.employee === employee && e.date === dayStr);
-  }
-
   addEntry(employee: string, date: Date, type: string): void {
     if (!this.plan) return;
     const year = this.plan.year;
     const month = this.plan.month;
-    const isoDate = date.toISOString().split('T')[0];
+    const isoDate = this.toIso(date);
 
     this.backendAccess.newEntry(year, month, employee, isoDate, type).subscribe({
       next: () => this.loadPlan(year, month),
-      error: (err) => console.error('Fehler beim Hinzufügen:', err)
+      error: (err) => console.error('Fehler beim Hinzufügen: ', err)
     });
   }
 
@@ -92,11 +80,11 @@ export class PlanComponent implements OnInit {
     if (!this.plan) return;
     const year = this.plan.year;
     const month = this.plan.month;
-    const isoDate = date.toISOString().split('T')[0];
+    const isoDate = this.toIso(date);
 
     this.backendAccess.deleteEntry(year, month, employee, isoDate).subscribe({
       next: () => this.loadPlan(year, month),
-      error: (err) => console.error('Fehler beim Löschen:', err)
+      error: (err) => console.error('Fehler beim Löschen: ', err)
     });
   }
 
@@ -105,12 +93,12 @@ export class PlanComponent implements OnInit {
     const year = this.plan.year;
     const month = this.plan.month;
 
-    const isoStart = start.toISOString().split('T')[0];
-    const isoEnd = end.toISOString().split('T')[0];
+    const isoStart = this.toIso(start);
+    const isoEnd = this.toIso(end);
 
     this.backendAccess.newEntries(year, month, employee, isoStart, isoEnd, type).subscribe({
       next: () => this.loadPlan(year, month),
-      error: (err) => console.error('Fehler beim Hinzufügen mehrerer Einträge:', err)
+      error: (err) => console.error('Fehler beim Hinzufügen mehrerer Einträge: ', err)
     });
   }
 
@@ -118,8 +106,30 @@ export class PlanComponent implements OnInit {
     return new Date();
   }
 
-  public getEntriesForUser(user: string): any[] {
-    if (!this.plan || !this.plan.entries) return [];
-    return this.plan.entries.filter((entry: any) => entry.user === user);
+  toIso(d: Date): string {
+    return d.toISOString().split('T')[0];
+  }
+
+  getCellType(user: string, day: Date): string | null {
+    if (!this.plan) return null;
+    const key = this.toIso(day);
+    return this.plan.entries?.[user]?.[key]?.type ?? null;
+  }
+
+  selectCell(user: string, day: Date): void {
+    this.selectedUser = user;
+    this.selectedDay = day;
+  }
+
+  isSelected(user: string, day: Date): boolean {
+    return this.selectedUser === user && this.selectedDay?.getTime() === day.getTime();
+  }
+
+  setEntry(type: string): void {
+    if (this.selectedUser && this.selectedDay && type !== "") {
+      this.addEntry(this.selectedUser, this.selectedDay, type);
+    } else if (this.selectedUser && this.selectedDay && type === "") {
+      this.deleteEntry(this.selectedUser, this.selectedDay);
+    }
   }
 }

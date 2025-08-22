@@ -15,7 +15,77 @@ th, td {
     transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
 }
 
-th:hover, td:hover {
-    background-color: #dbdbdb;
-    border: 3px solid #dbdbdb;
+#entry-buttons {
+    margin-bottom: 30px;
+}
+
+#entry-buttons a {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.u {
+    background-color: #88ff00;
+    border: 4px solid #88ff00;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.u:hover {
+    background-color: #fff;
+    color: #88ff00;
+}
+
+.ho {
+    background-color: #00aeff;
+    border: 4px solid #00aeff;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.ho:hover {
+    background-color: #fff;
+    color: #00aeff;
+}
+
+.k {
+    background-color: #ff00bf;
+    border: 4px solid #ff00bf;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.k:hover {
+    background-color: #fff;
+    color: #ff00bf;
+}
+
+.lg {
+    background-color: #ffa318;
+    border: 4px solid #ffa318;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.lg:hover {
+    background-color: #fff;
+    color: #ffa318;
+}
+
+.gz {
+    background-color: #8400ff;
+    border: 4px solid #8400ff;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.gz:hover {
+    background-color: #fff;
+    color: #8400ff;
+}
+
+.t {
+    background-color: #00ffaa;
+    border: 4px solid #00ffaa;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.t:hover {
+    background-color: #fff;
+    color: #00ffaa;
 }
