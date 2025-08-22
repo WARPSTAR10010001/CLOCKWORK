@@ -1,17 +1,15 @@
 function requireLogin(req, res, next) {
-    if (!req.session?.user) {
-        res.status(401).json({ error: "Nicht eingeloggt." });
-        return;
-    }
-    next();
+  if (!req.session || !req.session.user) {
+    return res.status(401).json({ error: "Nicht eingeloggt." });
+  }
+  next();
 }
 
 function requireAdmin(req, res, next) {
-    if (req.session?.user.id !== 0) {
-        res.status(403).json({ error: "Keine Berechtigung." });
-        return;
-    }
-    next();
+  if (!req.session || !req.session.user || !req.session.user.admin) {
+    return res.status(403).json({ error: "Keine Berechtigung." });
+  }
+  next();
 }
 
 function errorLogger(err, req, res, next) {

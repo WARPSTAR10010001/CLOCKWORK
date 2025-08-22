@@ -1,6 +1,13 @@
+// auth-service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+
+interface AuthStatus {
+  loggedIn: boolean;
+  admin: boolean;
+  user?: { id: number; username: string; admin: boolean } | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,18 +23,17 @@ export class AuthService {
     this.checkStatus().subscribe();
   }
 
-  checkStatus(): Observable<{ loggedIn: boolean; admin: boolean }> {
-    return this.http.get<{ loggedIn: boolean; admin: boolean }>(`${this.url}/status`, { withCredentials: true })
+  checkStatus(): Observable<AuthStatus> {
+    return this.http.get<AuthStatus>(`${this.url}/status`, { withCredentials: true })
       .pipe(tap(res => {
         this.loggedInSubject.next(res.loggedIn);
-        this.adminSubject.next(res.admin);
+        this.adminSubject.next(!!res.admin);
       }));
   }
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.url}/login`, { username, password }, { withCredentials: true })
+  login(username: string, password: string): Observable<AuthStatus> {
+    return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true })
       .pipe(tap(() => {
-        this.loggedInSubject.next(true);
         this.checkStatus().subscribe();
       }));
   }

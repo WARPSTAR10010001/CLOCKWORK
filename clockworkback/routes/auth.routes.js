@@ -2,50 +2,56 @@ const express = require("express");
 const router = express.Router();
 
 const users = [
-    {
-        id: 0,
-        username: "admin",
-        password: "CWadmin47495",
-    },
-    {
-        id: 1,
-        username: "default",
-        password: "rheinberg47495!",
-    }
+  { id: 0, username: "admin",   password: "CWadmin47495",   isAdmin: true  },
+  { id: 1, username: "default", password: "rheinberg47495!", isAdmin: false }
 ];
 
 router.post("/login", (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: "Bitte das Anmeldefeld ausfüllen." });
-    }
+  const { username, password } = req.body || {};
+  if (!username || !password) {
+    return res.status(400).json({ error: "Bitte das Anmeldefeld ausfüllen." });
+  }
 
-    const user = users.find(u => u.username === username);
-    if (!user || user.password !== password) {
-        return res.status(401).json({ error: "Falsche Anmeldedaten. Erneut versuchen oder einen Systemadmin kontaktieren." });
-    }
+  const user = users.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(401).json({ error: "Falsche Anmeldedaten. Erneut versuchen oder einen Systemadmin kontaktieren." });
+  }
 
-    req.session.user = { id: user.id, username: user.username, isAdmin: user.isAdmin };
-    res.json({ message: "Anmeldung erfolgreich.", user: { username: user.username, isAdmin: user.isAdmin } });
+  req.session.user = {
+    id: user.id,
+    username: user.username,
+    admin: !!user.isAdmin
+  };
+
+  return res.json({
+    loggedIn: true,
+    admin: !!user.isAdmin,
+    user: req.session.user
+  });
 });
 
 router.post("/logout", (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ error: "Abmeldung fehlgeschlagen." });
-        }
-        res.json({ message: "Abmeldung erfolgreich." });
-    });
+  const sidName = req.session?.cookie?.name || "connect.sid";
+
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).json({ error: "Abmeldung fehlgeschlagen." });
+    }
+    res.clearCookie(sidName, { path: "/" });
+    return res.json({ loggedOut: true });
+  });
 });
 
 router.get("/status", (req, res) => {
-    if (req.session && req.session.user) {
-        const user = req.session.user;
-        const isAdmin = user.id === 0;
-        res.json({ loggedIn: true, isAdmin, user });
-    } else {
-        res.json({ loggedIn: false, isAdmin: false });
-    }
+  if (req.session && req.session.user) {
+    const user = req.session.user;
+    return res.json({
+      loggedIn: true,
+      admin: !!user.admin,
+      user
+    });
+  }
+  return res.json({ loggedIn: false, admin: false, user: null });
 });
 
 module.exports = router;
