@@ -1,10 +1,15 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
+
 const router = express.Router();
 
 const users = [
-  { id: 0, username: "admin",   password: "CWadmin47495",   isAdmin: true  },
+  { id: 0, username: "admin",   password: "CWadmin47495",    isAdmin: true  },
   { id: 1, username: "default", password: "rheinberg47495!", isAdmin: false }
 ];
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES = process.env.JWT_EXPIRES;
 
 router.post("/login", (req, res) => {
   const { username, password } = req.body || {};
@@ -17,41 +22,38 @@ router.post("/login", (req, res) => {
     return res.status(401).json({ error: "Falsche Anmeldedaten. Erneut versuchen oder einen Systemadmin kontaktieren." });
   }
 
-  req.session.user = {
-    id: user.id,
-    username: user.username,
-    admin: !!user.isAdmin
-  };
+  const payload = { id: user.id, username: user.username, isAdmin: !!user.isAdmin };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 
   return res.json({
+    token,
     loggedIn: true,
-    admin: !!user.isAdmin,
-    user: req.session.user
+    isAdmin: !!user.isAdmin,
+    user: payload
   });
 });
 
 router.post("/logout", (req, res) => {
-  const sidName = req.session?.cookie?.name || "connect.sid";
-
-  req.session.destroy(err => {
-    if (err) {
-      return res.status(500).json({ error: "Abmeldung fehlgeschlagen." });
-    }
-    res.clearCookie(sidName, { path: "/" });
-    return res.json({ loggedOut: true });
-  });
+  return res.json({ loggedOut: true });
 });
 
 router.get("/status", (req, res) => {
-  if (req.session && req.session.user) {
-    const user = req.session.user;
+  const auth = req.headers.authorization || "";
+  const [, token] = auth.split(" ");
+  if (!token) {
+    return res.json({ loggedIn: false, isAdmin: false, user: null });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
     return res.json({
       loggedIn: true,
-      admin: !!user.admin,
-      user
+      isAdmin: !!decoded.isAdmin,
+      user: decoded
     });
+  } catch (err) {
+    return res.json({ loggedIn: false, isAdmin: false, user: null });
   }
-  return res.json({ loggedIn: false, admin: false, user: null });
 });
 
 module.exports = router;
