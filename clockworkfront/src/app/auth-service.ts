@@ -6,44 +6,24 @@ interface AuthStatus {
   loggedIn: boolean;
   isAdmin: boolean;
   user?: { id: number; username: string; isAdmin: boolean } | null;
-  token?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private url = "http://localhost:3000/api/auth";
-
-  private loggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
+  private loggedInSubject = new BehaviorSubject<boolean>(false);
   public loggedIn$ = this.loggedInSubject.asObservable();
 
   private adminSubject = new BehaviorSubject<boolean>(false);
   public admin$ = this.adminSubject.asObservable();
 
+  private url = "http://localhost:3000/api/auth";
+
   constructor(private http: HttpClient) {
     this.checkStatus().subscribe();
   }
 
-  private hasToken(): boolean {
-    return !!localStorage.getItem('cw_token');
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('cw_token');
-  }
-
-  setToken(token: string) {
-    localStorage.setItem('cw_token', token);
-    this.loggedInSubject.next(true);
-  }
-
-  clearToken() {
-    localStorage.removeItem('cw_token');
-    this.loggedInSubject.next(false);
-    this.adminSubject.next(false);
-  }
-
   checkStatus(): Observable<AuthStatus> {
-    return this.http.get<AuthStatus>(`${this.url}/status`)
+    return this.http.get<AuthStatus>(`${this.url}/status`, { withCredentials: true })
       .pipe(tap(res => {
         this.loggedInSubject.next(res.loggedIn);
         this.adminSubject.next(!!res.isAdmin);
@@ -51,20 +31,17 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<AuthStatus> {
-    return this.http.post<AuthStatus>(`${this.url}/login`, { username, password })
-      .pipe(tap(res => {
-        if (res.token) {
-          this.setToken(res.token);
-        }
-        this.loggedInSubject.next(!!res.loggedIn);
-        this.adminSubject.next(!!res.isAdmin);
+    return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true })
+      .pipe(tap(() => {
+        this.checkStatus().subscribe();
       }));
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.url}/logout`, {})
+    return this.http.post(`${this.url}/logout`, {}, { withCredentials: true })
       .pipe(tap(() => {
-        this.clearToken();
+        this.loggedInSubject.next(false);
+        this.adminSubject.next(false);
       }));
   }
 

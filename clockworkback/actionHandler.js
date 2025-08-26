@@ -1,45 +1,24 @@
-const jwt = require("jsonwebtoken");
-
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
-
-function extractToken(req) {
-  const auth = req.headers.authorization || "";
-  const parts = auth.split(" ");
-  if (parts.length === 2 && /^Bearer$/i.test(parts[0])) {
-    return parts[1];
-  }
-  return null;
-}
-
-function requireAuth(req, res, next) {
-  const token = extractToken(req);
-  if (!token) {
+function requireLogin(req, res, next) {
+  if (!req.session || !req.session.user) {
     return res.status(401).json({ error: "Nicht eingeloggt." });
   }
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // { id, username, isAdmin }
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Ungültiger oder abgelaufener Token." });
-  }
+  next();
 }
 
 function requireAdmin(req, res, next) {
-  const token = extractToken(req);
-  if (!token) {
-    return res.status(401).json({ error: "Nicht eingeloggt." });
+  if (!req.session || !req.session.user || !req.session.user.isAdmin) {
+    return res.status(403).json({ error: "Keine Berechtigung." });
   }
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    if (!decoded.isAdmin) {
-      return res.status(403).json({ error: "Keine Berechtigung." });
-    }
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Ungültiger oder abgelaufener Token." });
-  }
+  next();
+}
+
+function errorLogger(err, req, res, next) {
+    console.error(`[ERROR] ${req.method} ${req.url} - ${err.message}`);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Serverseitiger Fehler.",
+    });
+    return;
 }
 
 function requestLogger(req, res, next) {
@@ -48,4 +27,4 @@ function requestLogger(req, res, next) {
     next();
 }
 
-module.exports = { requireAuth, requireAdmin, requestLogger };
+module.exports = { requireLogin, requireAdmin, requestLogger, errorLogger }

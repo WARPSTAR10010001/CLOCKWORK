@@ -3,7 +3,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const router = express.Router();
 
-const { requireAuth, requireAdmin } = require("../actionHandler");
+const { requireLogin, requireAdmin } = require("../actionHandler");
 
 const DATA_DIR = path.join(__dirname, "../data");
 const PLANS_DIR = path.join(DATA_DIR, "plans");
@@ -65,7 +65,7 @@ function updateRemainingVacation(prevMonth, plan) {
   });
 }
 
-router.get("/:year/:month", requireAuth, async (req, res) => {
+router.get("/:year/:month", requireLogin, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   if (!isValidYear(year) || !isValidMonth(month)) {
@@ -91,7 +91,7 @@ router.get("/:year/:month", requireAuth, async (req, res) => {
   }
 });
 
-router.post("/new", requireAuth, requireAdmin, async (req, res) => {
+router.post("/new", requireLogin, requireAdmin, async (req, res) => {
   const year = parseInt(req.body.year, 10);
   const users = req.body.users;
   const lastYearCarryOver = req.body.lastYearCarryOver || {};
@@ -117,7 +117,7 @@ router.post("/new", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entry/delete", requireAuth, async (req, res) => {
+router.post("/:year/:month/entry/delete", requireLogin, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, date } = req.body;
@@ -142,7 +142,7 @@ router.post("/:year/:month/entry/delete", requireAuth, async (req, res) => {
 });
 
 
-router.get("/years", requireAuth, async (req, res) => {
+router.get("/years", requireLogin, async (req, res) => {
   try {
     const files = await fs.readdir(PLANS_DIR);
     const years = new Set();
@@ -160,7 +160,7 @@ router.get("/years", requireAuth, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entry", requireAuth, async (req, res) => {
+router.post("/:year/:month/entry", requireLogin, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, date, type } = req.body;
@@ -187,7 +187,7 @@ router.post("/:year/:month/entry", requireAuth, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entries", requireAuth, async (req, res) => {
+router.post("/:year/:month/entries", requireLogin, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, startDate, endDate, type } = req.body;
