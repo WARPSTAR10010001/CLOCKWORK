@@ -3,7 +3,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const router = express.Router();
 
-const { requireLogin, requireAdmin } = require("../actionHandler");
+const { checkAuth, requireAdmin } = require("../middleware");
 
 const DATA_DIR = path.join(__dirname, "../data");
 const PLANS_DIR = path.join(DATA_DIR, "plans");
@@ -65,7 +65,7 @@ function updateRemainingVacation(prevMonth, plan) {
   });
 }
 
-router.get("/:year/:month", requireLogin, async (req, res) => {
+router.get("/:year/:month", checkAuth, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   if (!isValidYear(year) || !isValidMonth(month)) {
@@ -75,7 +75,7 @@ router.get("/:year/:month", requireLogin, async (req, res) => {
   const file = monthFilePath(year, month);
   try {
     if (!(await fs.pathExists(file))) return res.status(404).json({ error: "Monatsplan nicht gefunden." });
-    
+
     const plan = await fs.readJson(file);
 
     const prevFile = monthFilePath(year, month - 1);
@@ -91,7 +91,7 @@ router.get("/:year/:month", requireLogin, async (req, res) => {
   }
 });
 
-router.post("/new", requireLogin, requireAdmin, async (req, res) => {
+router.post("/new", checkAuth, requireAdmin, async (req, res) => {
   const year = parseInt(req.body.year, 10);
   const users = req.body.users;
   const lastYearCarryOver = req.body.lastYearCarryOver || {};
@@ -117,13 +117,13 @@ router.post("/new", requireLogin, requireAdmin, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entry/delete", requireLogin, async (req, res) => {
+router.post("/:year/:month/entry/delete", checkAuth, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, date } = req.body;
 
   if (!isValidYear(year) || !isValidMonth(month) ||
-      typeof employee !== "string" || !isValidISODate(date)) {
+    typeof employee !== "string" || !isValidISODate(date)) {
     return res.status(400).json({ error: "Ungültige Felder." });
   }
 
@@ -142,7 +142,7 @@ router.post("/:year/:month/entry/delete", requireLogin, async (req, res) => {
 });
 
 
-router.get("/years", requireLogin, async (req, res) => {
+router.get("/years", checkAuth, async (req, res) => {
   try {
     const files = await fs.readdir(PLANS_DIR);
     const years = new Set();
@@ -150,7 +150,9 @@ router.get("/years", requireLogin, async (req, res) => {
       const match = file.match(/^(\d{4})-\d{2}\.json$/);
       if (match) {
         const year = parseInt(match[1], 10);
-        if (isValidYear(year)) years.add(year);
+        if (isValidYear(year)) {
+          years.add(year);
+        }
       }
     });
     res.json({ years: Array.from(years).sort((a, b) => a - b) });
@@ -160,7 +162,7 @@ router.get("/years", requireLogin, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entry", requireLogin, async (req, res) => {
+router.post("/:year/:month/entry", checkAuth, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, date, type } = req.body;
@@ -187,7 +189,7 @@ router.post("/:year/:month/entry", requireLogin, async (req, res) => {
   }
 });
 
-router.post("/:year/:month/entries", requireLogin, async (req, res) => {
+router.post("/:year/:month/entries", checkAuth, async (req, res) => {
   const year = parseInt(req.params.year, 10);
   const month = parseInt(req.params.month, 10);
   const { employee, startDate, endDate, type } = req.body;

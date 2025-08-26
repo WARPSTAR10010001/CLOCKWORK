@@ -3,7 +3,7 @@
 <form [formGroup]="planForm">
     <div>
         <label for="year">Jahr:</label>
-        <input id="year" type="number" formControlName="year">
+        <input id="year" type="number" class="num-entry" formControlName="year">
     </div>
     <hr>
     <div formArrayName="users">
@@ -11,8 +11,8 @@
         @for (user of users.controls; track user) {
         <div [formGroupName]="users.controls.indexOf(user)" class="user-row">
             <input type="text" placeholder="Name" formControlName="name">
-            <input type="number" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver" min="0">
-            <input type="number" placeholder="Urlaubsanspruch" formControlName="totalVacation" min="0">
+            <input type="number" class="num-entry" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver" min="0">
+            <input type="number" class="num-entry" placeholder="Urlaubsanspruch" formControlName="totalVacation" min="0">
 
             @if (users.controls.indexOf(user) > 0) {
             <a class="button-action" (click)="removeUser(users.controls.indexOf(user))">Entfernen</a>

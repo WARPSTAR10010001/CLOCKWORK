@@ -32,8 +32,9 @@ export class AuthService {
 
   login(username: string, password: string): Observable<AuthStatus> {
     return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true })
-      .pipe(tap(() => {
-        this.checkStatus().subscribe();
+      .pipe(tap(res => {
+        this.loggedInSubject.next(res.loggedIn);
+        this.adminSubject.next(!!res.isAdmin);
       }));
   }
 
