@@ -5,9 +5,9 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 
 export class BackendAccess {
-  private url = "http://localhost:3000/api/plans";
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
+  url: string = "http://localhost:3000/api/plans";
 
   getPlan(year: number, month: number): Observable<any> {
     return this.http.get<any>(`${this.url}/${year}/${month}`, { withCredentials: true });

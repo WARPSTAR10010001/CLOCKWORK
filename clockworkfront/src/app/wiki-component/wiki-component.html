@@ -1,1 +1,188 @@
 <h1 class="emp page-header">Wiki</h1>
+<div id="page-content" class="text">
+    <div id="was-ist-clockwork">
+        <h2>Was ist CLOCKWORK?</h2>
+        <p>
+            CLOCKWORK ist eine schlanke Webanwendung zur Verwaltung von Dienstplänen.
+            Sie ermöglicht eine übersichtliche Planung von Arbeitstagen, Urlaub, Krankheit, Homeoffice und weiteren
+            Einträgen – übers Jahr, pro Monat und pro Mitarbeiter. Ziel ist eine klare, schnelle und zuverlässige
+            Nutzung im Arbeitsalltag – ohne komplizierte Installationen.
+        </p>
+    </div>
+    <hr>
+    <div id="warum-web">
+        <h2>Warum eine Webanwendung?</h2>
+        <ul>
+            <li>Keine Installation: Zugriff direkt im Browser – unabhängig vom Endgerät.</li>
+            <li>Zentrale Updates: Neue Funktionen & Fixes sind sofort verfügbar, ohne Client-Updates.</li>
+            <li>Konsistenz: Einheitliche UI/UX für alle Nutzer.</li>
+            <li>Rollen & Berechtigungen: Zugriffskontrolle serverseitig, weniger Fehlerquellen.</li>
+            <li>Datenhaltung: Ein Ort für alle Pläne (Backups & Wiederherstellung einfacher).</li>
+            <li>Performance: Moderne Frontend-Technik (Angular) und schlanke API-Aufrufe.</li>
+        </ul>
+        <p class="emp">
+            Im Vergleich zu verteilten Excel-Dateien oder Desktop-Tools ist CLOCKWORK wartungsärmer, transparenter und
+            einfacher skalierbar.
+        </p>
+    </div>
+    <hr>
+    <div id="navigation">
+        <h2>Navigation & Aufbau</h2>
+        <ul>
+            <li>Header: Logo führt stets zur Startseite. Rechts je nach Status:
+                „Anmelden“ (nicht eingeloggt) oder „Jahresübersicht / Abmelden“ (eingeloggt).
+            </li>
+            <li>Footer: Links zu Wiki, Changelog und Adminpanel.</li>
+            <li>Router: Die Anwendung nutzt eine moderne, komponentenbasierte Navigation.</li>
+        </ul>
+        <p>
+            Nach dem Login sind alle relevanten Bereiche über die Kopfzeile erreichbar. Der Zugriff auf den Adminbereich
+            ist
+            nur mit Adminrechten möglich.
+        </p>
+    </div>
+    <hr>
+    <div id="auth">
+        <h2>Anmeldung (Auth)</h2>
+        <p>
+            Die Authentifizierung erfolgt über JSON Web Tokens (JWT), die in einem
+            httpOnly-Cookie gespeichert werden. Dadurch bleibt der Login sicher und transparent.
+        </p>
+        <ul>
+            <li>Login: Benutzername & Passwort eingeben → Token wird gesetzt → Zugriff freigeschaltet.</li>
+            <li>Automatische Abmeldung: Das Token läuft nach ca. 1 Stunde ab. Danach ist eine erneute
+                Anmeldung nötig.</li>
+            <li>Abmelden: Über „Abmelden“ im Header kann das Token sofort ungültig gemacht werden.</li>
+            <li>Hinweis: Cookies müssen im Browser erlaubt sein.</li>
+        </ul>
+    </div>
+    <hr>
+    <div id="jahresuebersicht">
+        <h2>Jahresübersicht</h2>
+        <p>
+            In der Jahresübersicht werden alle verfügbaren Jahre als Karten angezeigt. Jede Karte
+            verlinkt zur jeweiligen Monatsübersicht des Jahres. Die Karten sind klar gestaltet und passen sich flexibel
+            der Fensterbreite an.
+        </p>
+        <ul>
+            <li>Interaktiv: Klick auf eine Jahreskarte führt zur Auswahl der Monate.</li>
+            <li>Darstellung: Dezente, aber differenzierte Farbverläufe für Übersichtlichkeit.</li>
+        </ul>
+    </div>
+    <hr>
+    <div id="monatsuebersicht">
+        <h2>Monatsübersicht</h2>
+        <p>
+            Die Monatsübersicht zeigt die Monate (01-12) eines Jahres als klickbare Elemente. Ein Klick führt in den
+            Plan-Viewer (Dienstplan) für den gewählten Monat.
+        </p>
+        <ul>
+            <li>Voraussetzung: Der Jahresplan muss zuvor im Adminbereich erstellt worden sein.</li>
+            <li>Navigation: Zurück zur Jahresübersicht ist jederzeit über den Header möglich.</li>
+        </ul>
+    </div>
+    <hr>
+    <div id="planviewer">
+        <h2>Plan-Viewer (Dienstplan)</h2>
+        <p>
+            Der Plan-Viewer ist der zentrale Bereich zur Anzeige und Bearbeitung des Dienstplans. Die Tabelle zeigt pro
+            Mitarbeiter die Werktage eines Monats. Wochenenden werden ausgeblendet.
+        </p>
+        <h3>Aufbau</h3>
+        <ul>
+            <li>Linke Spalte: Mitarbeitername</li>
+            <li>Spalten pro Tag: Datum + Wochentag (Mo–Fr)</li>
+            <li>Einträge: pro Zelle farblich markiert:
+                <ul>
+                    <li><span style="color:#2ecc71;">Grün</span> = Urlaub</li>
+                    <li><span style="color:#f1c40f;">Gelb</span> = Krank</li>
+                    <li><span style="color:#3498db;">Blau</span> = Homeoffice</li>
+                    <li><span style="color:#e67e22;">Orange</span> = Lehrgang</li>
+                    <li><span style="color:#e91e63;">Pink</span> = Gleitzeit</li>
+                    <li><span style="color:#7fdbff;">Hellblau/Polarweiß</span> = Termine</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>Bearbeitung</h3>
+        <ul>
+            <li>Eintrag hinzufügen: Zelle anklicken → Typ auswählen → Speichern.</li>
+            <li>Eintrag löschen: „Löschen“-Aktion in der Zelle ausführen.</li>
+            <li>Übersichtszähler: Urlaubsrest je Mitarbeiter wird fortgeschrieben; eine kompakte
+                Zusammenfassung wird getrennt unterhalb der Tabelle angezeigt.</li>
+        </ul>
+        <p class="emp">
+            Bulk-Einträge (z. B. mehrere Tage in einem Schritt) sind geplant und folgen in einem späteren Update.
+        </p>
+    </div>
+    <hr>
+    <div id="admin">
+        <h2>Adminbereich</h2>
+        <p>
+            Der Adminbereich ist für das Anlegen neuer Jahrespläne zuständig. Nur Nutzer mit Adminrechten
+            haben Zugang. Hier lassen sich Jahr, Mitarbeiter sowie Urlaubsparameter festlegen.
+        </p>
+        <h3>Funktionen</h3>
+        <ul>
+            <li>Jahr festlegen: Das Kalenderjahr, für das die Pläne erzeugt werden.</li>
+            <li>Mitarbeiter verwalten: Name, Resturlaub (Vorjahr) und Urlaubsanspruch (aktuelles Jahr)
+                pro Person eintragen.</li>
+            <li>Plan erstellen: Erstellt die 12 Monatspläne und initialisiert die Zähler.</li>
+        </ul>
+        <p>
+            Nach dem Erstellen sind die Pläne sofort in Jahres- und Monatsübersicht verfügbar. Achte darauf, keine
+            doppelten Jahrespläne anzulegen.
+        </p>
+    </div>
+    <hr>
+    <div id="sicherheit">
+        <h2>Sicherheit & Datenschutz</h2>
+        <ul>
+            <li>JWT-basiert: Authentifizierung über httpOnly-Cookies (kein Zugriff via JavaScript).</li>
+            <li>Gültigkeitsdauer: Token läuft i. d. R. nach 1 Stunde ab (erneute Anmeldung nötig).</li>
+            <li>SameSite: Standardmäßig Lax für sichere, gleichzeitige Nutzung im Intranet.</li>
+            <li>Rollen: Admin-Rechte werden serverseitig validiert (kein Client-Trust).</li>
+            <li>Datenhaltung: Pläne werden serverseitig gespeichert und können gesichert werden.</li>
+        </ul>
+    </div>
+    <hr>
+    <div id="stoerungen">
+        <h2>Störungen & Fehlerbehebung</h2>
+        <ul>
+            <li>401 „Nicht autorisiert“: Token abgelaufen oder nicht gesetzt → Neu anmelden.</li>
+            <li>„Nichts wird geladen“: Prüfen, ob Login aktiv ist und ob das Jahr angelegt wurde.</li>
+            <li>„Adminpanel nicht sichtbar“: Keine Adminrechte – oder Token abgelaufen.</li>
+            <li>„Keine Jahre“ in der Übersicht: Jahresplan wurde noch nicht erstellt oder Serverpfad leer.</li>
+        </ul>
+        <p>
+            Bei anhaltenden Problemen bitte Browser-Cache leeren oder Seiten-Reload durchführen. Danach erneut anmelden.
+        </p>
+    </div>
+    <hr>
+    <div id="faq">
+        <h2>FAQ</h2>
+        <p>Warum werde ich nach einer Stunde ausgeloggt?<br>
+            Aus Sicherheitsgründen läuft das Token automatisch ab. Einfach neu anmelden.</p>
+
+        <p>Ich sehe keine Jahre / Monate – was tun?<br>
+            Der Admin muss zuerst einen Jahresplan erstellen. Danach erscheinen die Jahre in der Übersicht.</p>
+
+        <p>Warum sehe ich den Adminbereich nicht?<br>
+            Nur Nutzer mit Adminrechten haben Zugriff. Bei Bedarf beim Systemadmin melden.</p>
+
+        <p>Wie lösche ich einen Eintrag?<br>
+            Im Plan-Viewer den Eintrag in der Zelle per „Löschen“-Aktion entfernen.</p>
+    </div>
+    <hr>
+    <div id="roadmap">
+        <h2>Roadmap & Bekannte Einschränkungen</h2>
+        <ul>
+            <li>Bulk-Einträge: Mehrere Tage auf einmal setzen (z. B. Urlaubswoche) - in Planung.</li>
+            <li>Erweiterte Zähler: Detailliertere Statistiken (Homeoffice, Krankheit, Lehrgänge) pro Monat.</li>
+            <li>Benutzerverwaltung: Trennung von Admin- und Nutzerkonten in einer komfortableren UI.</li>
+            <li>Deployment: Stabile Produktivumgebung mit automatisierten Backups.</li>
+        </ul>
+        <p class="emp">
+            CLOCKWORK ist auf pragmatische, schnelle Nutzung ausgelegt - Feedback und Vorschläge sind willkommen.
+        </p>
+    </div>
+</div>

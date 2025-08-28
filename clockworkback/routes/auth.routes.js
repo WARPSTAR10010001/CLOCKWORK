@@ -23,7 +23,7 @@ router.post("/login", (req, res) => {
       username: user.username,
       isAdmin: user.isAdmin
     },
-    process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "1h" });
+    process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "2h" });
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -44,7 +44,12 @@ router.get("/status", (req, res) => {
   if (!token) return res.json({ loggedIn: false });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.json({ loggedIn: true, user: decoded });
+    return res.json({
+      loggedIn: true,
+      isAdmin: decoded.isAdmin,
+      user: { id: decoded.id, username: decoded.username, isAdmin: decoded.isAdmin },
+      exp: decoded.exp
+    });
   } catch {
     return res.json({ loggedIn: false });
   }

@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router'; // <-- Router importieren
 
 interface AuthStatus {
   loggedIn: boolean;
   isAdmin: boolean;
   user?: { id: number; username: string; isAdmin: boolean } | null;
+  exp?: number; // <-- exp hinzufügen
 }
 
 @Injectable({ providedIn: 'root' })
@@ -16,17 +18,27 @@ export class AuthService {
   private adminSubject = new BehaviorSubject<boolean>(false);
   public admin$ = this.adminSubject.asObservable();
 
-  private url = "http://localhost:3000/api/auth";
+  url: string = "http://localhost:3000/api/auth";
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) { // <-- Router injizieren
     this.checkStatus().subscribe();
   }
 
   checkStatus(): Observable<AuthStatus> {
     return this.http.get<AuthStatus>(`${this.url}/status`, { withCredentials: true })
       .pipe(tap(res => {
+        // Token abgelaufen prüfen
+        if (res.loggedIn && res.exp && res.exp * 1000 < Date.now()) {
+          this.logout().subscribe();
+          return;
+        }
+
         this.loggedInSubject.next(res.loggedIn);
         this.adminSubject.next(!!res.isAdmin);
+
+        if (!res.loggedIn) {
+          this.router.navigate(['/auth']); // redirect falls nicht mehr eingeloggt
+        }
       }));
   }
 
@@ -43,6 +55,7 @@ export class AuthService {
       .pipe(tap(() => {
         this.loggedInSubject.next(false);
         this.adminSubject.next(false);
+        this.router.navigate(['/auth']); // <-- redirect nach logout
       }));
   }
 

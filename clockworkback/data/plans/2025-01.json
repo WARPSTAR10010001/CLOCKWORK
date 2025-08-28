@@ -6,41 +6,31 @@
     "Marco Manthey",
     "Dennis Engels",
     "Jonas Burg",
-    "Thadäus Suchecki"
+    "Thadäus Suchecki",
+    "Niklas Peter"
   ],
   "entries": {
-    "Alpay Gürüz": {
-      "2025-01-02": {
-        "type": "LG"
-      },
-      "2025-01-06": {
-        "type": "GZ"
-      },
-      "2025-01-09": {
-        "type": "T"
-      },
-      "2025-01-12": {
-        "type": "T"
-      },
-      "2025-01-13": {
-        "type": "T"
-      }
-    },
-    "Marco Manthey": {
-      "2025-01-05": {
-        "type": "GZ"
-      }
-    },
+    "Alpay Gürüz": {},
+    "Marco Manthey": {},
     "Dennis Engels": {},
     "Jonas Burg": {},
-    "Thadäus Suchecki": {}
+    "Thadäus Suchecki": {},
+    "Niklas Peter": {
+      "2025-01-01": {
+        "type": "K"
+      },
+      "2025-01-05": {
+        "type": "U"
+      }
+    }
   },
   "remainingVacation": {
     "Alpay Gürüz": 0,
     "Marco Manthey": 0,
     "Dennis Engels": 0,
     "Jonas Burg": 0,
-    "Thadäus Suchecki": 0
+    "Thadäus Suchecki": 0,
+    "Niklas Peter": 0
   },
   "days": [
     {

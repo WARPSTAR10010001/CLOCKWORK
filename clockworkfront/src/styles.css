@@ -130,3 +130,7 @@ label {
     color: #ff1342;
     font-size: 1.5em;
 }
+
+#page-content {
+    margin-top: -30px;
+}

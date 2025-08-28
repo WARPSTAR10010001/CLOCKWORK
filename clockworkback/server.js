@@ -13,7 +13,7 @@ const holidayRoutes = require("./routes/holidays.routes");
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({ origin: "http://localhost:4200", credentials: true }));
+app.use(cors({ origin: process.env.URL, credentials: true }));
 
 app.use(requestLogger);
 app.use("/api/auth", authRoutes);
@@ -22,4 +22,4 @@ app.use("/api/holidays", holidayRoutes);
 
 app.get("/", (req, res) => res.status(200).send("CLOCKWORK läuft!"));
 
-app.listen(PORT, () => console.log(`[START] CLOCKWORK läuft auf Port ${ PORT }`));
+app.listen(PORT, () => console.log(`[START] CLOCKWORK läuft auf Port ${PORT}`));

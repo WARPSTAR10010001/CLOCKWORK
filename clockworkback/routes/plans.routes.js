@@ -226,4 +226,27 @@ router.post("/:year/:month/entries", checkAuth, async (req, res) => {
   }
 });
 
+router.get("/:year/:month/entries", checkAuth, async (req, res) => {
+  const year = parseInt(req.params.year, 10);
+  const month = parseInt(req.params.month, 10);
+  const { employee, date } = req.body;
+
+  if (!isValidYear(year) || !isValidMonth(month) ||
+    typeof employee !== "string" || !isValidISODate(date)) {
+    return res.status(400).json({ error: "Ungültige Felder." });
+  }
+
+  const file = monthFilePath(year, month);
+  try {
+    let plan = (await fs.pathExists(file)) ? await fs.readJson(file) : await createEmptyMonth(year, month, []);
+    if (plan.entries[employee] && plan.entries[employee][date]) {
+      entry = plan.entries[employee][date];
+    }
+    res.json({ message: "Eintrag versendet.", entry });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Serverseitiger Fehler." });
+  }
+});
+
 module.exports = router;
