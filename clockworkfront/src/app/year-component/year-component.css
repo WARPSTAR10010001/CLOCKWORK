@@ -1,13 +1,13 @@
 #result-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
     gap: 20px;
 }
 
 .year-card {
-    width: 48%;
+    width: 800px;
     display: flex;
     align-items: center;
     justify-content: center;

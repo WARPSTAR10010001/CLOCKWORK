@@ -67,7 +67,7 @@ export class AdminComponent {
       .subscribe({
         next: (res) => {
           this.submitting = false;
-          this.router.navigate(['/auth']);
+          this.router.navigate(['/plan']);
         },
         error: (err) => {
           console.error(err);

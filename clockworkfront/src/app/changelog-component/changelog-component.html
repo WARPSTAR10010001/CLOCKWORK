@@ -1,14 +1,42 @@
 <h1 class="emp page-header">Changelog</h1>
 <div id="page-content" class="text">
-    <h1 class="emp">Beta-Versionen</h1>
-    <div id="010">
-        <h2>[V0.1.0 // 27.08.2025]: ...</h2>
+    <h1 class="emp">Übersicht</h1>
+    <div id="summary">
         <ul>
-            <li>...</li>
+            <li><h2><a [routerLink]="['/changelog#beta']">Beta Versionen</a></h2></li>
+            <li><h2><a href="#alpha">Alpha Versionen</a></h2>
+                <ul>
+                    <li><a href="#001">V0.0.1</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
+    <h1 class="emp" id="beta">Beta Versionen</h1>
+    <div id="011">
+        <h2>[V0.1.1 // 02.09.2025]: Verbesserungen im Planviewer & Vorbereitung für Datenbankanbindung</h2>
+        <ul>
+            <li>Visuelle Verbesserungen im Planviewer umgesetzt</li>
+            <li>Alle Seiten flexibel skalierbar; CLOCKWORK kann jetzt auch auf halber Bildschirmgröße geöffnet werden
+            </li>
+            <li>Vorbereitungen für einen Darkmode getroffen</li>
+            <li>Arbeiten an einer Lösung für das Bulkeintragen von Einträgen gestartet</li>
+            <li>Schnittstelle zur PostgreSQL-Datenbank wird implementiert</li>
+        </ul>
+        <p>Dieses Release optimiert die Benutzeroberfläche und legt die Grundlage für zukünftige Features wie Darkmode,
+            Bulk-Operationen und Datenbankintegration.</p>
+    </div>
     <hr>
-    <h1 class="emp">Alpha-Versionen</h1>
+    <div id="010">
+        <h2>[V0.1.0 // 27.08.2025]: Grundgerüst und Basisfunktionen fertiggestellt</h2>
+        <ul>
+            <li>Systemrobustheit verbessert</li>
+            <li>Alle grundlegenden Features implementiert</li>
+            <li>Visuelle Identität des Systems fertiggestellt</li>
+        </ul>
+        <p>Mit diesem Release beginnt die Beta-Ausrollphase.</p>
+    </div>
+    <hr>
+    <h1 class="emp" id="alpha">Alpha Versionen</h1>
     <div id="004">
         <h2>[V0.0.4 // 26.08.2025]: UI/UX Optimierungen & JWT-basierte Authentifizierung</h2>
         <ul>
@@ -62,7 +90,7 @@
     </div>
     <hr>
     <div id="001">
-        <h2>[V0.0.1 // 15.08.2025]: Erster Release - Grundfunktionen & Struktur</h2>
+        <h2>[V0.0.1 // 15.08.2025]: Grundfunktionen & Struktur</h2>
         <ul>
             <li>Initiale Backend-Struktur für Nutzerverwaltung und Dienstplanung aufgebaut (Express & Sessions).</li>
             <li>Server-Konfiguration: Port auf 3000 gestellt, Umgebungsvariablen mit dotenv gesichert.</li>
@@ -80,7 +108,7 @@
     </div>
     <hr>
     <div id="tech-stack">
-        <h2>[Vorbereitung]: Tech-Stack</h2>
+        <h2>Tech-Stack Alpha-Phase</h2>
         <ul>
             <li>Frontend-Technologie: Web-Framework Angular</li>
             <li>Backend-Technologie: Express-Server</li>

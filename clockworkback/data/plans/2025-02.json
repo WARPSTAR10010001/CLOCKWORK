@@ -10,20 +10,21 @@
   ],
   "entries": {
     "Alpay Gürüz": {
-      "2025-02-09": {
-        "type": "T"
-      },
       "2025-02-06": {
-        "type": "GZ"
+        "type": "L"
       },
       "2025-02-05": {
-        "type": "GZ"
+        "type": "G"
       },
       "2025-02-04": {
-        "type": "LG"
+        "type": "L"
       }
     },
-    "Marco Manthey": {},
+    "Marco Manthey": {
+      "2025-02-02": {
+        "type": "H"
+      }
+    },
     "Dennis Engels": {},
     "Jonas Burg": {},
     "Thadäus Suchecki": {}

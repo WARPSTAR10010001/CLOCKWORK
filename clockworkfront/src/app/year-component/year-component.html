@@ -1,13 +1,15 @@
 <h1 class="emp page-header">Jahresübersicht</h1>
 
 @if (years.length === 0) {
-  <div class="error">{{ errorMessage }}</div>
+<div class="error">{{ errorMessage }}</div>
 } @else {
+<div id="content">
   <div id="result-container">
     @for (year of years; track year.value) {
-      <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
-        <span>{{ year.value }}</span>
-      </a>
+    <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
+      <span>{{ year.value }}</span>
+    </a>
     }
   </div>
+</div>
 }

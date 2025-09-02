@@ -23,6 +23,10 @@
     line-height: 1;
 }
 
+#credit:hover {
+    text-decoration: none;
+}
+
 #header {
     display: flex;
     flex-direction: row;

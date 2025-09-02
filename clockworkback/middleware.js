@@ -24,10 +24,23 @@ function checkAuth(req, res, next) {
   }
 }
 
+function checkRole(requiredRole) {
+  return (req, res, next) => {
+    if (!req.user) return res.status(401).json({ error: "Nicht eingeloggt" });
+
+    const rolesHierarchy = { "user": 1, "moderator": 2, "admin": 3 };
+    if (rolesHierarchy[req.user.role] >= rolesHierarchy[requiredRole]) {
+      next();
+    } else {
+      res.status(403).json({ error: "Zugriff verweigert" });
+    }
+  };
+}
+
 function requestLogger(req, res, next) {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${req.method} ${req.originalUrl}`);
   next();
 }
 
-export { checkAuth, requireAdmin, requestLogger };
+export { checkAuth, requireAdmin, checkRole, requestLogger };

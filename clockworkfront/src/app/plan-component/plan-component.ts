@@ -20,7 +20,7 @@ export interface Plan {
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
 })
-export class PlanComponent implements OnInit {
+export class PlanComponent implements OnInit {  
   month!: number;
   year!: number;
   plan: Plan | null = null;
@@ -125,11 +125,19 @@ export class PlanComponent implements OnInit {
     return this.selectedUser === user && this.selectedDay?.getTime() === day.getTime();
   }
 
+  deselect() {
+    this.selectedUser = null;
+    this.selectedDay = null;
+  }
+
   setEntry(type: string): void {
     if (this.selectedUser && this.selectedDay && type !== "") {
       this.addEntry(this.selectedUser, this.selectedDay, type);
     } else if (this.selectedUser && this.selectedDay && type === "") {
       this.deleteEntry(this.selectedUser, this.selectedDay);
     }
+
+    this.selectedUser = null;
+    this.selectedDay = null;
   }
 }
