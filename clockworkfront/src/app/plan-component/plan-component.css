@@ -67,6 +67,10 @@ tbody tr:nth-child(odd) td {
     background-color: #000;
 }
 
+.cell {
+    cursor: cell;
+}
+
 .u {
     background-color: #88ff00;
     border: 4px solid #88ff00;

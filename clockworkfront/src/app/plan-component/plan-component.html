@@ -31,31 +31,31 @@
           <td class="sticky">{{ user }}</td>
           @for (day of days; track day) {
           @if (getCellType(user, day) === "U"){
-          <td (click)="selectCell(user, day)" class="u-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="u-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else if (getCellType(user, day) === "H") {
-          <td (click)="selectCell(user, day)" class="h-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="h-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else if (getCellType(user, day) === "K") {
-          <td (click)="selectCell(user, day)" class="k-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="k-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else if (getCellType(user, day) === "L") {
-          <td (click)="selectCell(user, day)" class="l-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="l-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else if (getCellType(user, day) === "G") {
-          <td (click)="selectCell(user, day)" class="g-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="g-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else if (getCellType(user, day) === "T") {
-          <td (click)="selectCell(user, day)" class="t-cell" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="t-cell cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           } @else {
-          <td (click)="selectCell(user, day)" [class.selected]="isSelected(user, day)">
+          <td (click)="selectCell(user, day)" class="cell" [class.selected]="isSelected(user, day)">
             {{ getCellType(user, day) }}
           </td>
           }
