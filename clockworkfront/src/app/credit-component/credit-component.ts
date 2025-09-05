@@ -7,5 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './credit-component.css'
 })
 export class CreditComponent {
-
 }

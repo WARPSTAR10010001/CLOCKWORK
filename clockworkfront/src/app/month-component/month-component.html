@@ -1,8 +1,10 @@
-<h1 class="emp page-header">Monatsübersicht {{ year }}</h1>
-<div id="result-container">
-    @for (month of months; track month.value) {
-    <a [routerLink]="['/plan', year, month.value]" class="month-card" [ngClass]="month.colorClass">
-        <span>{{ month.name }}</span>
-    </a>
-    }
+<div class="comp-wrap">
+    <h1 class="emp page-header">Monatsübersicht {{ year }}</h1>
+    <div id="result-container">
+        @for (month of months; track month.value) {
+        <a [routerLink]="['/plan', year, month.value]" class="month-card" [ngClass]="month.colorClass">
+            <span>{{ month.name }}</span>
+        </a>
+        }
+    </div>
 </div>

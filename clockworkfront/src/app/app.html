@@ -4,26 +4,65 @@
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
     </a>
-    @if(authService.loggedIn$ | async) {
-      <div id="nav">
-        <a [routerLink]="['/plan']">Jahresübersicht</a>
-        <a (click)="logout()">Abmelden</a>
-      </div>
+    @if (authService.loggedIn$ | async) {
+    <div id="nav">
+      @if (authService.admin$ | async) {
+      <a [routerLink]="['/admin']">Adminpanel</a>
+      }
+      <a [routerLink]="['/plan']">Jahresübersicht</a>
+      <a (click)="logout()">Abmelden</a>
+    </div>
     } @else {
-      <div id="nav">
-        <a [routerLink]="['/auth']">Anmelden</a>
-      </div>
+    <div id="nav">
+      <a [routerLink]="['/auth']">Anmelden</a>
+    </div>
     }
   </div>
   <div id="main">
-    <router-outlet></router-outlet>
+    <div id="style-overlay" style="display: none">
+      <h1 class="emp page-header">Anzeigeeinstellungen</h1>
+      <div id="colorSelection">
+        <h2>Farbmodus:</h2>
+        <label>
+          <input type="radio" name="theme" value="light" [(ngModel)]="selectedTheme">
+          Hell
+        </label>
+        <label>
+          <input type="radio" name="theme" value="dim" [(ngModel)]="selectedTheme">
+          Dim (WIP)
+        </label>
+        <label>
+          <input type="radio" name="theme" value="dark" [(ngModel)]="selectedTheme">
+          Dunkel
+        </label>
+      </div>
+
+      <hr>
+
+      <div class="outlineSelection">
+        <h2>Kontur:</h2>
+        <label>
+          <input type="radio" name="outline" value="off" [(ngModel)]="outlineMode">
+          Aus
+        </label>
+        <label>
+          <input type="radio" name="outline" value="on" [(ngModel)]="outlineMode">
+          An
+        </label>
+      </div>
+      <br><br>
+      <a (click)="applySettings()" class="button-primary">Speichern</a>
+    </div>
+    <div id="main-content">
+      <router-outlet></router-outlet>
+    </div>
   </div>
   <div id="footer">
     <div id="footer-link">
-      <a [routerLink]="['/documentation']">Dokumentation</a>
       <a [routerLink]="['/changelog']">Changelog</a>
-      <a [routerLink]="['/admin']">Adminpanel</a>
+      <a [routerLink]="['/documentation']">Dokumentation</a>
+      <a (click)="showOverlay(true)">Anzeige</a>
     </div>
-    <p class="emp">V0.1.1 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp">V0.1.3 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

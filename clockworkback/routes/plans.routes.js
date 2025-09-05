@@ -249,4 +249,39 @@ router.get("/:year/:month/entries", checkAuth, async (req, res) => {
   }
 });
 
+router.delete("/:year/:month/entries/delete", checkAuth, async (req, res) => {
+  const year = parseInt(req.params.year, 10);
+  const month = parseInt(req.params.month, 10);
+  const { employee, startDate, endDate } = req.body;
+  if (!isValidYear(year) || !isValidMonth(month) ||
+      typeof employee !== "string" ||
+      !isValidISODate(startDate) || !isValidISODate(endDate)) {
+    return res.status(400).json({ error: "Ungültige Felder." });
+  }
+  const file = monthFilePath(year, month);
+  try {
+    let plan = (await fs.pathExists(file)) 
+      ? await fs.readJson(file) 
+      : await createEmptyMonth(year, month, []);
+
+    if (!plan.entries[employee]) {
+      return res.status(404).json({ error: "Keine Einträge für diesen Nutzer vorhanden." });
+    }
+    let current = new Date(startDate);
+    const end = new Date(endDate);
+    while (current <= end) {
+      const iso = current.toISOString().split("T")[0];
+      if (plan.entries[employee][iso]) {
+        delete plan.entries[employee][iso];
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    await fs.writeJson(file, plan, { spaces: 2 });
+    res.json({ message: "Bulk Delete erfolgreich." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Serverseitiger Fehler beim Bulk Delete." });
+  }
+});
+
 module.exports = router;

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { BackendAccess } from '../backend-access';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Theme, ThemeService } from '../theme-service';
 
 @Component({
   selector: 'app-admin-panel',

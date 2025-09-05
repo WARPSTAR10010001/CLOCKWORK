@@ -20,9 +20,26 @@
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
+:host-context(body.dark) .year-card {
+    border: 5px solid #000;
+    color: #000;
+}
+
+:host-context(body.light.outlines) .year-card {
+    outline: 3px solid #000;
+}
+
+:host-context(body.dark.outlines) .year-card {
+    outline: 3px solid #fff;
+}
+
 .year-card:hover {
     box-shadow: 0px 0px 30px #0000003f;
     transform: translateY(-5px);
+}
+
+:host-context(body.dark) .year-card:hover {
+    box-shadow: 0px 0px 30px #ffffff63;
 }
 
 .gradient-1 {

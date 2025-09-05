@@ -1,8 +1,0 @@
-li h2::after {
-    content: "";
-    transition: content 0.2s ease-in-out;
-}
-
-li h2:hover::after {
-    content: " >";
-}

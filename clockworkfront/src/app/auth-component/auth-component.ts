@@ -3,6 +3,7 @@ import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Theme, ThemeService } from '../theme-service';
 
 @Component({
   selector: 'app-auth-component',
@@ -11,10 +12,10 @@ import { Router } from '@angular/router';
   styleUrl: './auth-component.css',
 })
 export class AuthComponent {
-  username = '';
-  password = '';
-  errorMessage = '';
-
+  username: string = '';
+  password: string = '';
+  errorMessage: string = '';
+  
   constructor(private authService: AuthService, private router: Router) {}
 
   login() {

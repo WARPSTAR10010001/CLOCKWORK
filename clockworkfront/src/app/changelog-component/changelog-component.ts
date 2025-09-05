@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Theme, ThemeService } from '../theme-service';
 
 @Component({
   selector: 'app-changelog-component',
@@ -7,5 +8,4 @@ import { Component } from '@angular/core';
   styleUrl: './changelog-component.css'
 })
 export class ChangelogComponent {
-
 }

@@ -1,29 +1,33 @@
-<h1 class="emp page-header">Adminpanel</h1>
+<div class="comp-wrap">
+    <h1 class="emp page-header">Adminpanel</h1>
 
-<form [formGroup]="planForm">
-    <div>
-        <label for="year">Jahr:</label>
-        <input id="year" type="number" class="num-entry" formControlName="year">
-    </div>
-    <hr>
-    <div formArrayName="users">
-        <label>Mitarbeiter:</label>
-        @for (user of users.controls; track user) {
-        <div [formGroupName]="users.controls.indexOf(user)" class="user-row">
-            <input type="text" placeholder="Name" formControlName="name">
-            <input type="number" class="num-entry" placeholder="Resturlaub Vorjahr" formControlName="lastYearCarryOver" min="0">
-            <input type="number" class="num-entry" placeholder="Urlaubsanspruch" formControlName="totalVacation" min="0">
+    <form [formGroup]="planForm">
+        <div>
+            <label for="year">Jahr:</label>
+            <input id="year" type="number" class="num-entry" formControlName="year">
+        </div>
+        <hr>
+        <div formArrayName="users">
+            <label>Mitarbeiter:</label>
+            @for (user of users.controls; track user) {
+            <div [formGroupName]="users.controls.indexOf(user)" class="user-row">
+                <input type="text" placeholder="Name" formControlName="name">
+                <input type="number" class="num-entry" placeholder="Resturlaub Vorjahr"
+                    formControlName="lastYearCarryOver" min="0">
+                <input type="number" class="num-entry" placeholder="Urlaubsanspruch" formControlName="totalVacation"
+                    min="0">
 
-            @if (users.controls.indexOf(user) > 0) {
-            <a class="button-action" (click)="removeUser(users.controls.indexOf(user))">Entfernen</a>
+                @if (users.controls.indexOf(user) > 0) {
+                <a class="button-action" (click)="removeUser(users.controls.indexOf(user))">Entfernen</a>
+                }
+            </div>
             }
         </div>
-        }
-    </div>
-    <a class="button-primary button-row" (click)="addUser()">Mitarbeiter hinzufügen</a>
-    <a class="button-primary button-row" (click)="submit()">Jahresplan erstellen</a>
-</form>
+        <a class="button-primary button-row" (click)="addUser()">Mitarbeiter hinzufügen</a>
+        <a class="button-primary button-row" (click)="submit()">Jahresplan erstellen</a>
+    </form>
 
-@if (errorMessage) {
-<div class="error">{{ errorMessage }}</div>
-}
+    @if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+    }
+</div>

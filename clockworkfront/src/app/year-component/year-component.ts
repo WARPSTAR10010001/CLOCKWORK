@@ -22,7 +22,7 @@ export class YearComponent implements OnInit {
 
   constructor(private backendAccess: BackendAccess) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.backendAccess.getYears().subscribe({
       next: (res) => {
         const list = res.years ?? res;

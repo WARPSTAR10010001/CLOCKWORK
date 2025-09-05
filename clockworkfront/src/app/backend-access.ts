@@ -33,4 +33,8 @@ export class BackendAccess {
   newEntries(year: number, month: number, employee: string, startDate: string, endDate: string, type: string): Observable<any> {
     return this.http.post(`${this.url}/${year}/${month}/entries`, { employee, startDate, endDate, type }, { withCredentials: true });
   }
+
+  deleteEntries(year: number, month: number, employee: string, startDate: string, endDate: string): Observable<any> {
+  return this.http.post(`${this.url}/${year}/${month}/entries/delete`, { employee, startDate, endDate }, { withCredentials: true });
+  };
 }

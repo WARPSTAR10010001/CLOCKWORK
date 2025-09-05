@@ -1,7 +1,8 @@
-html, body {
+body {
     margin: 0;
     padding: 0;
     font-family: "Outfit", Bahnschrift, Verdana, Geneva, Tahoma, sans-serif;
+    background-color: #fff;
     color: #000;
     display: flex;
     flex-direction: column;
@@ -13,9 +14,18 @@ html, body {
     user-select: none;
 }
 
+body.dark {
+    background-color: #000;
+    color: #fff;
+}
+
 a {
     color: #000;
     text-decoration: none;
+}
+
+body.dark a {
+    color: #fff;
 }
 
 a:hover {
@@ -60,10 +70,22 @@ a:hover {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
+body.dark .button-primary {
+    border: 4px solid #fff;
+    background-color: #fff;
+    color: #000;
+}
+
 .button-primary:hover {
     text-decoration: none;
     color: #000;
     background-color: #fff;
+    box-shadow: 0px 0px 30px #0000003f;
+}
+
+body.dark .button-primary:hover {
+    color: #fff;
+    background-color: #000;
     box-shadow: 0px 0px 30px #0000003f;
 }
 
@@ -80,11 +102,23 @@ a:hover {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
+body.dark .button-action {
+    color: #ff1342;
+    background-color: #000;
+    box-shadow: 0px 0px 30px #00000000;
+}
+
 .button-action:hover {
     text-decoration: none;
     color: #fff;
     background-color: #ff1342;
     box-shadow: 0px 0px 30px #0000003f;
+}
+
+body.dark .button-action:hover {
+    background-color: #ff1342;
+    color: #000;
+    box-shadow: 0px 0px 30px #ffffff63;
 }
 
 input {
@@ -98,11 +132,22 @@ input {
     transition: box-shadow 0.2s ease-in-out;
 }
 
+body.dark input {
+    border: 4px solid #fff;
+    background-color: #000;
+    color: #fff;
+}
+
 input:focus {
     outline: none;
     box-shadow: 0px 0px 30px #0000003f;
     border-color: #000;
     box-shadow: none;
+}
+
+body.dark input:focus {
+    box-shadow: #ffffff63;
+    border-color: #fff;
 }
 
 li {
@@ -120,6 +165,11 @@ hr {
     margin: 50px 20px;
 }
 
+body.dark hr {
+    border: 2px solid #fff;
+    box-shadow: 0px 0px 30px #ffffff63;
+}
+
 label {
     font-size: 2em;
     margin-right: 20px;
@@ -132,4 +182,11 @@ label {
 
 #page-content {
     margin-top: -30px;
+}
+#colorSelection label,
+.outlineSelection label {
+  align-items: center;
+  gap: 6px;
+  font-size: 2rem;
+  cursor: pointer;
 }

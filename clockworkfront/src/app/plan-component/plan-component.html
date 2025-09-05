@@ -1,67 +1,62 @@
-@if (month < 10) { <h1 class="emp page-header">Dienstplan 0{{ month }}/{{ year }}</h1>
-  } @else {
-  <h1 class="emp page-header">Dienstplan {{ month }}/{{ year }}</h1>
-  }
-  <div id="entry-buttons">
-    <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
-    <a class="button-primary h" (click)="setEntry('H')">Homeoffice (H)</a>
-    <a class="button-primary k" (click)="setEntry('K')">Krank (K)</a>
-    <a class="button-primary l" (click)="setEntry('L')">Lehrgang (L)</a>
-    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (G)</a>
-    <a class="button-primary t" (click)="setEntry('T')">Termin (T)</a>
-    <a class="button-action" (click)="setEntry('')">Löschen</a>
-    <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
-  </div>
-  <div id="table-container">
-    <table class="plan-table">
-      <thead>
-        <tr>
-          <th class="sticky">Name</th>
-          @for (day of days; track day) {
-          <th>
-            {{ day.getDate() }}<br>
-            {{ weekdays[day.getDay() - 1] }}
-          </th>
+<div class="comp-wrap">
+  @if (month < 10) { <h1 class="emp page-header">Dienstplan 0{{ month }}/{{ year }}</h1>
+    } @else {
+    <h1 class="emp page-header">Dienstplan {{ month }}/{{ year }}</h1>
+    }
+    <div id="entry-buttons">
+      <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
+      <a class="button-primary h" (click)="setEntry('H')">Homeoffice (H)</a>
+      <a class="button-primary k" (click)="setEntry('K')">Krank (K)</a>
+      <a class="button-primary l" (click)="setEntry('L')">Lehrgang (L)</a>
+      <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (G)</a>
+      <a class="button-primary t" (click)="setEntry('T')">Termin (T)</a>
+      <a class="button-action" (click)="setEntry('')">Löschen</a>
+      <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
+    </div>
+    <div id="table-container">
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th class="sticky">Name</th>
+            @for (day of days; track day) {
+            <th>
+              {{ day.getDate() }}
+              <br>
+              {{ weekdays[day.getDay() - 1] }}
+            </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of plan?.users; track user) {
+          <tr>
+            <td class="sticky">{{ user }}</td>
+            @for (day of days; track day) {
+            @if (getCellType(user, day) === "U"){
+            <td (click)="selectCell(user, day, $event)" class="u-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else if (getCellType(user, day) === "H") {
+            <td (click)="selectCell(user, day, $event)" class="h-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else if (getCellType(user, day) === "K") {
+            <td (click)="selectCell(user, day, $event)" class="k-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else if (getCellType(user, day) === "L") {
+            <td (click)="selectCell(user, day, $event)" class="l-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else if (getCellType(user, day) === "G") {
+            <td (click)="selectCell(user, day, $event)" class="g-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else if (getCellType(user, day) === "T") {
+            <td (click)="selectCell(user, day, $event)" class="t-cell cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td>
+            } @else {
+            <td (click)="selectCell(user, day, $event)" class="cell" [class.selected]="isSelected(user, day)"> {{
+              getCellType(user, day) }} </td> }
+            }
+          </tr>
           }
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of plan?.users; track user) {
-        <tr>
-          <td class="sticky">{{ user }}</td>
-          @for (day of days; track day) {
-          @if (getCellType(user, day) === "U"){
-          <td (click)="selectCell(user, day)" class="u-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else if (getCellType(user, day) === "H") {
-          <td (click)="selectCell(user, day)" class="h-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else if (getCellType(user, day) === "K") {
-          <td (click)="selectCell(user, day)" class="k-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else if (getCellType(user, day) === "L") {
-          <td (click)="selectCell(user, day)" class="l-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else if (getCellType(user, day) === "G") {
-          <td (click)="selectCell(user, day)" class="g-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else if (getCellType(user, day) === "T") {
-          <td (click)="selectCell(user, day)" class="t-cell cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          } @else {
-          <td (click)="selectCell(user, day)" class="cell" [class.selected]="isSelected(user, day)">
-            {{ getCellType(user, day) }}
-          </td>
-          }
-          }
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+    </div>
+</div>
