@@ -159,7 +159,7 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light).u:hover {
+:host-context(body.light) .u:hover {
     background-color: #fff !important;
     color: #88ff00 !important;
 }
@@ -303,9 +303,14 @@ td {
     border: 3px solid #00ffaa !important;
 }
 
-.selected {
+:host-context(body.light) .selected {
     background-color: #fff !important;
     border: 3px solid #000 !important;
+}
+
+:host-context(body.dim) .selected {
+    background-color: #111 !important;
+    border: 3px solid #fff !important;
 }
 
 :host-context(body.dark) .selected {
