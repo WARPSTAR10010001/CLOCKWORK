@@ -1,0 +1,74 @@
+.overlay-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: blur(0.3);
+}
+
+.page-header {
+    margin-bottom: -50px;
+}
+
+#style-overlay,
+#error-overlay,
+#success-overlay,
+#info-overlay {
+    padding: 40px 50px;
+    border-radius: 10px;
+    width: 40%
+}
+
+:host-context(body.light) #style-overlay,
+#error-overlay,
+#success-overlay,
+#info-overlay {
+    box-shadow: 0px 0px 30px #0000003f;
+    background: #fff;
+}
+
+:host-context(body.dark) #style-overlay,
+#error-overlay,
+#success-overlay,
+#info-overlay {
+    box-shadow: 0px 0px 30px #ffffff63;
+    background: #000;
+    color: #fff;
+}
+
+:host-context(body.dark.outlines) #style-overlay,
+#error-overlay,
+#success-overlay,
+#info-overlay {
+    outline: 3px solid #fff;
+}
+
+:host-context(body.light.outlines) #style-overlay,
+#error-overlay,
+#success-overlay,
+#info-overlay {
+    outline: 3px solid #000;
+}
+
+#style-overlay label,
+#outlineSelection label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+label {
+    display: flex;
+    align-items: flex-start;
+}
+
+h1 {
+    margin-bottom: 40px;
+}

@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export type Theme = 'light' | 'dark' | 'dim';
+export type Outline = "outlines" | "no-outlines";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private themeKey = 'theme';
-  private currentThemeSubject = new BehaviorSubject<Theme>('light');
+  themeKey = 'theme';
+  outlineKey = "outline";
+  currentThemeSubject = new BehaviorSubject<Theme>('light');
+  currentOutlineSubject = new BehaviorSubject<Outline>("no-outlines");
   currentTheme$ = this.currentThemeSubject.asObservable();
-
-  private themeCycle: Theme[] = ['light', 'dark', 'dim'];
+  currentOutline$ = this.currentOutlineSubject.asObservable();
 
   constructor() {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
@@ -19,6 +21,12 @@ export class ThemeService {
       this.setTheme(savedTheme, false);
     } else {
       this.setTheme('light', false);
+    }
+    const savedOutline = localStorage.getItem(this.outlineKey) as Outline;
+    if (savedOutline) {
+      this.setOutline(savedOutline, false);
+    } else {
+      this.setOutline("no-outlines", false);
     }
   }
 
@@ -37,16 +45,18 @@ export class ThemeService {
     return this.currentThemeSubject.value;
   }
 
-  toggleDark() {
-    const newTheme = this.getTheme() === 'dark' ? 'light' : 'dark';
-    this.setTheme(newTheme);
+  setOutline(outline: Outline, save = true) {
+    document.body.classList.remove('outlines', 'no-outlines');
+    document.body.classList.add(outline);
+
+    this.currentOutlineSubject.next(outline);
+
+    if (save) {
+      localStorage.setItem(this.outlineKey, outline);
+    }
   }
 
-  cycleTheme() {
-    const current = this.getTheme();
-    const index = this.themeCycle.indexOf(current);
-    const nextIndex = (index + 1) % this.themeCycle.length;
-    const nextTheme = this.themeCycle[nextIndex];
-    this.setTheme(nextTheme);
+  getOutline(): Outline {
+    return this.currentOutlineSubject.value;
   }
 }

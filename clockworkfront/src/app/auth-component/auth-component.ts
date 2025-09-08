@@ -3,7 +3,7 @@ import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Theme, ThemeService } from '../theme-service';
+import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-auth-component',
@@ -16,17 +16,15 @@ export class AuthComponent {
   password: string = '';
   errorMessage: string = '';
   
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private overlayService: OverlayService) {}
 
   login() {
     this.authService.login(this.username, this.password).subscribe({
-      next: (res) => {
-        console.log('Login erfolgreich', res);
+      next: () => {
         this.router.navigate(['/plan']);
       },
-      error: (err) => {
-        console.error('Login fehlgeschlagen', err);
-        this.errorMessage = 'Login fehlgeschlagen. Bitte erneut versuchen oder einen Systemadmin kontaktieren.';
+      error: () => {
+        this.overlayService.showOverlay("error", "Login fehlgeschlagen. Bitte erneut versuchen oder einen Systemadmin kontaktieren.");
       }
     });
   }

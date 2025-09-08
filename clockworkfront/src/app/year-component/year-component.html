@@ -1,9 +1,5 @@
 <div class="comp-wrap">
 <h1 class="emp page-header">Jahresübersicht</h1>
-
-@if (years.length === 0) {
-<div class="error">{{ errorMessage }}</div>
-} @else {
 <div id="content">
   <div id="result-container">
     @for (year of years; track year.value) {
@@ -13,5 +9,4 @@
     }
   </div>
 </div>
-}
 </div>

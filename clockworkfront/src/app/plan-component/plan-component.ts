@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BackendAccess } from '../backend-access';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { OverlayService } from '../overlay-service';
 
 export interface PlanDay { date: string; weekday: number }
 
@@ -36,7 +37,7 @@ export class PlanComponent implements OnInit {
   selectedCells: SelectedCell[] = [];
   anchorCell: SelectedCell | null = null;
 
-  constructor(private backendAccess: BackendAccess, private activatedRoute: ActivatedRoute) { }
+  constructor(private backendAccess: BackendAccess, private activatedRoute: ActivatedRoute, private overlayService: OverlayService) { }
 
   ngOnInit(): void {
     this.month = Number(this.activatedRoute.snapshot.paramMap.get("month"));
@@ -53,7 +54,7 @@ export class PlanComponent implements OnInit {
         this.plan = data;
         this.days = this.generateDays(year, month);
       },
-      error: (err) => console.error('Fehler beim Laden des Plans:', err)
+      error: () => this.overlayService.showOverlay("error", "Fehler beim Laden des Plans.")
     });
   }
 
@@ -155,7 +156,7 @@ export class PlanComponent implements OnInit {
     const isoDate = this.toIso(date);
     this.backendAccess.newEntry(this.plan.year, this.plan.month, employee, isoDate, type).subscribe({
       next: () => this.loadPlan(this.plan!.year, this.plan!.month),
-      error: (err) => console.error('Fehler beim Hinzufügen: ', err)
+      error: () => this.overlayService.showOverlay("error", "Fehler beim Hinzufügen.")
     });
   }
 
@@ -164,7 +165,7 @@ export class PlanComponent implements OnInit {
     const isoDate = this.toIso(date);
     this.backendAccess.deleteEntry(this.plan.year, this.plan.month, employee, isoDate).subscribe({
       next: () => this.loadPlan(this.plan!.year, this.plan!.month),
-      error: (err) => console.error('Fehler beim Löschen: ', err)
+      error: () => this.overlayService.showOverlay("error", "Fehler beim Löschen.")
     });
   }
 
@@ -174,7 +175,7 @@ export class PlanComponent implements OnInit {
     const isoEnd = this.toIso(end);
     this.backendAccess.newEntries(this.plan.year, this.plan.month, employee, isoStart, isoEnd, type).subscribe({
       next: () => this.loadPlan(this.plan!.year, this.plan!.month),
-      error: (err) => console.error('Fehler beim Bulk-Hinzufügen: ', err)
+      error: () => this.overlayService.showOverlay("error", "Fehler beim Bulk-Hinzufügen.")
     });
   }
 
@@ -189,7 +190,7 @@ export class PlanComponent implements OnInit {
     this.backendAccess.deleteEntries(year, month, employee, isoStart, isoEnd)
       .subscribe({
         next: () => this.loadPlan(year, month),
-        error: (err) => console.error('Fehler beim Bulk-Löschen: ', err)
+        error: () => this.overlayService.showOverlay("error", "Fehler beim Bulk-Löschen.")
       });
   }
 }

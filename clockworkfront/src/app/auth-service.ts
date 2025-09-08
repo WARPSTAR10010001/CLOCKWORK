@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { OverlayService } from './overlay-service';
 
 interface AuthStatus {
   loggedIn: boolean;
@@ -20,7 +21,7 @@ export class AuthService {
 
   url: string = "http://localhost:3000/api/auth";
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private overlayService: OverlayService) {}
 
   login(username: string, password: string): Observable<AuthStatus> {
     return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true })
@@ -35,6 +36,7 @@ export class AuthService {
       .pipe(tap(() => {
         this.loggedInSubject.next(false);
         this.adminSubject.next(false);
+        this.overlayService.showOverlay("success", "Erfolgreich abgemeldet.");
         this.router.navigate(['/auth']);
       }));
   }

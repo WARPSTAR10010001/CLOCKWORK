@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { BackendAccess } from '../backend-access';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Theme, ThemeService } from '../theme-service';
+import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -16,9 +16,8 @@ export class AdminComponent {
   planForm: FormGroup;
   submitting = false;
   successMessage: string | null = null;
-  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private backend: BackendAccess, private router: Router) {
+  constructor(private overlayService: OverlayService, private fb: FormBuilder, private backend: BackendAccess, private router: Router) {
     this.planForm = this.fb.group({
       year: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2100)]],
       users: this.fb.array([])
@@ -44,12 +43,11 @@ export class AdminComponent {
 
   submit() {
     if (this.planForm.invalid) {
-      this.errorMessage = "Bitte alle Felder korrekt ausfüllen.";
+      this.overlayService.showOverlay("error", "Bitte alle Felder korrekt ausfüllen.");
       return;
     }
 
     this.submitting = true;
-    this.errorMessage = null;
 
     const formValue = this.planForm.value;
     const payload: any = {
@@ -72,7 +70,7 @@ export class AdminComponent {
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = "Fehler beim Erstellen des Jahresplans.";
+          this.overlayService.showOverlay("error", "Fehler beim Erstellen des Jahresplans.");
           this.submitting = false;
         }
       });

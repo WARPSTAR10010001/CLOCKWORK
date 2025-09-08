@@ -18,7 +18,7 @@ input {
     border: 1px solid #fff;
     border-radius: 15px;
     box-shadow: 0px 0px 30px #0000003f;
-    padding: 50px 50px 10px 50px;
+    padding: 50px;
 }
 
 :host-context(body.light.outlines) .login-form {
@@ -36,11 +36,12 @@ input {
 }
 
 .login-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    height: 10vh;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: blur(0.3);
 }
 
 .error {

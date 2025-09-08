@@ -6,9 +6,6 @@
       <input type="text" [(ngModel)]="username" placeholder="Nutzername">
       <input type="password" [(ngModel)]="password" placeholder="Passwort">
       <a class="button-primary" id="login" (click)="login()">Anmelden</a>
-      @if (errorMessage !== null) {
-      <p class="error">{{ errorMessage }}</p>
-      }
     </div>
   </div>
 </div>

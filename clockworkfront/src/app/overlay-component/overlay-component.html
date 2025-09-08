@@ -1,0 +1,56 @@
+@if (overlayState.show) {
+<div class="overlay-backdrop">
+  @if (overlayState.type === "style") {
+  <div id="style-overlay">
+    <h1 class="emp page-header">Anzeigeeinstellungen</h1>
+    <div id="colorSelection">
+      <h1>Farbmodus:</h1>
+      <label>
+        <input type="radio" name="theme" value="light" [checked]="selectedTheme === 'light'" (change)="changeTheme('light')">
+        Hell
+      </label>
+      <label>
+        <input type="radio" name="theme" value="dim" [checked]="selectedTheme === 'dim'" (change)="changeTheme('dim')">
+        Dim
+      </label>
+      <label>
+        <input type="radio" name="theme" value="dark" [checked]="selectedTheme === 'dark'" (change)="changeTheme('dark')">
+        Dunkel
+      </label>
+    </div>
+    <hr>
+    <div id="outlineSelection">
+      <h1>Kontur:</h1>
+      <label>
+        <input type="radio" name="outline" [checked]="selectedOutline === 'outlines'" (change)="changeOutline('outlines')">
+        An
+      </label>
+      <label>
+        <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'" (change)="changeOutline('no-outlines')">
+        Aus
+      </label>
+    </div>
+    <br>
+    <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "error") {
+  <div id="error-overlay">
+    <h1 class="emp page-header">Fehler</h1>
+    <h1>{{ overlayState.message }}</h1>
+    <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "success") {
+  <div id="success-overlay">
+    <h1 class="emp page-header">Erfolg</h1>
+    <h1>{{ overlayState.message }}</h1>
+    <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "info") {
+  <div id="info-overlay">
+    <h1 class="emp page-header">Info</h1>
+    <h1>{{ overlayState.message }}</h1>
+    <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  }
+</div>
+}
