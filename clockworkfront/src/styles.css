@@ -2,8 +2,6 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Outfit", Bahnschrift, Verdana, Geneva, Tahoma, sans-serif;
-    background-color: #fff;
-    color: #000;
     display: flex;
     flex-direction: column;
     white-space: normal;
@@ -14,18 +12,34 @@ body {
     user-select: none;
 }
 
+body.light {
+    background-color: #fff;
+    color: #000;
+}
+
+body.dim {
+    background-color: #111;
+    color: #fff;
+}
+
 body.dark {
     background-color: #000;
     color: #fff;
 }
 
-a {
+body.light a {
     color: #000;
+    text-decoration: none;
+}
+
+body.dim a {
+    color: #fff;
     text-decoration: none;
 }
 
 body.dark a {
     color: #fff;
+    text-decoration: none;
 }
 
 a:hover {
@@ -60,14 +74,23 @@ a:hover {
 .button-primary {
     text-decoration: none;
     font-size: 2em;
-    border: 4px solid #000;
     cursor: pointer;
     border-radius: 10px;
     padding: 5px 10px;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+body.light .button-primary {
+    border: 4px solid #000;
     background-color: #000;
     color: #fff;
     box-shadow: 0px 0px 30px #00000000;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+body.dim .button-primary {
+    border: 4px solid #fff;
+    background-color: #fff;
+    color: #111;
 }
 
 body.dark .button-primary {
@@ -76,11 +99,17 @@ body.dark .button-primary {
     color: #000;
 }
 
-.button-primary:hover {
+body.light .button-primary:hover {
     text-decoration: none;
     color: #000;
     background-color: #fff;
     box-shadow: 0px 0px 30px #0000003f;
+}
+
+body.dim .button-primary:hover {
+    color: #fff;
+    background-color: #111;
+    box-shadow: #ffffff20;
 }
 
 body.dark .button-primary:hover {
@@ -90,16 +119,25 @@ body.dark .button-primary:hover {
 }
 
 .button-action {
+    border: 4px solid #ff1342;
     text-decoration: none;
     font-size: 2em;
-    border: 4px solid #ff1342;
     cursor: pointer;
     border-radius: 10px;
     padding: 5px 10px;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+body.light .button-action {
     background-color: #fff;
     color: #ff1342;
     box-shadow: 0px 0px 30px #00000000;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+body.dim .button-action {
+    color: #ff1342;
+    background-color: #111;
+    box-shadow: 0px 0px 30px #00000000;
 }
 
 body.dark .button-action {
@@ -108,11 +146,17 @@ body.dark .button-action {
     box-shadow: 0px 0px 30px #00000000;
 }
 
-.button-action:hover {
+body.light .button-action:hover {
     text-decoration: none;
     color: #fff;
     background-color: #ff1342;
     box-shadow: 0px 0px 30px #0000003f;
+}
+
+body.dim .button-action:hover {
+    background-color: #ff1342;
+    color: #111;
+    box-shadow: 0px 0px 30px #ffffff50;
 }
 
 body.dark .button-action:hover {
@@ -124,12 +168,23 @@ body.dark .button-action:hover {
 input {
     font-family: inherit;
     margin-bottom: 10px;
-    border: 4px solid #000;
     border-radius: 10px;
     padding: 5px 10px;
     font-size: 2em;
     box-shadow: 0px 0px 30px #00000000;
     transition: box-shadow 0.2s ease-in-out;
+}
+
+body.light input {
+    border: 4px solid #000;
+    background-color: #000;
+    color: #fff;
+}
+
+body.dim input {
+    border: 4px solid #fff;
+    background-color: #111;
+    color: #fff;
 }
 
 body.dark input {
@@ -140,14 +195,18 @@ body.dark input {
 
 input:focus {
     outline: none;
+}
+
+body.light input:focus {
     box-shadow: 0px 0px 30px #0000003f;
-    border-color: #000;
-    box-shadow: none;
+}
+
+body.dim input:focus {
+    box-shadow: 0px 0px 30px #ffffff50;
 }
 
 body.dark input:focus {
     box-shadow: #ffffff63;
-    border-color: #fff;
 }
 
 li {
@@ -159,10 +218,18 @@ li {
 }
 
 hr {
-    border: 2px solid #000;
-    box-shadow: 0px 0px 30px #0000003f;
     border-radius: 5px;
     margin: 50px 20px;
+}
+
+body.light hr {
+    border: 2px solid #000;
+    box-shadow: 0px 0px 30px #0000003f;
+}
+
+body.dim hr {
+    border: 2px solid #fff;
+    box-shadow: 0px 0px 30px #ffffff50;
 }
 
 body.dark hr {
@@ -175,18 +242,6 @@ label {
     margin-right: 20px;
 }
 
-.error {
-    color: #ff1342;
-    font-size: 1.5em;
-}
-
 #page-content {
     margin-top: -30px;
-}
-#colorSelection label,
-.outlineSelection label {
-  align-items: center;
-  gap: 6px;
-  font-size: 2rem;
-  cursor: pointer;
 }

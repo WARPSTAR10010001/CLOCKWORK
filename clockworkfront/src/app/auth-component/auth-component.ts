@@ -19,6 +19,10 @@ export class AuthComponent {
   constructor(private authService: AuthService, private router: Router, private overlayService: OverlayService) {}
 
   login() {
+    if(this.username.length === 0 || this.password.length === 0) {
+      this.overlayService.showOverlay("error", "Bitte das Anmeldeformular ausfüllen.");
+      return;
+    }
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
         this.router.navigate(['/plan']);

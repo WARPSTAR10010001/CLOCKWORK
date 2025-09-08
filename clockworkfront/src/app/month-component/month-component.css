@@ -13,19 +13,19 @@
     justify-content: center;
     height: 95px;
     border-radius: 12px;
-    border: 5px solid #fff;
-    color: #fff;
     font-size: 4rem;
     text-decoration: none;
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
-:host-context(body.light.outlines) .month-card {
-    outline: 3px solid #000;
+:host-context(body.light) .month-card {
+    border: 5px solid #fff;
+    color: #fff;
 }
 
-:host-context(body.dark.outlines) .month-card {
-    outline: 3px solid #fff;
+:host-context(body.dim) .month-card {
+    border: 5px solid #111;
+    color: #111;
 }
 
 :host-context(body.dark) .month-card {
@@ -33,13 +33,29 @@
     color: #000;
 }
 
-.month-card:hover {
+:host-context(body.light.outlines) .month-card {
+    outline: 3px solid #000;
+}
+
+:host-context(body.dim.outlines) .month-card {
+    outline: 3px solid #fff;
+}
+
+:host-context(body.dark.outlines) .month-card {
+    outline: 3px solid #fff;
+}
+
+:host-context(body.light) .month-card:hover {
     box-shadow: 0px 0px 30px #0000003f;
     transform: translateY(-5px);
 }
-
+:host-context(body.dim) .month-card:hover {
+    box-shadow: 0px 0px 30px #ffffff50;
+    transform: translateY(-5px);
+}
 :host-context(body.dark) .month-card:hover {
     box-shadow: 0px 0px 30px #ffffff63;
+    transform: translateY(-5px);
 }
 
 .gradient-1 {

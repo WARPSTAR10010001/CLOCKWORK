@@ -26,34 +26,52 @@
 }
 
 :host-context(body.light) #style-overlay,
-#error-overlay,
-#success-overlay,
-#info-overlay {
-    box-shadow: 0px 0px 30px #0000003f;
-    background: #fff;
+:host-context(body.light) #error-overlay,
+:host-context(body.light) #success-overlay,
+:host-context(body.light) #info-overlay {
+  box-shadow: 0px 0px 30px #0000003f;
+  background: #fff;
+  color: #000;
+}
+
+:host-context(body.dim) #style-overlay,
+:host-context(body.dim) #error-overlay,
+:host-context(body.dim) #success-overlay,
+:host-context(body.dim) #info-overlay {
+  box-shadow: 0px 0px 30px #ffffff50;
+  background: #111;
+  color: #fff;
 }
 
 :host-context(body.dark) #style-overlay,
-#error-overlay,
-#success-overlay,
-#info-overlay {
-    box-shadow: 0px 0px 30px #ffffff63;
-    background: #000;
-    color: #fff;
+:host-context(body.dark) #error-overlay,
+:host-context(body.dark) #success-overlay,
+:host-context(body.dark) #info-overlay {
+  box-shadow: 0px 0px 30px #ffffff63;
+  background: #000;
+  color: #fff;
 }
 
 :host-context(body.dark.outlines) #style-overlay,
-#error-overlay,
-#success-overlay,
-#info-overlay {
-    outline: 3px solid #fff;
+:host-context(body.dark.outlines) #error-overlay,
+:host-context(body.dark.outlines) #success-overlay,
+:host-context(body.dark.outlines) #info-overlay {
+  outline: 3px solid #fff;
 }
 
+:host-context(body.dim.outlines) #style-overlay,
+:host-context(body.dim.outlines) #error-overlay,
+:host-context(body.dim.outlines) #success-overlay,
+:host-context(body.dim.outlines) #info-overlay {
+  outline: 3px solid #fff;
+}
+
+
 :host-context(body.light.outlines) #style-overlay,
-#error-overlay,
-#success-overlay,
-#info-overlay {
-    outline: 3px solid #000;
+:host-context(body.light.outlines) #error-overlay,
+:host-context(body.light.outlines) #success-overlay,
+:host-context(body.light.outlines) #info-overlay {
+  outline: 3px solid #000;
 }
 
 #style-overlay label,
