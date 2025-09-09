@@ -25,9 +25,9 @@ input {
 }
 
 :host-context(body.dim) .login-form {
-    background-color: #111;
-    border: 1px solid #111;
-    box-shadow: 0px 0px 30px #ffffff50;
+    background-color: #1e1e1e;
+    border: 1px solid #1e1e1e;
+    box-shadow: 0px 0px 30px #00000080;
 }
 
 :host-context(body.dark) .login-form {

@@ -1,7 +1,4 @@
 Disable Scroll & Click on Overlay
 Adjust Input With in Admin-Component
-Fix Text Layering on Auth-Component
 Add "Monatsübersicht"-Button in Header
-Fix Outline Selection
-Add Dim-Mode
 Add Documentation-Page

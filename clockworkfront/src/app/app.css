@@ -70,9 +70,9 @@
 }
 
 :host-context(body.dim) #header {
-    background-color: #111;
-    border: 1px solid #111;
-    box-shadow: 0px 0px 30px #ffffff50;
+    background-color: #1e1e1e;
+    border: 1px solid #1e1e1e;
+    box-shadow: 0px 0px 30px #00000080;
 }
 
 :host-context(body.dark) #header {
@@ -118,9 +118,9 @@
 }
 
 :host-context(body.dim) #footer {
-    background-color: #111;
-    border: 1px solid #111;
-    box-shadow: 0px 0px 30px #ffffff50;
+    background-color: #1e1e1e;
+    border: 1px solid #1e1e1e;
+    box-shadow: 0px 0px 30px #00000080;
 }
 
 :host-context(body.dark) #footer {

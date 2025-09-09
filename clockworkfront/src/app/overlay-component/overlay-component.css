@@ -38,8 +38,8 @@
 :host-context(body.dim) #error-overlay,
 :host-context(body.dim) #success-overlay,
 :host-context(body.dim) #info-overlay {
-  box-shadow: 0px 0px 30px #ffffff50;
-  background: #111;
+  box-shadow: 0px 0px 30px #00000080;
+  background: #1e1e1e;
   color: #fff;
 }
 

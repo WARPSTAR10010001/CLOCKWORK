@@ -66,6 +66,7 @@ export class AdminComponent {
       .subscribe({
         next: (res) => {
           this.submitting = false;
+          this.overlayService.showOverlay("success", "Neuer Plan wurde erstellt.");
           this.router.navigate(['/plan']);
         },
         error: (err) => {

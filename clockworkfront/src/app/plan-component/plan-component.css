@@ -13,8 +13,8 @@
 }
 
 :host-context(body.dim) #table-container {
-    box-shadow: 0px 0px 30px #ffffff50;
-    background-color: #111;
+    box-shadow: 0px 0px 30px #00000080;
+    background-color: #1e1e1e;
 }
 
 :host-context(body.dark) #table-container {
@@ -61,8 +61,8 @@ td {
 
 :host-context(body.dim) th,
 :host-context(body.dim) td {
-    background-color: #1d1d1d;
-    border: 3px solid #1d1d1d;
+    background-color: #242424;
+    border: 3px solid #242424;
 }
 
 :host-context(body.dark) th,
@@ -82,7 +82,7 @@ td {
 }
 
 :host-context(body.dim) .sticky {
-    outline: 2px solid #111;
+    outline: 2px solid #1e1e1e;
 }
 
 :host-context(body.dark) .sticky {
@@ -140,7 +140,7 @@ td {
 }
 
 :host-context(body.dim) .deselect:hover {
-    color: #111;
+    color: #1e1e1e;
     background-color: #fff;
 }
 
@@ -165,7 +165,7 @@ td {
 }
 
 :host-context(body.dim) .u:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #88ff00 !important;
 }
 
@@ -185,7 +185,7 @@ td {
 }
 
 :host-context(body.dim) .h:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #00aeff !important;
 }
 
@@ -205,7 +205,7 @@ td {
 }
 
 :host-context(body.dim) .k:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #ff00bf !important;
 }
 
@@ -225,7 +225,7 @@ td {
 }
 
 :host-context(body.dim) .l:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #ffa318 !important;
 }
 
@@ -245,7 +245,7 @@ td {
 }
 
 :host-context(body.dim) .g:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #864eff !important;
 }
 
@@ -265,7 +265,7 @@ td {
 }
 
 :host-context(body.dim) .t:hover {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     color: #00ffaa !important;
 }
 
@@ -309,7 +309,7 @@ td {
 }
 
 :host-context(body.dim) .selected {
-    background-color: #111 !important;
+    background-color: #1e1e1e !important;
     border: 3px solid #fff !important;
 }
 

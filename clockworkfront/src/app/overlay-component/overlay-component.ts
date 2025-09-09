@@ -19,12 +19,8 @@ export class OverlayComponent implements OnInit {
 
   ngOnInit() {
     this.overlayService.overlay$.subscribe(state => this.overlayState = state);
-
-    // Initialwerte aus ThemeService ziehen
     this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
-
-    // Live-Updates abonnieren (falls woanders geändert wird)
     this.themeService.currentTheme$.subscribe(theme => this.selectedTheme = theme);
     this.themeService.currentOutline$.subscribe(outline => this.selectedOutline = outline);
   }
