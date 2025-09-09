@@ -5,34 +5,44 @@
     <h1 class="emp page-header">Anzeigeeinstellungen</h1>
     <div id="colorSelection">
       <h1>Farbmodus:</h1>
-      <label>
-        <input type="radio" name="theme" value="light" [checked]="selectedTheme === 'light'" (change)="changeTheme('light')">
-        Hell
-      </label>
-      <label>
-        <input type="radio" name="theme" value="dim" [checked]="selectedTheme === 'dim'" (change)="changeTheme('dim')">
-        Dim
-      </label>
-      <label>
-        <input type="radio" name="theme" value="dark" [checked]="selectedTheme === 'dark'" (change)="changeTheme('dark')">
-        Dunkel
-      </label>
-      <label>
-        <input type="radio" name="theme" value="hero" [checked]="selectedTheme === 'hero'" (change)="changeTheme('hero')">
-        Hero
-      </label>
+      <div class="options">
+        <label>
+          <input type="radio" name="theme" value="light" [checked]="selectedTheme === 'light'"
+            (change)="changeTheme('light')">
+          Hell
+        </label>
+        <label>
+          <input type="radio" name="theme" value="dim" [checked]="selectedTheme === 'dim'"
+            (change)="changeTheme('dim')">
+          Dim
+        </label>
+        <label>
+          <input type="radio" name="theme" value="dark" [checked]="selectedTheme === 'dark'"
+            (change)="changeTheme('dark')">
+          Dunkel
+        </label>
+        <label>
+          <input type="radio" name="theme" value="hero" [checked]="selectedTheme === 'hero'"
+            (change)="changeTheme('hero')">
+          Hero
+        </label>
+      </div>
     </div>
     <hr>
     <div id="outlineSelection">
       <h1>Kontur:</h1>
-      <label>
-        <input type="radio" name="outline" [checked]="selectedOutline === 'outlines'" (change)="changeOutline('outlines')">
-        An
-      </label>
-      <label>
-        <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'" (change)="changeOutline('no-outlines')">
-        Aus
-      </label>
+      <div class="options">
+        <label>
+          <input type="radio" name="outline" [checked]="selectedOutline === 'outlines'"
+            (change)="changeOutline('outlines')">
+          An
+        </label>
+        <label>
+          <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'"
+            (change)="changeOutline('no-outlines')">
+          Aus
+        </label>
+      </div>
     </div>
     <br>
     <a (click)="close()" class="button-primary">Schließen</a>

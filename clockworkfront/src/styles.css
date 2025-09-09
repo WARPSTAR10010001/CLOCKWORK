@@ -1,10 +1,5 @@
 :root {
     --red: #ff1342;
-    --bgc: #fff;
-    --tc: #000;
-    --olc: #000;
-    --bsc: #0000003f;
-    --bc: #fff;
 }
 
 body.light {
