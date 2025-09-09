@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'dark' | 'dim' | 'hero';
+export type Theme = 'light' | 'dark' | 'dim';
 export type Outline = "outlines" | "no-outlines";
 
 @Injectable({
@@ -31,7 +31,7 @@ export class ThemeService {
   }
 
   setTheme(theme: Theme, save = true) {
-    document.body.classList.remove('light', 'dark', 'dim', 'hero');
+    document.body.classList.remove('light', 'dark', 'dim');
     document.body.classList.add(theme);
 
     this.currentThemeSubject.next(theme);

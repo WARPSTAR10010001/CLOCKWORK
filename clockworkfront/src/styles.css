@@ -55,6 +55,11 @@ body.dark {
     color: var(--tc);
 }
 
+body.hero {
+    background-color: var(--bgc);
+    color: var(--tc);
+}
+
 a {
     text-decoration: none;
     color: var(--tc);
@@ -199,4 +204,8 @@ label {
     gap: 8px;
     cursor: pointer;
     font-size: 2em;
+}
+
+.ng-dirty {
+    background-color: var(--bgc) !important;
 }

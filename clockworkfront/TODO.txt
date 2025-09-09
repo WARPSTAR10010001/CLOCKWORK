@@ -1,3 +1,3 @@
-Adjust Input With in Admin-Component
 Add "Monatsübersicht"-Button in Header
 Add Documentation-Page
+Database Connection

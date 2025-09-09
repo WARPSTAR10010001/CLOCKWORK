@@ -14,7 +14,7 @@ input {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 20px;
     padding: 50px;
     background-color: var(--bgc);
     border: 1px solid var(--bgc);
@@ -36,6 +36,7 @@ input {
 #colored {
     height: 200px;
     padding-bottom: 40px;
+    margin-top: -30px;
 }
 
 #login {
