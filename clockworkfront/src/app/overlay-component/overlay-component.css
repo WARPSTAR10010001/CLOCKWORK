@@ -22,6 +22,7 @@
   box-shadow: 0px 0px 30px var(--bsc);
   background: var(--bgc);
   color: var(--tc);
+  overflow: auto;
 }
 
 .page-header {
@@ -43,21 +44,24 @@ h1 {
   outline: 3px solid var(--olc);
 }
 
-#colorSelection,
-#outlineSelection {
+#theme-selection,
+#outline-selection,
+#color-selection {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
 }
 
-#colorSelection h1,
-#outlineSelection h1 {
+#theme-selection h1,
+#outline-selection h1,
+#color-selection h1 {
   font-size: 1.8em;
   margin-bottom: 10px;
 }
 
-#colorSelection .options,
-#outlineSelection .options {
+#theme-selection .options,
+#outline-selection .options,
+#color-selection .options {
   display: flex;
   flex-direction: row;
   gap: 20px;

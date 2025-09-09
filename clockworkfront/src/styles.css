@@ -26,6 +26,10 @@ body.dark {
     --bc: #000;
 }
 
+body.bw {
+    filter: grayscale(100%);
+}
+
 body {
     margin: 0;
     padding: 0;

@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export type Theme = 'light' | 'dark' | 'dim';
 export type Outline = "outlines" | "no-outlines";
+export type Color = "standard" | "soft" | "bw";
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,13 @@ export type Outline = "outlines" | "no-outlines";
 export class ThemeService {
   themeKey = 'theme';
   outlineKey = "outline";
+  colorKey = "color";
   currentThemeSubject = new BehaviorSubject<Theme>('light');
   currentOutlineSubject = new BehaviorSubject<Outline>("no-outlines");
+  currentColorSubject = new BehaviorSubject<Color>("standard");
   currentTheme$ = this.currentThemeSubject.asObservable();
   currentOutline$ = this.currentOutlineSubject.asObservable();
+  currentColor$ = this.currentColorSubject.asObservable();
 
   constructor() {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
@@ -27,6 +31,12 @@ export class ThemeService {
       this.setOutline(savedOutline, false);
     } else {
       this.setOutline("no-outlines", false);
+    }
+    const savedColor = localStorage.getItem(this.colorKey) as Color;
+    if (savedColor) {
+      this.setColor(savedColor, false);
+    } else {
+      this.setColor("standard", false);
     }
   }
 
@@ -58,5 +68,20 @@ export class ThemeService {
 
   getOutline(): Outline {
     return this.currentOutlineSubject.value;
+  }
+
+  setColor(color: Color, save = true) {
+    document.body.classList.remove("standard", "soft", "bw");
+    document.body.classList.add(color);
+
+    this.currentColorSubject.next(color);
+
+    if (save) {
+      localStorage.setItem(this.colorKey, color);
+    }
+  }
+
+  getColor(): Color {
+    return this.currentColorSubject.value;
   }
 }

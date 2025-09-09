@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { OverlayService, OverlayState } from '../overlay-service';
-import { ThemeService, Theme, Outline } from '../theme-service';
+import { ThemeService, Theme, Outline, Color } from '../theme-service';
 
 @Component({
   selector: 'app-overlay-component',
@@ -11,6 +11,7 @@ export class OverlayComponent implements OnInit {
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
   selectedOutline: Outline = 'no-outlines';
+  selectedColor: Color = "standard";
 
   constructor(
     private overlayService: OverlayService,
@@ -30,8 +31,10 @@ export class OverlayComponent implements OnInit {
 
     this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
+    this.selectedColor = this.themeService.getColor();
     this.themeService.currentTheme$.subscribe(theme => this.selectedTheme = theme);
     this.themeService.currentOutline$.subscribe(outline => this.selectedOutline = outline);
+    this.themeService.currentColor$.subscribe(color => this.selectedColor = color);
   }
 
   changeTheme(theme: Theme) {
@@ -40,6 +43,10 @@ export class OverlayComponent implements OnInit {
 
   changeOutline(outline: Outline) {
     this.themeService.setOutline(outline);
+  }
+
+  changeColor(color: Color) {
+    this.themeService.setColor(color);
   }
 
   close() {

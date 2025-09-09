@@ -3,8 +3,8 @@
   @if (overlayState.type === "style") {
   <div id="style-overlay">
     <h1 class="emp page-header">Ansicht</h1>
-    <div id="colorSelection">
-      <h1>Farbmodus:</h1>
+    <div id="theme-selection">
+      <h1>Anzeigemodus:</h1>
       <div class="options">
         <label>
           <input type="radio" name="theme" value="light" [checked]="selectedTheme === 'light'"
@@ -24,7 +24,7 @@
       </div>
     </div>
     <hr>
-    <div id="outlineSelection">
+    <div id="outline-selection">
       <h1>Kontur:</h1>
       <div class="options">
         <label>
@@ -36,6 +36,24 @@
           <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'"
             (change)="changeOutline('no-outlines')">
           Aus
+        </label>
+      </div>
+    </div>
+    <hr>
+    <div id="color-selection">
+      <h1>Farbauswahl:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="color" [checked]="selectedColor === 'standard'" (change)="changeColor('standard')">
+          Standard
+        </label>
+        <label>
+          <input type="radio" name="color" [checked]="selectedColor === 'soft'" (change)="changeColor('soft')">
+          Soft
+        </label>
+        <label>
+          <input type="radio" name="color" [checked]="selectedColor === 'bw'" (change)="changeColor('bw')">
+          Schwarz/Weiß
         </label>
       </div>
     </div>
