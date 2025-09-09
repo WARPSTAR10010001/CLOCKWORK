@@ -64,7 +64,7 @@ export class AdminComponent {
 
     this.backend.newPlan(payload.year, payload.users, payload.lastYearCarryOver, payload.totalVacation)
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.submitting = false;
           this.overlayService.showOverlay("success", "Neuer Plan wurde erstellt.");
           this.router.navigate(['/plan']);

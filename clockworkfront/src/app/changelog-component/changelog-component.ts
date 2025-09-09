@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Theme, ThemeService } from '../theme-service';
 
 @Component({
   selector: 'app-changelog-component',
