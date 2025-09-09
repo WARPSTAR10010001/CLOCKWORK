@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { OverlayService, OverlayState } from '../overlay-service';
 import { ThemeService, Theme, Outline } from '../theme-service';
 
@@ -14,11 +14,20 @@ export class OverlayComponent implements OnInit {
 
   constructor(
     private overlayService: OverlayService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
-    this.overlayService.overlay$.subscribe(state => this.overlayState = state);
+    this.overlayService.overlay$.subscribe(state => {
+      this.overlayState = state;
+      if (state.show) {
+        this.renderer.setStyle(document.body, 'overflow', 'hidden');
+      } else {
+        this.renderer.setStyle(document.body, 'overflow', '');
+      }
+    });
+
     this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
     this.themeService.currentTheme$.subscribe(theme => this.selectedTheme = theme);

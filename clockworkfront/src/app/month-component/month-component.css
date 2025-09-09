@@ -12,50 +12,19 @@
     align-items: center;
     justify-content: center;
     height: 95px;
-    border-radius: 12px;
-    font-size: 4rem;
+    border-radius: 10px;
+    font-size: 4em;
     text-decoration: none;
+    border: 5px solid var(--bc);
+    color: var(--bgc);
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
-:host-context(body.light) .month-card {
-    border: 5px solid var(--bc);
-    color: var(--tc);
-}
-
-:host-context(body.dim) .month-card {
-    border: 5px solid var(--bc);
-    color: var(--tc);
-}
-
-:host-context(body.dark) .month-card {
-    border: 5px solid var(--bc);
-    color: var(--tc);
-}
-
-:host-context(body.light.outlines) .month-card {
+:host-context(body.outlines) .month-card {
     outline: 3px solid var(--olc);
 }
 
-:host-context(body.dim.outlines) .month-card {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dark.outlines) .month-card {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.light) .month-card:hover {
-    box-shadow: 0px 0px 30px var(--bsc);
-    transform: translateY(-5px);
-}
-
-:host-context(body.dim) .month-card:hover {
-    box-shadow: 0px 0px 30px var(--bsc);
-    transform: translateY(-5px);
-}
-
-:host-context(body.dark) .month-card:hover {
+.month-card:hover {
     box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }

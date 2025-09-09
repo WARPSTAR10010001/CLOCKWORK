@@ -57,19 +57,9 @@ body.dark {
 
 a {
     text-decoration: none;
-}
-
-body.light a {
     color: var(--tc);
 }
 
-body.dim a {
-    color: var(--tc);
-}
-
-body.dark a {
-    color: var(--tc);
-}
 
 a:hover {
     cursor: pointer;
@@ -108,44 +98,14 @@ a:hover {
     border-radius: 10px;
     padding: 5px 10px;
     box-shadow: 0px 0px 30px #00000000;
+    border: 4px solid var(--tc);
+    background-color: var(--tc);
+    color: var(--bgc);
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-body.light .button-primary {
-    border: 4px solid var(--tc);
-    background-color: var(--tc);
-    color: var(--bgc);
-}
-
-body.dim .button-primary {
-    border: 4px solid var(--tc);
-    background-color: var(--tc);
-    color: var(--bgc);
-}
-
-body.dark .button-primary {
-    border: 4px solid var(--tc);
-    background-color: var(--tc);
-    color: var(--bgc);
 }
 
 .button-primary:hover {
     text-decoration: none;
-}
-
-body.light .button-primary:hover {
-    color: var(--tc);
-    background-color: var(--bgc);
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dim .button-primary:hover {
-    color: var(--tc);
-    background-color: var(--bgc);
-    box-shadow: var(--bsc);
-}
-
-body.dark .button-primary:hover {
     color: var(--tc);
     background-color: var(--bgc);
     box-shadow: 0px 0px 30px var(--bsc);
@@ -160,37 +120,13 @@ body.dark .button-primary:hover {
     border-radius: 10px;
     padding: 5px 10px;
     box-shadow: 0px 0px 30px #00000000;
+    background-color: var(--bgc);
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-body.light .button-action {
-    background-color: var(--bgc);
-}
-
-body.dim .button-action {
-    background-color: var(--bgc);
-}
-
-body.dark .button-action {
-    background-color: var(--bgc);
 }
 
 .button-action:hover {
     background-color: var(--red) !important;
     text-decoration: none;
-}
-
-body.light .button-action:hover {
-    color: var(--bgc) !important;
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dim .button-action:hover {
-    color: var(--bgc) !important;
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dark .button-action:hover {
     color: var(--bgc) !important;
     box-shadow: 0px 0px 30px var(--bsc);
 }
@@ -202,40 +138,14 @@ input {
     padding: 5px 10px;
     font-size: 2em;
     box-shadow: 0px 0px 30px #00000000;
+    border: 4px solid var(--tc);
+    background-color: var(--bgc);
+    color: var(--tc);
     transition: box-shadow 0.2s ease-in-out;
-}
-
-body.light input {
-    border: 4px solid var(--tc);
-    background-color: var(--bgc);
-    color: var(--tc);
-}
-
-body.dim input {
-    border: 4px solid var(--tc);
-    background-color: var(--bgc);
-    color: var(--tc)
-}
-
-body.dark input {
-    border: 4px solid var(--tc);
-    background-color: var(--bgc);
-    color: var(--tc);
 }
 
 input:focus {
     outline: none;
-}
-
-body.light input:focus {
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dim input:focus {
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dark input:focus {
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
@@ -250,28 +160,43 @@ li {
 hr {
     border-radius: 5px;
     margin: 50px 20px;
-}
-
-body.light hr {
     border: 2px solid var(--tc);
     box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dim hr {
-    border: 2px solid var(--tc);
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-body.dark hr {
-    border: 2px solid var(--tc);
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-label {
-    font-size: 2em;
-    margin-right: 20px;
 }
 
 #page-content {
     margin-top: -30px;
+}
+
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 50px;
+    height: 30px;
+    border-radius: 20px;
+    border: 5px solid var(--tc);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-width 0.2s ease-in-out;
+}
+
+input[type="radio"]:hover {
+    border-width: 7px;
+}
+
+input[type="radio"]:checked {
+    border-width: 10px;
+    box-shadow: 0px 0px 30px var(--bsc);
+}
+
+label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 2em;
 }

@@ -14,37 +14,14 @@ input {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 15px;
+    border-radius: 10px;
     padding: 50px;
-}
-
-:host-context(body.light) .login-form {
     background-color: var(--bgc);
     border: 1px solid var(--bgc);
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
-:host-context(body.dim) .login-form {
-    background-color: var(--bgc);
-    border: 1px solid var(--bgc);
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-:host-context(body.dark) .login-form {
-    background-color: var(--bgc);
-    border: 1px solid var(--bgc);
-    box-shadow: 0px 0px 30px var(--bsc);
-}
-
-:host-context(body.light.outlines) .login-form {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dim.outlines) .login-form {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dark.outlines) .login-form {
+:host-context(body.outlines) .login-form {
     outline: 3px solid var(--olc);
 }
 

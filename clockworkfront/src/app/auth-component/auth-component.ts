@@ -29,6 +29,8 @@ export class AuthComponent {
       },
       error: () => {
         this.overlayService.showOverlay("error", "Login fehlgeschlagen. Bitte erneut versuchen oder einen Systemadmin kontaktieren.");
+        this.username = "";
+        this.password = "";
       }
     });
   }

@@ -12,50 +12,19 @@
     align-items: center;
     justify-content: center;
     height: 200px;
-    border-radius: 12px;
-    font-size: 4rem;
+    border-radius: 10px;
+    font-size: 6em;
     text-decoration: none;
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-}
-
-:host-context(body.light) .year-card {
     border: 5px solid var(--bc);
-    color: var(--tc);
+    color: var(--bgc);
 }
 
-:host-context(body.dim) .year-card {
-    border: 5px solid var(--bc);
-    color: var(--tc);
-}
-
-:host-context(body.dark) .year-card {
-    border: 5px solid var(--bc);
-    color: var(--tc);
-}
-
-:host-context(body.light.outlines) .year-card {
+:host-context(body.outlines) .year-card {
     outline: 3px solid var(--olc);
 }
 
-:host-context(body.dim.outlines) .year-card {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dark.outlines) .year-card {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.light) .year-card:hover {
-    box-shadow: 0px 0px 30px var(--bsc);
-    transform: translateY(-5px);
-}
-
-:host-context(body.dim) .year-card:hover {
-    box-shadow: 0px 0px 30px var(--bsc);
-    transform: translateY(-5px);
-}
-
-:host-context(body.dark) .year-card:hover {
+.year-card:hover {
     box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }

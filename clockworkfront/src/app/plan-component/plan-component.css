@@ -7,30 +7,12 @@
     margin: 0 auto;
 }
 
-:host-context(body.light) #table-container {
+#table-container {
     box-shadow: 0px 0px 30px var(--bsc);
     background-color: var(--bgc);
 }
 
-:host-context(body.dim) #table-container {
-    box-shadow: 0px 0px 30px var(--bsc);
-    background-color: var(--bgc);
-}
-
-:host-context(body.dark) #table-container {
-    box-shadow: 0px 0px 30px var(--bsc);
-    background-color: var(--bgc);
-}
-
-:host-context(body.light.outlines) #table-container {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dim.outlines) #table-container {
-    outline: 3px solid var(--olc);
-}
-
-:host-context(body.dark.outlines) #table-container {
+:host-context(body.outlines) #table-container {
     outline: 3px solid var(--olc);
 }
 
@@ -75,17 +57,6 @@ td {
     position: sticky;
     left: 1px;
     z-index: 2;
-}
-
-:host-context(body.light) .sticky {
-    outline: 2px solid var(--bgc);
-}
-
-:host-context(body.dim) .sticky {
-    outline: 2px solid var(--bgc);
-}
-
-:host-context(body.dark) .sticky {
     outline: 2px solid var(--bgc);
 }
 
@@ -119,35 +90,12 @@ td {
 }
 
 .deselect {
+    border: 4px solid var(--tc);
+    color: var(--tc) !important;
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .deselect {
-    border: 4px solid var(--tc);
-    color: var(--tc) !important;
-}
-
-:host-context(body.dim) .deselect {
-    border: 4px solid var(--tc);
-    color: var(--tc) !important;
-}
-
-:host-context(body.dark) .deselect {
-    border: 4px solid var(--tc);
-    color: var(--tc) !important;
-}
-
-:host-context(body.light) .deselect:hover {
-    color: var(--bgc) !important;
-    background-color: var(--tc) !important;
-}
-
-:host-context(body.dim) .deselect:hover {
-    color: var(--bgc) !important;
-    background-color: var(--tc) !important;
-}
-
-:host-context(body.dark) .deselect:hover {
+.deselect:hover {
     color: var(--bgc) !important;
     background-color: var(--tc) !important;
 }
@@ -164,17 +112,6 @@ td {
 
 .u:hover {
     color: #88ff00 !important;
-}
-
-:host-context(body.light) .u:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .u:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .u:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -186,17 +123,6 @@ td {
 
 .h:hover {
     color: #00aeff !important;
-}
-
-:host-context(body.light) .h:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .h:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .h:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -208,17 +134,6 @@ td {
 
 .k:hover {
     color: #ff00bf !important;
-}
-
-:host-context(body.light) .k:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .k:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .k:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -230,17 +145,6 @@ td {
 
 .l:hover {
     color: #ffa318 !important;
-}
-
-:host-context(body.light) .l:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .l:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .l:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -252,17 +156,6 @@ td {
 
 .g:hover {
     color: #864eff !important;
-}
-
-:host-context(body.light) .g:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .g:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .g:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -274,17 +167,6 @@ td {
 
 .t:hover {
     color: #00ffaa !important;
-}
-
-:host-context(body.light) .t:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dim) .t:hover {
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.dark) .t:hover {
     background-color: var(--bgc) !important;
 }
 
@@ -318,17 +200,7 @@ td {
     border: 3px solid #00ffaa !important;
 }
 
-:host-context(body.light) .selected {
-    background-color: var(--bgc) !important;
-    border: 3px solid var(--olc) !important;
-}
-
-:host-context(body.dim) .selected {
-    background-color: var(--bgc) !important;
-    border: 3px solid var(--olc) !important;
-}
-
-:host-context(body.dark) .selected {
+.selected {
     background-color: var(--bgc) !important;
     border: 3px solid var(--olc) !important;
 }

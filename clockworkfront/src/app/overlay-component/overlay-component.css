@@ -17,69 +17,30 @@
 #info-overlay {
   padding: 40px 50px;
   border-radius: 10px;
-  width: 40%
-}
-
-:host-context(body.light) #style-overlay,
-:host-context(body.light) #error-overlay,
-:host-context(body.light) #success-overlay,
-:host-context(body.light) #info-overlay {
+  width: 40%;
+  z-index: 10000;
   box-shadow: 0px 0px 30px var(--bsc);
   background: var(--bgc);
   color: var(--tc);
 }
 
-:host-context(body.dim) #style-overlay,
-:host-context(body.dim) #error-overlay,
-:host-context(body.dim) #success-overlay,
-:host-context(body.dim) #info-overlay {
-  box-shadow: 0px 0px 30px var(--bsc);
-  background: var(--bgc);
-  color: var(--tc);
+.page-header {
+  margin-bottom: -30px;
 }
 
-:host-context(body.dark) #style-overlay,
-:host-context(body.dark) #error-overlay,
-:host-context(body.dark) #success-overlay,
-:host-context(body.dark) #info-overlay {
-  box-shadow: 0px 0px 30px var(--bsc);
-  background: var(--bgc);
-  color: var(--tc);
+hr {
+  margin-bottom: 10px;
 }
 
-:host-context(body.dark.outlines) #style-overlay,
-:host-context(body.dark.outlines) #error-overlay,
-:host-context(body.dark.outlines) #success-overlay,
-:host-context(body.dark.outlines) #info-overlay {
+h1 {
+  padding-bottom: 20px;
+}
+
+:host-context(body.outlines) #style-overlay,
+:host-context(body.outlines) #error-overlay,
+:host-context(body.outlines) #success-overlay,
+:host-context(body.outlines) #info-overlay {
   outline: 3px solid var(--olc);
-}
-
-:host-context(body.dim.outlines) #style-overlay,
-:host-context(body.dim.outlines) #error-overlay,
-:host-context(body.dim.outlines) #success-overlay,
-:host-context(body.dim.outlines) #info-overlay {
-  outline: 3px solid var(--olc);
-}
-
-
-:host-context(body.light.outlines) #style-overlay,
-:host-context(body.light.outlines) #error-overlay,
-:host-context(body.light.outlines) #success-overlay,
-:host-context(body.light.outlines) #info-overlay {
-  outline: 3px solid var(--olc);
-}
-
-#style-overlay label,
-#outlineSelection label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-right: 10px;
-}
-
-label {
-  display: flex;
-  align-items: flex-start;
 }
 
 #colorSelection,
@@ -91,7 +52,7 @@ label {
 
 #colorSelection h1,
 #outlineSelection h1 {
-  font-size: 1.2em;
+  font-size: 1.8em;
   margin-bottom: 10px;
 }
 
@@ -100,42 +61,5 @@ label {
   display: flex;
   flex-direction: row;
   gap: 20px;
-}
-
-#colorSelection h1,
-#outlineSelection h1 {
-  font-size: 1.8em;
-}
-
-#colorSelection label,
-#outlineSelection label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 1.7em;
-}
-
-#colorSelection input[type="radio"],
-#outlineSelection input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 50px;
-  height: 30px;
-  border-radius: 20px;
-  border: 3px solid var(--tc);
-  cursor: pointer;
-  transition: border-width 0.3s ease-in-out;
-}
-
-#colorSelection input[type="radio"]:hover,
-#outlineSelection input[type="radio"]:hover {
-  border-width: 5px solid;
-}
-
-#colorSelection input[type="radio"]:checked,
-#outlineSelection input[type="radio"]:checked {
-  border-width: 7px;
-  box-shadow: 0px 0px 30px var(--bsc);
+  flex-wrap: wrap;
 }

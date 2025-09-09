@@ -1,4 +1,3 @@
-Disable Scroll & Click on Overlay
 Adjust Input With in Admin-Component
 Add "Monatsübersicht"-Button in Header
 Add Documentation-Page
