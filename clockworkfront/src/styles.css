@@ -1,3 +1,36 @@
+:root {
+    --red: #ff1342;
+    --bgc: #fff;
+    --tc: #000;
+    --olc: #000;
+    --bsc: #0000003f;
+    --bc: #fff;
+}
+
+body.light {
+    --bgc: #fff;
+    --tc: #000;
+    --olc: #000;
+    --bsc: #0000003f;
+    --bc: #fff;
+}
+
+body.dim {
+    --bgc: #1e1e1e;
+    --tc: #fff;
+    --olc: #fff;
+    --bsc: #00000080;
+    --bc: #1e1e1e;
+}
+
+body.dark {
+    --bgc: #000;
+    --tc: #fff;
+    --olc: #fff;
+    --bsc: #ffffff63;
+    --bc: #000;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -13,33 +46,34 @@ body {
 }
 
 body.light {
-    background-color: #fff;
-    color: #000;
+    background-color: var(--bgc);
+    color: var(--tc);
 }
 
 body.dim {
-    background-color: #1e1e1e;
-    color: #fff;
+    background-color: var(--bgc);
+    color: var(--tc);
 }
 
 body.dark {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--bgc);
+    color: var(--tc);
+}
+
+a {
+    text-decoration: none;
 }
 
 body.light a {
-    color: #000;
-    text-decoration: none;
+    color: var(--tc);
 }
 
 body.dim a {
-    color: #fff;
-    text-decoration: none;
+    color: var(--tc);
 }
 
 body.dark a {
-    color: #fff;
-    text-decoration: none;
+    color: var(--tc);
 }
 
 a:hover {
@@ -78,92 +112,92 @@ a:hover {
     cursor: pointer;
     border-radius: 10px;
     padding: 5px 10px;
+    box-shadow: 0px 0px 30px #00000000;
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 body.light .button-primary {
-    border: 4px solid #000;
-    background-color: #000;
-    color: #fff;
-    box-shadow: 0px 0px 30px #00000000;
+    border: 4px solid var(--tc);
+    background-color: var(--tc);
+    color: var(--bgc);
 }
 
 body.dim .button-primary {
-    border: 4px solid #fff;
-    background-color: #fff;
-    color: #1e1e1e;
+    border: 4px solid var(--tc);
+    background-color: var(--tc);
+    color: var(--bgc);
 }
 
 body.dark .button-primary {
-    border: 4px solid #fff;
-    background-color: #fff;
-    color: #000;
+    border: 4px solid var(--tc);
+    background-color: var(--tc);
+    color: var(--bgc);
+}
+
+.button-primary:hover {
+    text-decoration: none;
 }
 
 body.light .button-primary:hover {
-    text-decoration: none;
-    color: #000;
-    background-color: #fff;
-    box-shadow: 0px 0px 30px #0000003f;
+    color: var(--tc);
+    background-color: var(--bgc);
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dim .button-primary:hover {
-    color: #fff;
-    background-color: #1e1e1e;
-    box-shadow: #ffffff20;
+    color: var(--tc);
+    background-color: var(--bgc);
+    box-shadow: var(--bsc);
 }
 
 body.dark .button-primary:hover {
-    color: #fff;
-    background-color: #000;
-    box-shadow: 0px 0px 30px #0000003f;
+    color: var(--tc);
+    background-color: var(--bgc);
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 .button-action {
-    border: 4px solid #ff1342;
+    border: 4px solid var(--red);
+    color: var(--red) !important;
     text-decoration: none;
     font-size: 2em;
     cursor: pointer;
     border-radius: 10px;
     padding: 5px 10px;
+    box-shadow: 0px 0px 30px #00000000;
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 body.light .button-action {
-    background-color: #fff;
-    color: #ff1342;
-    box-shadow: 0px 0px 30px #00000000;
+    background-color: var(--bgc);
 }
 
 body.dim .button-action {
-    color: #ff1342;
-    background-color: #1e1e1e;
-    box-shadow: 0px 0px 30px #00000000;
+    background-color: var(--bgc);
 }
 
 body.dark .button-action {
-    color: #ff1342;
-    background-color: #000;
-    box-shadow: 0px 0px 30px #00000000;
+    background-color: var(--bgc);
+}
+
+.button-action:hover {
+    background-color: var(--red) !important;
+    text-decoration: none;
 }
 
 body.light .button-action:hover {
-    text-decoration: none;
-    color: #fff;
-    background-color: #ff1342;
-    box-shadow: 0px 0px 30px #0000003f;
+    color: var(--bgc) !important;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dim .button-action:hover {
-    background-color: #ff1342;
-    color: #1e1e1e;
-    box-shadow: 0px 0px 30px #00000080;
+    color: var(--bgc) !important;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dark .button-action:hover {
-    background-color: #ff1342;
-    color: #000;
-    box-shadow: 0px 0px 30px #ffffff63;
+    color: var(--bgc) !important;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 input {
@@ -177,21 +211,21 @@ input {
 }
 
 body.light input {
-    border: 4px solid #000;
-    background-color: #000;
-    color: #fff;
+    border: 4px solid var(--tc);
+    background-color: var(--bgc);
+    color: var(--tc);
 }
 
 body.dim input {
-    border: 4px solid #fff;
-    background-color: #1e1e1e;
-    color: #fff;
+    border: 4px solid var(--tc);
+    background-color: var(--bgc);
+    color: var(--tc)
 }
 
 body.dark input {
-    border: 4px solid #fff;
-    background-color: #000;
-    color: #fff;
+    border: 4px solid var(--tc);
+    background-color: var(--bgc);
+    color: var(--tc);
 }
 
 input:focus {
@@ -199,15 +233,15 @@ input:focus {
 }
 
 body.light input:focus {
-    box-shadow: 0px 0px 30px #0000003f;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dim input:focus {
-    box-shadow: 0px 0px 30px #00000080;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dark input:focus {
-    box-shadow: #ffffff63;
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 li {
@@ -224,18 +258,18 @@ hr {
 }
 
 body.light hr {
-    border: 2px solid #000;
-    box-shadow: 0px 0px 30px #0000003f;
+    border: 2px solid var(--tc);
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dim hr {
-    border: 2px solid #fff;
-    box-shadow: 0px 0px 30px #00000080;
+    border: 2px solid var(--tc);
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 body.dark hr {
-    border: 2px solid #fff;
-    box-shadow: 0px 0px 30px #ffffff63;
+    border: 2px solid var(--tc);
+    box-shadow: 0px 0px 30px var(--bsc);
 }
 
 label {

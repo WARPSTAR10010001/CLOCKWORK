@@ -8,30 +8,30 @@
 }
 
 :host-context(body.light) #table-container {
-    box-shadow: 0px 0px 30px #0000003f;
-    background-color: #fff;
+    box-shadow: 0px 0px 30px var(--bsc);
+    background-color: var(--bgc);
 }
 
 :host-context(body.dim) #table-container {
-    box-shadow: 0px 0px 30px #00000080;
-    background-color: #1e1e1e;
+    box-shadow: 0px 0px 30px var(--bsc);
+    background-color: var(--bgc);
 }
 
 :host-context(body.dark) #table-container {
-    box-shadow: 0px 0px 30px #ffffff63;
-    background-color: #000;
+    box-shadow: 0px 0px 30px var(--bsc);
+    background-color: var(--bgc);
 }
 
 :host-context(body.light.outlines) #table-container {
-    outline: 3px solid #000;
+    outline: 3px solid var(--olc);
 }
 
 :host-context(body.dim.outlines) #table-container {
-    outline: 3px solid #fff;
+    outline: 3px solid var(--olc);
 }
 
 :host-context(body.dark.outlines) #table-container {
-    outline: 3px solid #fff;
+    outline: 3px solid var(--olc);
 }
 
 table {
@@ -78,15 +78,15 @@ td {
 }
 
 :host-context(body.light) .sticky {
-        outline: 2px solid #fff;
+    outline: 2px solid var(--bgc);
 }
 
 :host-context(body.dim) .sticky {
-    outline: 2px solid #1e1e1e;
+    outline: 2px solid var(--bgc);
 }
 
 :host-context(body.dark) .sticky {
-    outline: 2px solid #000;
+    outline: 2px solid var(--bgc);
 }
 
 :host-context(body.light) tr:nth-child(odd) td {
@@ -118,35 +118,38 @@ td {
   padding: 10px 15px;
 }
 
-:host-context(body.light) .deselect {
-    border: 4px solid #000;
-    color: #000;
+.deselect {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
+:host-context(body.light) .deselect {
+    border: 4px solid var(--tc);
+    color: var(--tc) !important;
+}
+
 :host-context(body.dim) .deselect {
-    border: 4px solid #fff;
-    color: #fff;
+    border: 4px solid var(--tc);
+    color: var(--tc) !important;
 }
 
 :host-context(body.dark) .deselect {
-    border: 4px solid #fff;
-    color: #fff;
+    border: 4px solid var(--tc);
+    color: var(--tc) !important;
 }
 
 :host-context(body.light) .deselect:hover {
-    color: #fff;
-    background-color: #000;
+    color: var(--bgc) !important;
+    background-color: var(--tc) !important;
 }
 
 :host-context(body.dim) .deselect:hover {
-    color: #1e1e1e;
-    background-color: #fff;
+    color: var(--bgc) !important;
+    background-color: var(--tc) !important;
 }
 
 :host-context(body.dark) .deselect:hover {
-    color: #000;
-    background-color: #fff;
+    color: var(--bgc) !important;
+    background-color: var(--tc) !important;
 }
 
 .cell {
@@ -159,18 +162,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .u:hover {
-    background-color: #fff !important;
+.u:hover {
     color: #88ff00 !important;
+}
+
+:host-context(body.light) .u:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .u:hover {
-    background-color: #1e1e1e !important;
-    color: #88ff00 !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .u:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .h {
@@ -179,18 +184,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .h:hover {
-    background-color: #fff !important;
+.h:hover {
     color: #00aeff !important;
+}
+
+:host-context(body.light) .h:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .h:hover {
-    background-color: #1e1e1e !important;
-    color: #00aeff !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .h:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .k {
@@ -199,18 +206,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .k:hover {
-    background-color: #fff !important;
+.k:hover {
     color: #ff00bf !important;
+}
+
+:host-context(body.light) .k:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .k:hover {
-    background-color: #1e1e1e !important;
-    color: #ff00bf !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .k:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .l {
@@ -219,18 +228,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .l:hover {
-    background-color: #fff !important;
+.l:hover {
     color: #ffa318 !important;
+}
+
+:host-context(body.light) .l:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .l:hover {
-    background-color: #1e1e1e !important;
-    color: #ffa318 !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .l:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .g {
@@ -239,18 +250,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .g:hover {
-    background-color: #fff !important;
+.g:hover {
     color: #864eff !important;
+}
+
+:host-context(body.light) .g:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .g:hover {
-    background-color: #1e1e1e !important;
-    color: #864eff !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .g:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .t {
@@ -259,18 +272,20 @@ td {
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-:host-context(body.light) .t:hover {
-    background-color: #fff !important;
+.t:hover {
     color: #00ffaa !important;
+}
+
+:host-context(body.light) .t:hover {
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dim) .t:hover {
-    background-color: #1e1e1e !important;
-    color: #00ffaa !important;
+    background-color: var(--bgc) !important;
 }
 
 :host-context(body.dark) .t:hover {
-    background-color: #000 !important;
+    background-color: var(--bgc) !important;
 }
 
 .u-cell {
@@ -304,16 +319,16 @@ td {
 }
 
 :host-context(body.light) .selected {
-    background-color: #fff !important;
-    border: 3px solid #000 !important;
+    background-color: var(--bgc) !important;
+    border: 3px solid var(--olc) !important;
 }
 
 :host-context(body.dim) .selected {
-    background-color: #1e1e1e !important;
-    border: 3px solid #fff !important;
+    background-color: var(--bgc) !important;
+    border: 3px solid var(--olc) !important;
 }
 
 :host-context(body.dark) .selected {
-    background-color: #000 !important;
-    border: 3px solid #fff !important;
+    background-color: var(--bgc) !important;
+    border: 3px solid var(--olc) !important;
 }

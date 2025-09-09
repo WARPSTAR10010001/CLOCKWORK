@@ -19,42 +19,44 @@
 }
 
 :host-context(body.light) .month-card {
-    border: 5px solid #fff;
-    color: #fff;
+    border: 5px solid var(--bc);
+    color: var(--tc);
 }
 
 :host-context(body.dim) .month-card {
-    border: 5px solid #1e1e1e;
-    color: #1e1e1e;
+    border: 5px solid var(--bc);
+    color: var(--tc);
 }
 
 :host-context(body.dark) .month-card {
-    border: 5px solid #000;
-    color: #000;
+    border: 5px solid var(--bc);
+    color: var(--tc);
 }
 
 :host-context(body.light.outlines) .month-card {
-    outline: 3px solid #000;
+    outline: 3px solid var(--olc);
 }
 
 :host-context(body.dim.outlines) .month-card {
-    outline: 3px solid #fff;
+    outline: 3px solid var(--olc);
 }
 
 :host-context(body.dark.outlines) .month-card {
-    outline: 3px solid #fff;
+    outline: 3px solid var(--olc);
 }
 
 :host-context(body.light) .month-card:hover {
-    box-shadow: 0px 0px 30px #0000003f;
+    box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }
+
 :host-context(body.dim) .month-card:hover {
-    box-shadow: 0px 0px 30px #00000080;
+    box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }
+
 :host-context(body.dark) .month-card:hover {
-    box-shadow: 0px 0px 30px #ffffff63;
+    box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }
 
