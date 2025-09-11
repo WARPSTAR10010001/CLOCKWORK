@@ -8,6 +8,10 @@
     <div id="nav">
       @if (authService.admin$ | async) {
       <a [routerLink]="['/admin']">Adminpanel</a>
+      <a [routerLink]="['/mod']">Modpanel</a>
+      }
+      @if (authService.mod$ | async) {
+      <a [routerLink]="['/mod']">Modpanel</a>
       }
       <a [routerLink]="['/plan']">Jahresübersicht</a>
       <a (click)="logout()">Abmelden</a>
@@ -30,6 +34,6 @@
       <a [routerLink]="['/documentation']">Dokumentation</a>
       <a (click)="openStyleOverlay()">Ansicht</a>
     </div>
-    <p class="emp">V0.1.5 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp">V0.1.6 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>
