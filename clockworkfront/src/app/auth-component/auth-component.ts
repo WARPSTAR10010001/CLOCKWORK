@@ -23,7 +23,7 @@ export class AuthComponent {
       this.overlayService.showOverlay("error", "Bitte das Anmeldeformular ausfüllen.");
       return;
     }
-    this.authService.login(this.username, this.password).subscribe({
+    this.authService.login(this.username.toLowerCase(), this.password).subscribe({
       next: () => {
         this.router.navigate(['/plan']);
       },

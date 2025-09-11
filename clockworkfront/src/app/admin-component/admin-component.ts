@@ -32,8 +32,8 @@ export class AdminComponent {
   addUser() {
     this.users.push(this.fb.group({
       name: ['', Validators.required],
-      lastYearCarryOver: [0, [Validators.required, Validators.min(0)]],
-      totalVacation: [30, [Validators.required, Validators.min(0)]]
+      lastYearCarryOver: [[Validators.required, Validators.min(0)]],
+      totalVacation: [[Validators.required, Validators.min(0)]]
     }));
   }
 
