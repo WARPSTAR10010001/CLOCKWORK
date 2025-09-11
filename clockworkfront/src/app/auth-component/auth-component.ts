@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,5 +33,10 @@ export class AuthComponent {
         this.password = "";
       }
     });
+  }
+
+  @HostListener('document:keydown.enter', ['$event'])
+  onEscHandler(event: Event) {
+    this.login();
   }
 }

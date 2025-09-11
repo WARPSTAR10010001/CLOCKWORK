@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, HostListener } from '@angular/core';
 import { OverlayService, OverlayState } from '../overlay-service';
 import { ThemeService, Theme, Outline, Color } from '../theme-service';
 
@@ -17,7 +17,7 @@ export class OverlayComponent implements OnInit {
     private overlayService: OverlayService,
     private themeService: ThemeService,
     private renderer: Renderer2
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.overlayService.overlay$.subscribe(state => {
@@ -51,5 +51,12 @@ export class OverlayComponent implements OnInit {
 
   close() {
     this.overlayService.hideOverlay();
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscHandler(event: Event) {
+    if (this.overlayState.show) {
+      this.close();
+    }
   }
 }
