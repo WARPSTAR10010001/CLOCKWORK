@@ -1,0 +1,141 @@
+{
+  "year": 2025,
+  "month": 11,
+  "users": [
+    "Person 1",
+    "Person 2",
+    "Person 3"
+  ],
+  "entries": {
+    "Person 1": {},
+    "Person 2": {},
+    "Person 3": {}
+  },
+  "remainingVacation": {
+    "Person 1": 0,
+    "Person 2": 0,
+    "Person 3": 0
+  },
+  "days": [
+    {
+      "date": "2025-10-31",
+      "weekday": 6
+    },
+    {
+      "date": "2025-11-01",
+      "weekday": 7
+    },
+    {
+      "date": "2025-11-02",
+      "weekday": 1
+    },
+    {
+      "date": "2025-11-03",
+      "weekday": 2
+    },
+    {
+      "date": "2025-11-04",
+      "weekday": 3
+    },
+    {
+      "date": "2025-11-05",
+      "weekday": 4
+    },
+    {
+      "date": "2025-11-06",
+      "weekday": 5
+    },
+    {
+      "date": "2025-11-07",
+      "weekday": 6
+    },
+    {
+      "date": "2025-11-08",
+      "weekday": 7
+    },
+    {
+      "date": "2025-11-09",
+      "weekday": 1
+    },
+    {
+      "date": "2025-11-10",
+      "weekday": 2
+    },
+    {
+      "date": "2025-11-11",
+      "weekday": 3
+    },
+    {
+      "date": "2025-11-12",
+      "weekday": 4
+    },
+    {
+      "date": "2025-11-13",
+      "weekday": 5
+    },
+    {
+      "date": "2025-11-14",
+      "weekday": 6
+    },
+    {
+      "date": "2025-11-15",
+      "weekday": 7
+    },
+    {
+      "date": "2025-11-16",
+      "weekday": 1
+    },
+    {
+      "date": "2025-11-17",
+      "weekday": 2
+    },
+    {
+      "date": "2025-11-18",
+      "weekday": 3
+    },
+    {
+      "date": "2025-11-19",
+      "weekday": 4
+    },
+    {
+      "date": "2025-11-20",
+      "weekday": 5
+    },
+    {
+      "date": "2025-11-21",
+      "weekday": 6
+    },
+    {
+      "date": "2025-11-22",
+      "weekday": 7
+    },
+    {
+      "date": "2025-11-23",
+      "weekday": 1
+    },
+    {
+      "date": "2025-11-24",
+      "weekday": 2
+    },
+    {
+      "date": "2025-11-25",
+      "weekday": 3
+    },
+    {
+      "date": "2025-11-26",
+      "weekday": 4
+    },
+    {
+      "date": "2025-11-27",
+      "weekday": 5
+    },
+    {
+      "date": "2025-11-28",
+      "weekday": 6
+    },
+    {
+      "date": "2025-11-29",
+      "weekday": 7
+    }
+  ]
+}

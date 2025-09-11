@@ -1,3 +1,4 @@
-Add "Monatsübersicht"-Button in Header
-Add Documentation-Page
-Database Connection
+Add "Monatsübersicht"-button in header
+Add "Dokumentation"-component
+Establish DB connection
+Fix overlay position on scroll
