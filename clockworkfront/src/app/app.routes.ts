@@ -9,6 +9,8 @@ import { AuthComponent } from './auth-component/auth-component';
 import { AuthGuard } from './auth-guard';
 import { AdminGuard } from './admin-guard';
 import { CreditComponent } from './credit-component/credit-component';
+import { ModeratorComponent } from './moderator-component/moderator-component';
+import { ModGuard } from './mod-guard';
 
 export const routes: Routes = [
     {
@@ -42,6 +44,12 @@ export const routes: Routes = [
         component: AdminComponent,
         title: 'Adminpanel - CLOCKWORK',
         canActivate: [AdminGuard]
+    },
+    {
+        path: 'mod',
+        component: ModeratorComponent,
+        title: 'Modpanel - CLOCKWORK',
+        canActivate: [ModGuard]
     },
     {
         path: 'auth',
