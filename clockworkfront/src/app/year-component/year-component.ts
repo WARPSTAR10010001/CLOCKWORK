@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { BackendAccess } from '../backend-access';
 import { OverlayService } from '../overlay-service';
+// NEU: Importiere den richtigen Service und das Plan-Interface
+import { BackendAccess, Plan } from '../backend-access';
 
 interface YearCard {
   value: number;
@@ -16,27 +17,32 @@ interface YearCard {
   templateUrl: './year-component.html',
   styleUrls: ['./year-component.css']
 })
-
 export class YearComponent implements OnInit {
   years: YearCard[] = [];
-  errorMessage: string | null = null;
 
-  constructor(private backendAccess: BackendAccess, private overlayService: OverlayService) {}
+  // NEU: Injiziere den PlanService statt dem alten BackendAccess
+  constructor(
+    private backendAccess: BackendAccess,
+    private overlayService: OverlayService
+  ) {}
 
   ngOnInit() {
-    this.backendAccess.getYears().subscribe({
-      next: (res) => {
-        const list = res.years ?? res;
-        this.years = list.map((year: number) => ({
-          value: year,
+    // NEU: Rufe die neue, saubere Methode im PlanService auf
+    this.backendAccess.getAllPlansForDepartment().subscribe({
+      next: (plans: Plan[]) => {
+        // Die Logik ist jetzt einfacher: Wir mappen direkt über die Plan-Objekte
+        this.years = plans.map((plan: Plan) => ({
+          value: plan.year,
           colorClass: this.randomClass()
-        }));
+        })).sort((a, b) => b.value - a.value); // Sortiere absteigend, neustes Jahr zuerst
+
         if (this.years.length === 0) {
-          this.overlayService.showOverlay("error", "Jahre konnten nicht geladen werden. Bitte wiederholen Sie den Anmeldevorgang oder kontaktieren Sie einen Systemadmin.");
+          // Die Nachricht ist jetzt hilfreicher für den Nutzer
+          this.overlayService.showOverlay("info", "Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.");
         }
       },
       error: () => {
-        this.overlayService.showOverlay("error", "Fehler beim Laden der Jahre. Bitte erneut versuchen.")
+        this.overlayService.showOverlay("error", "Fehler beim Laden der verfügbaren Jahre.");
       }
     });
   }

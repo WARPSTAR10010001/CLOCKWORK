@@ -44,9 +44,24 @@ export class AuthService {
     );
   }
 
+  /**
+   * AKTUALISIERT: Diese Methode leitet den Benutzer nach einem
+   * erfolgreichen Login zur Jahresübersicht weiter.
+   */
   login(username: string, password: string): Observable<AuthStatus> {
     return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true }).pipe(
-      tap(status => this.authStatusSubject.next(status))
+      tap(status => {
+        // Zuerst den neuen Status im gesamten System bekannt geben
+        this.authStatusSubject.next(status);
+
+        // DANN prüfen, ob der Login erfolgreich war
+        if (status.loggedIn) {
+          // Zeige eine Erfolgsmeldung
+          this.overlayService.showOverlay("success", `Willkommen, ${status.user?.username}!`);
+          // Leite den Benutzer zur Jahresübersicht weiter
+          this.router.navigate(['/plan']);
+        }
+      })
     );
   }
 

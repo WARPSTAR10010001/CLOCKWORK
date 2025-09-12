@@ -1,27 +1,27 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Wichtig für die @if-Syntax im Template
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from './auth-service';
 import { OverlayComponent } from './overlay-component/overlay-component';
 import { OverlayService } from './overlay-service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, OverlayComponent, AsyncPipe],
+  standalone: true, // Moderne Angular-Komponenten sind standalone
+  imports: [CommonModule, RouterOutlet, RouterLink, OverlayComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
   constructor(public authService: AuthService, private overlayService: OverlayService) {}
 
+  /**
+   * AKTUALISIERT: Diese Methode ruft jetzt nur noch die logout()-Funktion
+   * im AuthService auf. Der Service kümmert sich um den Rest.
+   * Kein .subscribe() mehr nötig.
+   */
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {},
-      error: (err) => {
-        console.error('Logout fehlgeschlagen', err);
-      }
-    });
+    this.authService.logout();
   }
 
   openStyleOverlay() {

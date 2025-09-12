@@ -1,12 +1,13 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router'; // Router wird hier nicht mehr direkt benötigt, kann aber bleiben
 import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-auth-component',
+  standalone: true, // Wichtig für moderne Angular-Komponenten
   imports: [FormsModule, CommonModule],
   templateUrl: './auth-component.html',
   styleUrl: './auth-component.css',
@@ -14,29 +15,38 @@ import { OverlayService } from '../overlay-service';
 export class AuthComponent {
   username: string = '';
   password: string = '';
-  errorMessage: string = '';
-  
-  constructor(private authService: AuthService, private router: Router, private overlayService: OverlayService) {}
+  isSubmitting = false; // Für besseres User-Feedback
+
+  constructor(
+    private authService: AuthService, 
+    private overlayService: OverlayService
+    // private router: Router // Nicht mehr direkt für die Navigation hier benötigt
+    ) {}
 
   login() {
-    if(this.username.length === 0 || this.password.length === 0) {
-      this.overlayService.showOverlay("error", "Bitte das Anmeldeformular ausfüllen.");
+    if (this.username.length === 0 || this.password.length === 0) {
+      this.overlayService.showOverlay("error", "Bitte füllen Sie beide Anmeldefelder aus.");
       return;
     }
+
+    this.isSubmitting = true;
+
+    // Der entscheidende Aufruf. Wir MÜSSEN subscriben, um ihn zu starten.
     this.authService.login(this.username.toLowerCase(), this.password).subscribe({
+      // Der `next`-Block ist jetzt LEER.
+      // Die Erfolgslogik (Weiterleitung, Erfolgsmeldung) wird
+      // komplett vom `tap`-Operator im AuthService übernommen.
       next: () => {
-        this.router.navigate(['/plan']);
+        this.isSubmitting = false;
       },
-      error: () => {
-        this.overlayService.showOverlay("error", "Login fehlgeschlagen. Bitte erneut versuchen oder einen Systemadmin kontaktieren.");
-        this.username = "";
+      // Der `error`-Block ist weiterhin wichtig, um auf fehlgeschlagene Logins zu reagieren.
+      error: (err) => {
+        this.isSubmitting = false;
+        const message = err.error?.error || "Login fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben.";
+        this.overlayService.showOverlay("error", message);
+        // Das Passwort-Feld leeren ist gute Praxis
         this.password = "";
       }
     });
-  }
-
-  @HostListener('document:keydown.enter', ['$event'])
-  onEscHandler(event: Event) {
-    this.login();
   }
 }
