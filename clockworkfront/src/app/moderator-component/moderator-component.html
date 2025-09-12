@@ -1,1 +1,38 @@
-<p>moderator-component works!</p>
+<div class="comp-wrap">
+  <h1 class="emp page-header">Modpanel</h1>
+    <form [formGroup]="planForm" (ngSubmit)="submit()">
+    <div>
+      <h1 for="year">Jahr:</h1>
+      <input id="year" type="number" class="num-entry" formControlName="year" placeholder="Jahr">
+    </div>
+    <hr>
+    <div formArrayName="users">
+      <h1>Mitarbeiter:</h1>
+      @for (employeeGroup of employees.controls; track employeeGroup; let i = $index) {
+        <div [formGroupName]="i" class="user-row">
+          <input type="text" 
+                 placeholder="Name (wählen oder neu eingeben)" 
+                 formControlName="name"
+                 list="employee-suggestions"
+                 autocomplete="off">
+          <input type="number" class="num-entry" placeholder="Resturlaub"
+                 formControlName="lastYearCarryOver" min="0">
+          <input type="number" class="num-entry" placeholder="Urlaubsanspruch" 
+                 formControlName="totalVacation" min="0">
+          @if (employees.length > 0 && i > 0) {
+            <a class="button-action" (click)="removeEmployee(i)">Entfernen</a>
+          }
+        </div>
+      }
+      <datalist id="employee-suggestions">
+        @for (emp of availableEmployees; track emp.id) {
+          <option [value]="emp.name"></option>
+        }
+      </datalist>
+    </div>
+    <a class="button-primary button-row" (click)="addEmployee()">Mitarbeiter hinzufügen</a>
+    <button type="submit" class="button-primary button-row" [disabled]="submitting || planForm.invalid">
+      {{ submitting ? 'Wird erstellt...' : 'Jahresplan erstellen' }}
+    </button>
+  </form>
+</div>

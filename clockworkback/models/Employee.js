@@ -2,12 +2,39 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
 const Employee = sequelize.define('Employee', {
-  username: { type: DataTypes.STRING, allowNull: false },
-  department: { type: DataTypes.STRING, allowNull: false },
-  start_date: { type: DataTypes.DATEONLY, allowNull: false },
-  end_date: { type: DataTypes.DATEONLY },
-  total_vacation: { type: DataTypes.INTEGER, defaultValue: 30 },
-  carry_over: { type: DataTypes.INTEGER, defaultValue: 0 }
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    department_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'departments',
+            key: 'id'
+        }
+    },
+    vacation_days_last_year: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
+    vacation_days_current_year: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
+    start_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
+    end_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    }
+}, {
+    tableName: 'employees',
+    timestamps: false
 });
 
 module.exports = Employee;

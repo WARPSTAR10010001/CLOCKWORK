@@ -4,59 +4,73 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { OverlayService } from './overlay-service';
 
+interface User {
+  id: number;
+  username: string;
+  role: 'admin' | 'mod' | 'user';
+  departmentId?: number;
+}
+
 interface AuthStatus {
   loggedIn: boolean;
-  role?: 'admin' | 'moderator' | 'default';
-  user?: { id: number; username: string; role: 'admin' | 'moderator' | 'default', department?: string } | null;
+  user: User | null;
   exp?: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private loggedInSubject = new BehaviorSubject<boolean>(false);
-  public loggedIn$ = this.loggedInSubject.asObservable();
+  private authStatusSubject = new BehaviorSubject<AuthStatus | null>(null);
+  public authStatus$ = this.authStatusSubject.asObservable();
 
-  private adminSubject = new BehaviorSubject<boolean>(false);
-  public admin$ = this.adminSubject.asObservable();
+  private url = "http://localhost:3000/api/auth";
 
-  private modSubject = new BehaviorSubject<boolean>(false);
-  public mod$ = this.modSubject.asObservable();
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private overlayService: OverlayService
+  ) {
+    this.checkStatus().subscribe();
+  }
 
-  url: string = "http://localhost:3000/api/auth";
-
-  constructor(private http: HttpClient, private router: Router, private overlayService: OverlayService) {}
+  checkStatus(): Observable<AuthStatus> {
+    return this.http.get<AuthStatus>(`${this.url}/status`, { withCredentials: true }).pipe(
+      tap(status => {
+        if (status && status.loggedIn) {
+          this.authStatusSubject.next(status);
+        } else {
+          this.authStatusSubject.next({ loggedIn: false, user: null });
+        }
+      })
+    );
+  }
 
   login(username: string, password: string): Observable<AuthStatus> {
-    return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true })
-      .pipe(tap(res => {
-        this.loggedInSubject.next(res.loggedIn);
-
-        const role = res.user?.role;
-        this.adminSubject.next(role === 'admin');
-        this.modSubject.next(role === 'moderator');
-      }));
+    return this.http.post<AuthStatus>(`${this.url}/login`, { username, password }, { withCredentials: true }).pipe(
+      tap(status => this.authStatusSubject.next(status))
+    );
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.url}/logout`, {}, { withCredentials: true })
-      .pipe(tap(() => {
-        this.loggedInSubject.next(false);
-        this.adminSubject.next(false);
-        this.modSubject.next(false);
-        this.overlayService.showOverlay("success", "Erfolgreich abgemeldet.");
-        this.router.navigate(['/auth']);
-      }));
+  logout(): void {
+    this.http.post(`${this.url}/logout`, {}, { withCredentials: true }).subscribe(() => {
+      this.authStatusSubject.next({ loggedIn: false, user: null });
+      this.overlayService.showOverlay("success", "Erfolgreich abgemeldet.");
+      this.router.navigate(['/auth']);
+    });
   }
 
-  isLogged(): boolean {
-    return this.loggedInSubject.value;
+  public get currentUserRole(): 'admin' | 'mod' | 'user' | null {
+    return this.authStatusSubject.value?.user?.role || null;
   }
 
-  isAdmin(): boolean {
-    return this.adminSubject.value;
+  public isAdmin(): boolean {
+    return this.currentUserRole === 'admin';
   }
 
-  isMod(): boolean {
-    return this.modSubject.value;
+  public isMod(): boolean {
+    return this.currentUserRole === 'mod';
+  }
+
+  public isLoggedIn(): boolean {
+    return this.authStatusSubject.value?.loggedIn || false;
   }
 }

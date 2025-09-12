@@ -1,11 +1,23 @@
-const { Pool } = require('pg');
+const { Sequelize } = require('sequelize');
 
-const pool = new Pool({
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
-  host: process.env.PG_HOST,
-  port: process.env.PG_PORT,
-  database: process.env.PG_DATABASE
-});
+const sequelize = new Sequelize(
+  process.env.PG_DATABASE,
+  process.env.PG_USER,
+  process.env.PG_PASSWORD,
+  {
+    host: 'localhost',
+    dialect: 'postgres',
+    logging: false
+  }
+);
 
-module.exports = pool;
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('[START] CLOCKWORK DATENBANK läuft!');
+  } catch (err) {
+    console.error('[ERROR] CLOCKWORK DATENBANK Interner Fehler', err);
+  }
+})();
+
+module.exports = sequelize;

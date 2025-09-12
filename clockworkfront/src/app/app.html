@@ -4,13 +4,13 @@
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
     </a>
-    @if (authService.loggedIn$ | async) {
+    @if (authService.isLoggedIn()) {
     <div id="nav">
-      @if (authService.admin$ | async) {
+      @if (authService.isAdmin()) {
       <a [routerLink]="['/admin']">Adminpanel</a>
       <a [routerLink]="['/mod']">Modpanel</a>
       }
-      @if (authService.mod$ | async) {
+      @if (authService.isMod()) {
       <a [routerLink]="['/mod']">Modpanel</a>
       }
       <a [routerLink]="['/plan']">Jahresübersicht</a>
@@ -34,6 +34,6 @@
       <a [routerLink]="['/documentation']">Dokumentation</a>
       <a (click)="openStyleOverlay()">Ansicht</a>
     </div>
-    <p class="emp">V0.1.6 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp">V0.1.7 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

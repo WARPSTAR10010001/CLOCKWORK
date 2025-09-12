@@ -1,0 +1,23 @@
+input {
+    text-align: center;
+}
+
+.user-row input {
+    margin-right: 20px;
+}
+
+.user-row {
+    margin-bottom: 20px;
+}
+
+.button-row {
+    margin-right: 20px;
+}
+
+.num-entry {
+    width: 300px;
+}
+
+.page-header {
+    margin-bottom: -20px;
+}

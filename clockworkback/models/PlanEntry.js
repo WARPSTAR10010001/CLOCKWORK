@@ -1,12 +1,40 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const Employee = require('./Employee');
 
-const PlanEntry2025 = sequelize.define('PlanEntry2025', {
-  date: { type: DataTypes.DATEONLY, allowNull: false },
-  type: { type: DataTypes.STRING, allowNull: false }
+const PlanEntry = sequelize.define('PlanEntry', {
+    plan_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'plans',
+            key: 'id'
+        }
+    },
+    employee_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'employees',
+            key: 'id'
+        }
+    },
+    entry_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    entry_type: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+    }
+}, {
+    tableName: 'plan_entries',
+    timestamps: false,
+    indexes: [
+        {
+            unique: true,
+            fields: ['employee_id', 'entry_date']
+        }
+    ]
 });
 
-PlanEntry2025.belongsTo(Employee, { foreignKey: 'employee_id' });
-
-module.exports = PlanEntry2025;
+module.exports = PlanEntry;
