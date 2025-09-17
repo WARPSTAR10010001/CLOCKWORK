@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { OverlayService } from './overlay-service';
 
@@ -40,6 +40,10 @@ export class AuthService {
         } else {
           this.authStatusSubject.next({ loggedIn: false, user: null });
         }
+      }),
+      catchError(() => {
+        this.authStatusSubject.next({ loggedIn: false, user: null });
+        return of({ loggedIn: false, user: null });
       })
     );
   }
@@ -59,7 +63,7 @@ export class AuthService {
           // Zeige eine Erfolgsmeldung
           this.overlayService.showOverlay("success", `Willkommen, ${status.user?.username}!`);
           // Leite den Benutzer zur Jahresübersicht weiter
-          this.router.navigate(['/plan']);
+          this.router.navigate(['/years']);
         }
       })
     );

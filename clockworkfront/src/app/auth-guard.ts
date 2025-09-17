@@ -2,54 +2,107 @@ import { Injectable } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from './auth-service';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /**
- * This guard protects routes that should only be accessible to logged-in users.
+ * Dieser Guard schützt Routen für eingeloggte Nutzer.
  */
 export const AuthGuard: CanActivateFn = (): Observable<boolean> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // This is the reactive way to check for authentication.
   return authService.authStatus$.pipe(
-    // take(1) ensures the observable completes after getting the first value.
-    take(1), 
+    // HIER IST DIE MAGIE: Wir warten, bis der Status nicht mehr der initiale 'null'-Wert ist.
+    // Das stellt sicher, dass wir entweder das Ergebnis von checkStatus() (beim Neuladen)
+    // oder von login() abwarten.
+    filter(status => status !== null), 
+    
+    take(1), // Nimm den ersten "echten" Status, der durch den Filter kommt
     map(authStatus => {
       const isLoggedIn = authStatus?.loggedIn || false;
       
       if (isLoggedIn) {
-        return true; // User is logged in, allow access.
+        return true; // Zugriff erlaubt
       } else {
-        // User is not logged in, redirect to the login page.
-        router.navigate(['/auth']);
-        return false; // Block access.
+        router.navigate(['/auth']); // Nicht eingeloggt, zum Login umleiten
+        return false; // Zugriff blockieren
       }
     })
   );
 };
 
-
 /**
- * This guard protects the /auth route itself.
- * It prevents already logged-in users from seeing the login page again.
+ * Dieser Guard schützt die Login-Seite selbst.
  */
 export const LoginGuard: CanActivateFn = (): Observable<boolean> => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
     return authService.authStatus$.pipe(
+        // Auch hier warten wir auf den ersten echten Status
+        filter(status => status !== null),
+        
         take(1),
         map(authStatus => {
             const isLoggedIn = authStatus?.loggedIn || false;
 
             if (isLoggedIn) {
-                // User is already logged in, redirect them away from the login page.
-                router.navigate(['/plan']);
-                return false; // Block access to /auth.
+                // Bereits eingeloggt? Weg von der Login-Seite, hin zur Jahresübersicht
+                router.navigate(['/years']); 
+                return false; // Zugriff auf /auth blockieren
             } else {
-                return true; // User is not logged in, allow access to /auth.
+                return true; // Nicht eingeloggt? Zugriff auf /auth erlauben
+            }
+        })
+    );
+};
+
+
+/**
+ * NEU: Dieser Guard schützt Routen, die nur für Moderatoren und Admins zugänglich sein sollen.
+ */
+export const ModGuard: CanActivateFn = (): Observable<boolean> => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
+
+    return authService.authStatus$.pipe(
+        // Wir warten wieder auf den ersten echten Status, um Race Conditions zu vermeiden
+        filter(status => status !== null),
+        take(1),
+        map(authStatus => {
+            const role = authStatus?.user?.role;
+
+            // Prüfe, ob die Rolle entweder 'mod' oder 'admin' ist
+            if (role === 'mod' || role === 'admin') {
+                return true; // Zugriff erlaubt
+            } else {
+                // Wenn nicht, wird der Nutzer zum Login umgeleitet
+                router.navigate(['/auth']);
+                return false; // Zugriff blockieren
+            }
+        })
+    );
+};
+
+export const AdminGuard: CanActivateFn = (): Observable<boolean> => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
+
+    return authService.authStatus$.pipe(
+        // Wir warten wieder auf den ersten echten Status, um Race Conditions zu vermeiden
+        filter(status => status !== null),
+        take(1),
+        map(authStatus => {
+            const role = authStatus?.user?.role;
+
+            // Prüfe, ob die Rolle entweder 'mod' oder 'admin' ist
+            if (role === 'admin') {
+                return true; // Zugriff erlaubt
+            } else {
+                // Wenn nicht, wird der Nutzer zum Login umgeleitet
+                router.navigate(['/auth']);
+                return false; // Zugriff blockieren
             }
         })
     );

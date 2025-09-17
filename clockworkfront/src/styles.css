@@ -213,3 +213,7 @@ label {
 .ng-dirty {
     background-color: var(--bgc) !important;
 }
+
+button {
+    font-family: inherit;
+}

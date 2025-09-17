@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // Router wird hier nicht mehr direkt benötigt, kann aber bleiben
+import { Router } from '@angular/router'
 import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-auth-component',
-  standalone: true, // Wichtig für moderne Angular-Komponenten
   imports: [FormsModule, CommonModule],
   templateUrl: './auth-component.html',
   styleUrl: './auth-component.css',
@@ -19,8 +18,8 @@ export class AuthComponent {
 
   constructor(
     private authService: AuthService, 
-    private overlayService: OverlayService
-    // private router: Router // Nicht mehr direkt für die Navigation hier benötigt
+    private overlayService: OverlayService,
+    private router: Router
     ) {}
 
   login() {
@@ -37,6 +36,7 @@ export class AuthComponent {
       // Die Erfolgslogik (Weiterleitung, Erfolgsmeldung) wird
       // komplett vom `tap`-Operator im AuthService übernommen.
       next: () => {
+        this.router.navigate(["/years"]);
         this.isSubmitting = false;
       },
       // Der `error`-Block ist weiterhin wichtig, um auf fehlgeschlagene Logins zu reagieren.

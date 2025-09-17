@@ -36,10 +36,11 @@ router.post("/login", async (req, res) => {
         );
 
         res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: "lax" })
-           .json({
-               message: "Login erfolgreich",
-               user: tokenPayload
-           });
+            .json({
+                loggedIn: true,
+                message: "Login erfolgreich",
+                user: tokenPayload
+            });
 
     } catch (err) {
         console.error("Login Fehler:", err);

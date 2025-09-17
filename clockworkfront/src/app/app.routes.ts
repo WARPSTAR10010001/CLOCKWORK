@@ -6,23 +6,21 @@ import { MonthComponent } from './month-component/month-component';
 import { PlanComponent } from './plan-component/plan-component';
 import { AdminComponent } from './admin-component/admin-component';
 import { AuthComponent } from './auth-component/auth-component';
-import { AuthGuard } from './auth-guard';
-import { AdminGuard } from './admin-guard';
 import { CreditComponent } from './credit-component/credit-component';
 import { ModeratorComponent } from './moderator-component/moderator-component';
-import { ModGuard } from './mod-guard';
+import { AuthGuard, ModGuard, AdminGuard, LoginGuard } from './auth-guard';
 
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'plan',
+        redirectTo: 'years', // Startseite ist die Jahresübersicht
         pathMatch: 'full'
     },
     {
-        path: 'plan',
+        path: 'years', // Klarer Pfadname für die Jahresübersicht
         component: YearComponent,
         title: 'Jahresübersicht - CLOCKWORK',
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard] // Muss eingeloggt sein
     },
     {
         path: 'documentation',
@@ -43,18 +41,20 @@ export const routes: Routes = [
         path: 'admin',
         component: AdminComponent,
         title: 'Adminpanel - CLOCKWORK',
-        canActivate: [AdminGuard]
+        // Guards werden nacheinander ausgeführt: Erst eingeloggt? Dann Admin?
+        canActivate: [AuthGuard, AdminGuard]
     },
     {
         path: 'mod',
         component: ModeratorComponent,
         title: 'Modpanel - CLOCKWORK',
-        canActivate: [ModGuard]
+        canActivate: [AuthGuard, ModGuard]
     },
     {
         path: 'auth',
         component: AuthComponent,
         title: 'Anmeldung - CLOCKWORK',
+        canActivate: [LoginGuard]
     },
     {
         path: 'plan/:year',
@@ -67,5 +67,10 @@ export const routes: Routes = [
         component: PlanComponent,
         title: 'Dienstplan - CLOCKWORK',
         canActivate: [AuthGuard]
+    },
+    // Fängt alle unbekannten URLs ab und leitet sie sicher weiter
+    {
+        path: '**',
+        redirectTo: 'years'
     }
 ];

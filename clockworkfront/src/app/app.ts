@@ -7,7 +7,6 @@ import { OverlayService } from './overlay-service';
 
 @Component({
   selector: 'app-root',
-  standalone: true, // Moderne Angular-Komponenten sind standalone
   imports: [CommonModule, RouterOutlet, RouterLink, OverlayComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
