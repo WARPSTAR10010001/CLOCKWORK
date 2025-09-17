@@ -14,21 +14,11 @@ const Employee = sequelize.define('Employee', {
             key: 'id'
         }
     },
-    vacation_days_last_year: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
-    vacation_days_current_year: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
-    start_date: {
+    hire_date: {
         type: DataTypes.DATEONLY,
-        allowNull: true
+        allowNull: false
     },
-    end_date: {
+    termination_date: {
         type: DataTypes.DATEONLY,
         allowNull: true
     }
