@@ -2,11 +2,11 @@ input {
     text-align: center;
 }
 
-.user-row input {
+.employee-row input {
     margin-right: 20px;
 }
 
-.user-row {
+.employee-row {
     margin-bottom: 20px;
 }
 

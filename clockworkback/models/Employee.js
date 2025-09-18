@@ -1,5 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Department = require('./Department'); // Annahme, dass es ein Department-Modell gibt
+const Plan = require('./Plan');
+const PlanMembership = require('./PlanMembership');
 
 const Employee = sequelize.define('Employee', {
     name: {
@@ -8,23 +11,18 @@ const Employee = sequelize.define('Employee', {
     },
     department_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
-            model: 'departments',
+            model: Department,
             key: 'id'
-        }
-    },
-    hire_date: {
-        type: DataTypes.DATEONLY,
+        },
         allowNull: false
-    },
-    termination_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: true
     }
 }, {
     tableName: 'employees',
     timestamps: false
 });
+
+// Definiere die Many-to-Many-Beziehung
+Employee.belongsToMany(Plan, { through: PlanMembership, foreignKey: 'employee_id' });
 
 module.exports = Employee;

@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { OverlayService } from '../overlay-service';
-import { BackendAccess, NewPlanPayload } from '../backend-access';
-import { Employee, EmployeeService } from '../employee-service';
+import { BackendAccess } from '../backend-access'; // Dein Service
+import { EmployeeService, Employee } from '../employee-service'; // Dein Service
 
 @Component({
   selector: 'app-moderator-component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './moderator-component.html',
-  styleUrl: './moderator-component.css'
+  styleUrls: ['./moderator-component.css']
 })
 export class ModeratorComponent implements OnInit {
   planForm: FormGroup;
@@ -32,58 +32,59 @@ export class ModeratorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.employeeService.getEmployeesForDepartment().subscribe({
-      next: (employees) => {
-        this.availableEmployees = employees;
-        if (this.employees.length === 0) {
-            this.addEmployee();
-        }
-      },
-      error: () => this.overlayService.showOverlay("error", "Mitarbeiterliste konnte nicht geladen werden.")
+    // Bestehende Mitarbeiter für Vorschläge laden
+    this.employeeService.getEmployeesForDepartment().subscribe(employees => {
+      this.availableEmployees = employees;
     });
+    // Mit einer leeren Mitarbeiterzeile starten
+    this.addEmployee();
   }
 
   get employees(): FormArray {
     return this.planForm.get('employees') as FormArray;
   }
 
+  // Erstellt eine neue, leere Mitarbeiterzeile im Formular
   createEmployeeGroup(): FormGroup {
+    const today = new Date().toISOString().split('T')[0];
     return this.fb.group({
-      employee_id: [null, Validators.required],
+      name: ['', Validators.required],
+      start_date: [today, Validators.required],
+      end_date: [null],
       vacation_days_carryover: [0, [Validators.required, Validators.min(0)]],
       vacation_days_total: [30, [Validators.required, Validators.min(0)]]
     });
   }
 
-  addEmployee() {
+  addEmployee(): void {
     this.employees.push(this.createEmployeeGroup());
   }
 
-  removeEmployee(index: number) {
+  removeEmployee(index: number): void {
     this.employees.removeAt(index);
   }
 
-  submit() {
+  submit(): void {
     if (this.planForm.invalid) {
-      this.overlayService.showOverlay("error", "Bitte alle Felder korrekt ausfüllen.");
+      this.overlayService.showOverlay("error", "Bitte alle erforderlichen Felder korrekt ausfüllen.");
       this.planForm.markAllAsTouched();
       return;
     }
 
     this.submitting = true;
-
-    const payload: NewPlanPayload = this.planForm.value;
+    const payload = this.planForm.value;
 
     this.backendAccess.createPlan(payload).subscribe({
       next: () => {
         this.submitting = false;
-        this.overlayService.showOverlay("success", "Neuer Jahresplan wurde erfolgreich erstellt.");
-        this.router.navigate(['/plan']);
+        this.overlayService.showOverlay("success", `Jahresplan für ${payload.year} wurde erfolgreich erstellt.`);
+        this.router.navigate(['/years']);
       },
       error: (err) => {
-        console.error(err);
-        this.overlayService.showOverlay("error", err.error?.error || "Fehler beim Erstellen des Jahresplans.");
         this.submitting = false;
+        const message = err.error?.error || "Fehler beim Erstellen des Jahresplans.";
+        this.overlayService.showOverlay("error", message);
+        console.error(err);
       }
     });
   }
