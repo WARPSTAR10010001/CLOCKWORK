@@ -1,20 +1,25 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
+module.exports = (sequelize, DataTypes) => {
+    const Holiday = sequelize.define('Holiday', {
+        holiday_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        holiday_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        holiday_date: {
+            type: DataTypes.DATEONLY,
+            allowNull: false,
+        },
+    }, {
+        tableName: 'holidays',
+        timestamps: false,
+    });
 
-const Holiday = sequelize.define('Holiday', {
-    holiday_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        unique: true,
-        primaryKey: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-}, {
-    tableName: 'holidays',
-    timestamps: false
-});
+    // Holidays haben in diesem Schema keine direkten Assoziationen zu anderen Tabellen
+    // Falls doch, hier die .associate Methode hinzufügen
 
-module.exports = Holiday;
+    return Holiday;
+};

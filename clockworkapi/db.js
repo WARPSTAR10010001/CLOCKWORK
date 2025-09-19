@@ -1,5 +1,11 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const basename = path.basename(__filename);
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const db = {};
 
 const sequelize = new Sequelize(
     process.env.PG_DATABASE,
@@ -11,32 +17,24 @@ const sequelize = new Sequelize(
     }
 );
 
-const Department = require('./models/Department');
-const Employee = require('./models/Employee');
-const Holiday = require('./models/Holiday');
-const Plan = require('./models/Plan');
-const PlanEntry = require('./models/PlanEntry');
-const PlanMembership = require('./models/PlanMembership');
-const SystemUser = require('./models/SystemUser');
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
 
-Department.hasMany(SystemUser, { foreignKey: 'department_id' });
-SystemUser.belongsTo(Department, { foreignKey: 'department_id' });
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-Department.hasMany(Employee, { foreignKey: 'department_id' });
-Employee.belongsTo(Department, { foreignKey: 'department_id' });
-
-Department.hasMany(Plan, { foreignKey: 'department_id' });
-Plan.belongsTo(Department, { foreignKey: 'department_id' });
-
-Plan.belongsToMany(Employee, { through: PlanMembership, foreignKey: 'plan_id' });
-Employee.belongsToMany(Plan, { through: PlanMembership, foreignKey: 'employee_id' });
-
-Plan.hasMany(PlanEntry, { foreignKey: 'plan_id' });
-PlanEntry.belongsTo(Plan, { foreignKey: 'plan_id' });
-
-Employee.hasMany(PlanEntry, { foreignKey: 'employee_id' });
-PlanEntry.belongsTo(Employee, { foreignKey: 'employee_id' });
-
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
 (async () => {
     try {
@@ -47,4 +45,4 @@ PlanEntry.belongsTo(Employee, { foreignKey: 'employee_id' });
     }
 })();
 
-module.exports = sequelize;
+module.exports = db;

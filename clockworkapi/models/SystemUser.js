@@ -1,31 +1,37 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
-
-const SystemUser = sequelize.define('SystemUser', {
-    username: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false
-    },
-    password_hash: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-    role: {
-        type: DataTypes.ENUM('admin', 'mod', 'user'),
-        allowNull: false
-    },
-    department_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'departments',
-            key: 'id'
+module.exports = (sequelize, DataTypes) => {
+    const SystemUser = sequelize.define('SystemUser', {
+        user_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: true,
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'user' // z.B. 'user', 'moderator', 'admin'
         }
-    }
-}, {
-    tableName: 'system_users',
-    timestamps: false
-});
+    }, {
+        tableName: 'system_users',
+        timestamps: false,
+    });
 
-module.exports = SystemUser;
+    SystemUser.associate = (models) => {
+        SystemUser.belongsTo(models.Department, { foreignKey: 'department_id' });
+    };
+
+    return SystemUser;
+};

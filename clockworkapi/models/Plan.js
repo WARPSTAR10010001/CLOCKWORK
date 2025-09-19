@@ -1,29 +1,32 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
-const Department = require('./Department');
-const Employee = require('./Employee');
-const PlanMembership = require('./PlanMembership');
-
-const Plan = sequelize.define('Plan', {
-    year: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    department_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Department,
-            key: 'id'
+module.exports = (sequelize, DataTypes) => {
+    const Plan = sequelize.define('Plan', {
+        plan_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
-        allowNull: false
-    }
-}, {
-    tableName: 'plans',
-    timestamps: false
-});
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        month: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        year: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        }
+    }, {
+        tableName: 'plans',
+        timestamps: false,
+    });
 
-// Definiere die Many-to-Many-Beziehung
-Plan.belongsToMany(Employee, { through: PlanMembership, foreignKey: 'plan_id' });
+    Plan.associate = (models) => {
+        Plan.belongsTo(models.Department, { foreignKey: 'department_id' });
+        Plan.belongsToMany(models.Employee, { through: models.PlanMembership, foreignKey: 'plan_id' });
+        Plan.hasMany(models.PlanEntry, { foreignKey: 'plan_id' });
+    };
 
-
-module.exports = Plan;
+    return Plan;
+};

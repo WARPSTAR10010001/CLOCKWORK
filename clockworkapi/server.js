@@ -4,7 +4,9 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 3000;
 require("dotenv").config();
-require('./db'); 
+
+// Die neue Art, die DB und die Modelle zu importieren
+const db = require('./models'); 
 
 const { requestLogger } = require("./middleware/requestLogger");
 
@@ -17,11 +19,14 @@ app.use(cookieParser());
 app.use(cors({ origin: process.env.URL, credentials: true }));
 
 app.use(requestLogger);
-
 app.use("/api/auth", authRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/employees", employeeRoutes);
 
 app.get("/", (req, res) => res.status(200).send("CLOCKWORK API läuft!"));
 
-app.listen(PORT, () => console.log(`[START] CLOCKWORK API läuft auf Port ${PORT}!`));
+// Optional: Synchronisiere die Datenbank beim Start (erstellt Tabellen, falls nicht vorhanden)
+// In einer Produktivumgebung würde man hier eher Migrationen verwenden.
+db.sequelize.sync().then(() => {
+    app.listen(PORT, () => console.log(`[START] CLOCKWORK API läuft auf Port ${PORT}!`));
+});
