@@ -72,7 +72,7 @@ function generateHolidays(year) {
     const corpusChristi = new Date(easter);
     corpusChristi.setUTCDate(easter.getUTCDate() + 60);
     holidays.push({ name: "Fronleichnam", holiday_date: getDateStr(corpusChristi) });
-    
+
     return holidays;
 }
 
@@ -101,7 +101,7 @@ router.post("/", verifyToken, isMod, async (req, res) => {
             await transaction.rollback();
             return res.status(409).json({ error: `Ein Plan für das Jahr ${year} existiert bereits.` });
         }
-        
+
         const holidayCount = await Holiday.count({ where: { holiday_date: { [Op.between]: [`${year}-01-01`, `${year}-12-31`] } } });
         if (holidayCount === 0) {
             const holidays = generateHolidays(year);
@@ -112,7 +112,10 @@ router.post("/", verifyToken, isMod, async (req, res) => {
             if (!empData.name || !empData.name.trim()) continue;
 
             const [employee] = await Employee.findOrCreate({
-                where: { name: empData.name.trim(), department_id: departmentId },
+                where: {
+                    name: empData.name.trim(),
+                    department_id: departmentId
+                },
                 defaults: { name: empData.name.trim(), department_id: departmentId },
                 transaction
             });

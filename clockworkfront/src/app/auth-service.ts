@@ -19,6 +19,7 @@ interface AuthStatus {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private departmentId: number | null = null;
   private authStatusSubject = new BehaviorSubject<AuthStatus | null>(null);
   public authStatus$ = this.authStatusSubject.asObservable();
 
