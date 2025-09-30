@@ -1,123 +1,70 @@
 const express = require('express');
 const router = express.Router();
+// KORREKTUR: Das Modell wird aus dem zentralen 'models'-Export importiert
+const { SystemUser } = require('../models');
 const bcrypt = require('bcrypt');
-const jwt = 'jsonwebtoken';
-const SystemUser = require('../models/SystemUser');
-const Department = require('../models/Department');
+const jwt = require('jsonwebtoken');
 
-// POST /api/auth/register - Einen neuen Benutzer registrieren
+// Route zum Erstellen eines neuen Benutzers (Registrierung)
 router.post('/register', async (req, res) => {
-    const { username, password, email, department_id } = req.body;
+  try {
+    const { username, password, role } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Benutzername und Passwort sind erforderlich.' });
-    }
+    // Hashen des Passworts
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    try {
-        // Überprüfen, ob der Benutzer bereits existiert
-        const existingUser = await SystemUser.findOne({ where: { username } });
-        if (existingUser) {
-            return res.status(409).json({ message: 'Benutzername bereits vergeben.' });
-        }
+    // Erstellen des neuen Benutzers in der Datenbank
+    const newUser = await SystemUser.create({
+      username,
+      password: hashedPassword,
+      role: role || 'user', // Standardrolle 'user', wenn keine angegeben ist
+    });
 
-        // Passwort hashen
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Neuen Benutzer erstellen
-        const newUser = await SystemUser.create({
-            username,
-            password: hashedPassword,
-            email,
-            department_id
-        });
-
-        res.status(201).json({
-            message: 'Benutzer erfolgreich registriert.',
-            user: {
-                user_id: newUser.user_id,
-                username: newUser.username,
-                email: newUser.email
-            }
-        });
-    } catch (err) {
-        console.error('Fehler bei der Registrierung:', err);
-        res.status(500).json({ message: 'Serverfehler bei der Registrierung.' });
-    }
+    res.status(201).send({ message: 'User registered successfully!', userId: newUser.id });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 });
 
-
-// POST /api/auth/login - Einen Benutzer anmelden
+// Route zum Einloggen eines Benutzers
 router.post('/login', async (req, res) => {
+  try {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Benutzername und Passwort sind erforderlich.' });
+    // Suchen des Benutzers anhand des Benutzernamens
+    const user = await SystemUser.findOne({ where: { username } });
+
+    if (!user) {
+      return res.status(404).send({ message: 'User Not found.' });
     }
 
-    try {
-        // Benutzer in der Datenbank finden
-        const user = await SystemUser.findOne({
-            where: { username },
-            include: [{ model: Department, attributes: ['department_name'] }]
-        });
+    // Vergleichen des eingegebenen Passworts mit dem gespeicherten Hash
+    const passwordIsValid = bcrypt.compareSync(
+      password,
+      user.password
+    );
 
-        if (!user) {
-            return res.status(401).json({ message: 'Ungültige Anmeldedaten.' });
-        }
-
-        // Passwort vergleichen
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Ungültige Anmeldedaten.' });
-        }
-
-        // JWT erstellen
-        const payload = {
-            user: {
-                id: user.user_id,
-                username: user.username,
-                role: user.role // Annahme: Das User-Modell hat eine 'role'-Spalte
-            }
-        };
-
-        const token = jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' },
-        );
-        
-        // Token im Cookie speichern
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Nur über HTTPS in Produktion
-            sameSite: 'strict'
-        });
-
-        // Antwort senden
-        res.status(200).json({
-            message: 'Anmeldung erfolgreich.',
-            user: {
-                id: user.user_id,
-                username: user.username,
-                email: user.email,
-                role: user.role,
-                department: user.Department ? user.Department.department_name : null
-            },
-            token: token
-        });
-
-    } catch (err) {
-        console.error('Fehler beim Login:', err);
-        res.status(500).json({ message: 'Serverfehler beim Login.' });
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: 'Invalid Password!',
+      });
     }
-});
 
-// POST /api/auth/logout - Einen Benutzer abmelden
-router.post('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.status(200).json({ message: 'Abmeldung erfolgreich.' });
-});
+    // Erstellen eines JWT-Tokens
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, // Erwäge, den Secret Key in einer Umgebungsvariable zu speichern
+      process.env.JWT_EXPIRES,
+    );
 
+    res.status(200).send({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      accessToken: token,
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
 
 module.exports = router;
