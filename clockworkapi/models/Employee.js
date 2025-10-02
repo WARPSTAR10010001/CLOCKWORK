@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Employee = sequelize.define('Employee', {
-        employee_id: {
+        id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
@@ -13,20 +13,32 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique: true
+        department_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
-    }, {
-        tableName: 'employees',
-        timestamps: false
-    });
+    }, { tableName: 'employees', timestamps: false });
 
     Employee.associate = (models) => {
-        Employee.belongsTo(models.Department, { foreignKey: 'department_id' });
-        Employee.belongsToMany(models.Plan, { through: models.PlanMembership, foreignKey: 'employee_id' });
-        Employee.hasMany(models.PlanEntry, { foreignKey: 'employee_id' });
+        // Beziehung zum Department (war bereits korrekt)
+        Employee.belongsTo(models.Department, {
+            foreignKey: 'department_id'
+        });
+
+        // NEU: Ein Mitarbeiter hat viele einzelne Einträge in Dienstplänen
+        Employee.hasMany(models.PlanEntry, {
+            foreignKey: 'employee_id'
+        });
+
+        // KORRIGIERT: Definiert die Viele-zu-Viele-Beziehung ZU Plänen
+        // Sequelize wird automatisch eine Tabelle "plan_memberships" erstellen,
+        // um die Verbindungen zu speichern.
+        Employee.belongsToMany(models.Plan, {
+            through: 'plan_memberships', // Name der Zwischentabelle
+            foreignKey: 'employee_id',
+            otherKey: 'plan_id',
+            timestamps: false
+        });
     };
 
     return Employee;
