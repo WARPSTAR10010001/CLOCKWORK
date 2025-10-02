@@ -1,32 +1,38 @@
 const express = require("express");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const app = express();
-const PORT = 3000;
-require("dotenv").config();
+const db = require("./models");
+// NEU: Importiert eine Funktion zum Erstellen von Start-Daten
+const createInitialData = require("./utils/initial.data"); 
 
-// Die neue Art, die DB und die Modelle zu importieren
-const db = require('./models'); 
-
-const { requestLogger } = require("./middleware/requestLogger");
-
-const authRoutes = require("./routes/auth.routes");
-const employeeRoutes = require("./routes/employee.routes")
-const planRoutes = require("./routes/plans.routes");
-
+app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
-app.use(cors({ origin: process.env.URL, credentials: true }));
+app.use(express.urlencoded({ extended: true }));
 
-app.use(requestLogger);
-app.use("/api/auth", authRoutes);
-app.use("/api/plans", planRoutes);
-app.use("/api/employees", employeeRoutes);
+// --- WICHTIG: DATENBANK-RESET ---
+// `force: true` löscht alle Tabellen und erstellt sie basierend auf deinen Models neu.
+// Das behebt den "user_id existiert nicht"-Fehler.
+// Später für den Live-Betrieb auf `force: false` setzen oder entfernen!
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("--------------------------------------------------");
+  console.log("Datenbank wurde resettet und neu synchronisiert.");
+  console.log("Erstelle initiale Test-Daten...");
+  createInitialData(); // Ruft die neue Funktion auf
+  console.log("--------------------------------------------------");
+});
+// ------------------------------------
 
-app.get("/", (req, res) => res.status(200).send("CLOCKWORK API läuft!"));
+app.get("/", (req, res) => {
+  res.json({ message: "Willkommen zur Clockwork API." });
+});
 
-// Optional: Synchronisiere die Datenbank beim Start (erstellt Tabellen, falls nicht vorhanden)
-// In einer Produktivumgebung würde man hier eher Migrationen verwenden.
-db.sequelize.sync().then(() => {
-    app.listen(PORT, () => console.log(`[START] CLOCKWORK API läuft auf Port ${PORT}!`));
+// Routen einbinden
+require('./routes/auth.routes')(app);
+require('./routes/employee.routes')(app);
+require('./routes/plans.routes')(app);
+
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server läuft auf Port ${PORT}.`);
 });
