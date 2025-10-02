@@ -3,30 +3,39 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
+const process = require('process');
 const basename = path.basename(__filename);
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
-const sequelize = new Sequelize(
-    process.env.PG_DATABASE,
-    process.env.PG_USER,
-    process.env.PG_PASSWORD, {
-        host: process.env.PG_HOST || 'localhost',
-        dialect: 'postgres',
-        logging: false
-    }
-);
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
 fs
   .readdirSync(__dirname)
   .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+    // Diese Logik stellt sicher, dass alle .js-Dateien in diesem Ordner
+    // als Modelle geladen werden. Unser neues 'plan_employee.js' wird also
+    // automatisch gefunden.
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
+    );
   })
   .forEach(file => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
+// Diese Schleife ruft die 'associate'-Methode für jedes Modell auf.
+// Das ist der entscheidende Teil, der unsere Beziehungen aktiviert.
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -35,14 +44,5 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
-(async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('[START] CLOCKWORK DATENBANK läuft!');
-    } catch (err) {
-        console.error('[ERROR] CLOCKWORK DATENBANK Interner Fehler', err);
-    }
-})();
 
 module.exports = db;
