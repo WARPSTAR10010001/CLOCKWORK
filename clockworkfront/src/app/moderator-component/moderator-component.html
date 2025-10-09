@@ -1,8 +1,8 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Modpanel: Neuen Jahresplan anlegen</h1>
-  
+  <h1 class="emp page-header">Modpanel</h1>
+
   <form [formGroup]="planForm" (ngSubmit)="submit()">
-    
+
     <div class="form-group year-group">
       <label for="year">Dienstplan für das Jahr:</label>
       <input id="year" type="number" class="num-entry" formControlName="year">
@@ -13,55 +13,53 @@
     <div formArrayName="employees">
       <!-- Kopfzeile für die Mitarbeitertabelle -->
       <div class="employee-header-row">
-          <div>Name</div>
-          <div>Einstellungsdatum</div>
-          <div>Kündigungsdatum</div>
-          <div>Resturlaub (Vorjahr)</div>
-          <div>Urlaubsanspruch</div>
-          <div>Aktion</div>
+        <div>Name</div>
+        <div>Einstellungsdatum</div>
+        <div>Kündigungsdatum</div>
+        <div>Resturlaub (Vorjahr)</div>
+        <div>Urlaubsanspruch</div>
+        <div>Aktion</div>
       </div>
-      
+
       <!-- Loop über alle Mitarbeiter im Formular -->
       @for (employeeGroup of employees.controls; track employeeGroup; let i = $index) {
-        <div [formGroupName]="i" class="employee-entry-row">
-          
-          <!-- Name mit Autocomplete-Vorschlägen -->
-          <input type="text" 
-                 placeholder="Name eingeben oder wählen" 
-                 formControlName="name"
-                 list="employee-suggestions"
-                 autocomplete="off">
-          
-          <!-- Einstellungsdatum -->
-          <input type="date" formControlName="start_date">
+      <div [formGroupName]="i" class="employee-entry-row">
 
-          <!-- Kündigungsdatum -->
-          <input type="date" formControlName="end_date">
+        <!-- Name mit Autocomplete-Vorschlägen -->
+        <input type="text" placeholder="Name eingeben oder wählen" formControlName="name" list="employee-suggestions"
+          autocomplete="off">
 
-          <!-- Urlaubstage -->
-          <input type="number" class="num-entry-small" formControlName="vacation_days_carryover" min="0">
-          <input type="number" class="num-entry-small" formControlName="vacation_days_total" min="0">
+        <!-- Einstellungsdatum -->
+        <input type="date" formControlName="start_date">
 
-          <!-- Löschen-Button, sichtbar ab der zweiten Zeile -->
-          <div class="action-cell">
-            @if (i > 0) {
-              <a class="button-action" (click)="removeEmployee(i)">Löschen</a>
-            }
-          </div>
+        <!-- Kündigungsdatum -->
+        <input type="date" formControlName="end_date">
+
+        <!-- Urlaubstage -->
+        <input type="number" class="num-entry-small" formControlName="vacation_days_carryover" min="0">
+        <input type="number" class="num-entry-small" formControlName="vacation_days_total" min="0">
+
+        <!-- Löschen-Button, sichtbar ab der zweiten Zeile -->
+        <div class="action-cell">
+          @if (i > 0) {
+          <a class="button-action" (click)="removeEmployee(i)">Löschen</a>
+          }
         </div>
+      </div>
       }
     </div>
 
     <!-- Datalist für Namensvorschläge -->
     <datalist id="employee-suggestions">
       @for (emp of availableEmployees; track emp.id) {
-        <option [value]="emp.name"></option>
+      <option [value]="emp.name"></option>
       }
     </datalist>
 
+
     <div class="button-row">
       <a class="button-secondary" (click)="addEmployee()">Mitarbeiter hinzufügen</a>
-      <button type="submit" class="button-primary" [disabled]="submitting || planForm.invalid">
+      <button type="submit" class="button-primary" [disabled]="submitting || planForm.invalid || !departmentId">
         {{ submitting ? 'Wird erstellt...' : 'Jahresplan erstellen & Speichern' }}
       </button>
     </div>

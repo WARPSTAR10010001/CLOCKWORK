@@ -2,8 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OverlayService } from '../overlay-service';
-// NEU: Importiere den richtigen Service und das Plan-Interface
-import { BackendAccess, Plan } from '../backend-access';
+import { BackendAccess } from '../backend-access';
+import { AuthService } from '../auth-service';
+import { map, switchMap, take, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+// shape aus BackendAccess (Plan-List-Items)
+interface PlanListItem {
+  id: number;
+  departmentId: number;
+  year: number;
+  createdAt: string;
+}
 
 interface YearCard {
   value: number;
@@ -20,31 +30,41 @@ interface YearCard {
 export class YearComponent implements OnInit {
   years: YearCard[] = [];
 
-  // NEU: Injiziere den PlanService statt dem alten BackendAccess
   constructor(
-    private backendAccess: BackendAccess,
-    private overlayService: OverlayService
+    private backend: BackendAccess,
+    private auth: AuthService,
+    private overlay: OverlayService
   ) {}
 
-  ngOnInit() {
-    // NEU: Rufe die neue, saubere Methode im PlanService auf
-    this.backendAccess.getAllPlansForDepartment().subscribe({
-      next: (plans: Plan[]) => {
-        // Die Logik ist jetzt einfacher: Wir mappen direkt über die Plan-Objekte
-        this.years = plans.map((plan: Plan) => ({
-          value: plan.year,
-          colorClass: this.randomClass()
-        })).sort((a, b) => b.value - a.value); // Sortiere absteigend, neustes Jahr zuerst
+  ngOnInit(): void {
+    this.auth.authStatus$
+      .pipe(
+        take(1),
+        map(status => status?.user?.departmentId ?? null),
+        switchMap(depId => {
+          if (depId == null) {
+            this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+            return of<{ plans: PlanListItem[] }>({ plans: [] });
+          }
+          return this.backend.getPlansForDepartment(depId);
+        }),
+        catchError(() => {
+          this.overlay.showOverlay('error', 'Fehler beim Laden der verfügbaren Jahre.');
+          return of<{ plans: PlanListItem[] }>({ plans: [] });
+        })
+      )
+      .subscribe(({ plans }) => {
+        // Ein Plan je Jahr (Unique-Constraint vorhanden) – wir mappen direkt
+        const cards = plans
+          .map(p => ({ value: p.year, colorClass: this.randomClass() }))
+          .sort((a, b) => b.value - a.value);
+
+        this.years = cards;
 
         if (this.years.length === 0) {
-          // Die Nachricht ist jetzt hilfreicher für den Nutzer
-          this.overlayService.showOverlay("info", "Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.");
+          this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.');
         }
-      },
-      error: () => {
-        this.overlayService.showOverlay("error", "Fehler beim Laden der verfügbaren Jahre.");
-      }
-    });
+      });
   }
 
   private randomClass(): string {

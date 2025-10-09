@@ -1,82 +1,134 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of, map, switchMap } from 'rxjs';
 
-// --- Interfaces für Typsicherheit, die wir bereits definiert haben ---
-
-export interface Plan {
-  id: number;
-  year: number;
-  department_id: number;
-}
-
-export interface PlanEntry {
-  id: number;
-  plan_id: number;
-  employee_id: number;
-  entry_date: string; // ISO-String YYYY-MM-DD
-  entry_type: string;
-}
-
-export interface NewPlanPayload {
-  year: number;
-  employees: {
-    employee_id: number;
-    vacation_days_carryover: number;
-    vacation_days_total: number;
-  }[];
-}
+import {
+  PlanListItem, PlanDetails, PlanEntry, CreatePlanBody, CreateEntryBody, PlanEntryStatus
+} from './types';
 
 @Injectable({ providedIn: 'root' })
-export class BackendAccess { // Dein originaler Klassenname wird beibehalten
-  private apiUrl = "http://localhost:3000/api/plans";
+export class BackendAccess {
+  private base = 'http://localhost:4000/api';
 
   constructor(private http: HttpClient) {}
 
+  // === PLANS ===
+
+  /** Liste aller Pläne eines Fachbereichs (für /years Seite) */
+  getPlansForDepartment(departmentId: number): Observable<{ plans: PlanListItem[] }> {
+    return this.http.get<{ plans: PlanListItem[] }>(`${this.base}/plans?departmentId=${departmentId}`);
+  }
+
+  /** Plan-Details inkl. Mitarbeiter und Urlaubsständen */
+  getPlanDetails(planId: number): Observable<PlanDetails> {
+    return this.http.get<PlanDetails>(`${this.base}/plans/${planId}`);
+  }
+
+  /** Plan erstellen (nur MOD/ADMIN) */
+  createPlan(body: CreatePlanBody): Observable<{ id: number; departmentId: number; year: number; createdAt: string }> {
+    return this.http.post<{ id: number; departmentId: number; year: number; createdAt: string }>(
+      `${this.base}/plans`,
+      body
+    );
+  }
+
+  // === PLAN ENTRIES ===
+
+  /** Monatsfeed der Einträge für einen Plan */
+  getPlanEntriesForMonth(planId: number, monthYYYYMM: string): Observable<{ entries: PlanEntry[]; departmentId: number }> {
+    return this.http.get<{ entries: PlanEntry[]; departmentId: number }>(
+      `${this.base}/plan-entries`,
+      { params: { planId, month: monthYYYYMM } as any }
+    );
+  }
+
+  /** Ein einzelnes Datum eintragen */
+  createEntry(body: CreateEntryBody): Observable<PlanEntry> {
+    return this.http.post<PlanEntry>(`${this.base}/plan-entries`, body);
+  }
+
+  /** Mehrere Daten auf einmal eintragen (Client-seitig gebatcht) */
+  createEntriesBatch(
+    base: Omit<CreateEntryBody, 'date'>,
+    dates: string[],
+    status?: PlanEntryStatus
+  ): Observable<PlanEntry[]> {
+    const calls = dates.map(date =>
+      this.createEntry({
+        ...base,
+        date,
+        status: status ?? 'OTHER'
+      })
+    );
+    return forkJoin(calls);
+  }
+
+  /** Eintrag ändern */
+  updateEntry(entryId: number, patch: Partial<Pick<PlanEntry, 'status' | 'description'>>): Observable<{
+    id: number; status: PlanEntryStatus; description: string | null;
+  }> {
+    return this.http.patch<{ id: number; status: PlanEntryStatus; description: string | null }>(
+      `${this.base}/plan-entries/${entryId}`,
+      patch
+    );
+  }
+
+  /** Eintrag löschen */
+  deleteEntry(entryId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/plan-entries/${entryId}`);
+  }
+
   /**
-   * NEU & ERFORDERLICH: Holt alle Pläne, die für die Abteilung des eingeloggten Benutzers existieren.
-   * Wird von der Jahresübersicht (YearComponent) benötigt.
+   * Mehrere Einträge anhand (employeeId, dates[]) löschen:
+   * 1) Monat laden
+   * 2) passende IDs herausfiltern
+   * 3) alle DELETEs feuern
    */
-  getAllPlansForDepartment(): Observable<Plan[]> {
-    return this.http.get<Plan[]>(this.apiUrl, { withCredentials: true });
+  deleteEntriesByDates(planId: number, employeeId: number, dates: string[]): Observable<void[]> {
+    if (dates.length === 0) return of([]);
+    // Wir müssen wissen, in welchen Monaten diese Dates liegen:
+    const months = Array.from(new Set(dates.map(d => d.slice(0, 7))));
+    const monthCalls = months.map(m => this.getPlanEntriesForMonth(planId, m));
+    return forkJoin(monthCalls).pipe(
+      map(resArr => {
+        const all = resArr.flatMap(r => r.entries);
+        const toDelete = all.filter(e =>
+          e.employee_id === employeeId && dates.includes(e.entry_date)
+        );
+        return toDelete.map(e => e.id);
+      }),
+      switchMap(ids => forkJoin(ids.map(id => this.deleteEntry(id))))
+    );
   }
 
-  // Holt Pläne für ein spezifisches Jahr (wird z.B. im PlanViewer verwendet)
-  getPlans(year: number): Observable<Plan[]> {
-    return this.http.get<Plan[]>(`${this.apiUrl}?year=${year}`, { withCredentials: true });
+  // === EMPLOYEES (Minimal – für Setup Screens später praktisch) ===
+
+  getEmployees(departmentId: number): Observable<{ employees: Array<{
+    id: number;
+    display_name: string;
+    start_month: string;
+    end_month: string | null;
+    annual_leave_days: number;
+    carryover_days: number;
+    is_active: boolean;
+  }> }> {
+    return this.http.get<{ employees: any[] }>(`${this.base}/employees`, { params: { departmentId } as any });
   }
 
-  // Holt alle Einträge für eine spezifische Plan-ID
-  getPlanEntries(planId: number): Observable<PlanEntry[]> {
-    return this.http.get<PlanEntry[]>(`${this.apiUrl}/${planId}/entries`, { withCredentials: true });
+  createEmployee(payload: {
+    departmentId: number;
+    displayName: string;
+    startMonth: string;             // YYYY-MM-01
+    endMonth?: string | null;
+    annualLeaveDays?: number;
+    carryoverDays?: number;
+  }): Observable<any> {
+    return this.http.post(`${this.base}/employees`, payload);
   }
 
-  // Erstellt einen komplett neuen Jahresplan
-  createPlan(payload: NewPlanPayload): Observable<Plan> {
-    return this.http.post<Plan>(this.apiUrl, payload, { withCredentials: true });
-  }
+  // === HOLIDAYS ===
 
-  // Erstellt mehrere Einträge für einen Mitarbeiter in einem spezifischen Plan.
-  createEntries(planId: number, employeeId: number, entryType: string, dates: string[]): Observable<any> {
-    const url = `${this.apiUrl}/${planId}/entries`;
-    const payload = {
-      employee_id: employeeId,
-      entry_type: entryType,
-      dates: dates
-    };
-    return this.http.post(url, payload, { withCredentials: true });
-  }
-
-  // Löscht mehrere Einträge für einen Mitarbeiter aus einem spezifischen Plan.
-  deleteEntries(planId: number, employeeId: number, dates: string[]): Observable<any> {
-    const url = `${this.apiUrl}/${planId}/entries`;
-    const options = {
-      withCredentials: true,
-      body: {
-        employee_id: employeeId,
-        dates: dates
-      }
-    };
-    return this.http.delete(url, options);
+  getHolidays(year: number, stateCode: 'NW' = 'NW'): Observable<{ holidays: Array<{ id:number; date:string; name:string }> }> {
+    return this.http.get<{ holidays: any[] }>(`${this.base}/holidays`, { params: { year, stateCode } as any });
   }
 }

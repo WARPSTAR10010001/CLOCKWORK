@@ -1,62 +1,59 @@
-<div class="comp-wrap" *ngIf="currentPlan">
+<div class="comp-wrap">
   <!-- Header mit Monatsanzeige -->
+  @if (planId !== null) {
   <h1 class="emp page-header">
     Dienstplan {{ month.toString().padStart(2, '0') }}/{{ year }}
   </h1>
-  
-  <!-- Aktions-Buttons -->
+
+  <!-- Aktions-Buttons (Mapping an neue Statuswerte angepasst) -->
   <div id="entry-buttons">
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
     <a class="button-primary h" (click)="setEntry('H')">Homeoffice (H)</a>
     <a class="button-primary k" (click)="setEntry('K')">Krank (K)</a>
     <a class="button-primary l" (click)="setEntry('L')">Lehrgang (L)</a>
-    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (G)</a>
-    <a class="button-primary t" (click)="setEntry('T')">Termin (T)</a>
+    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (F)</a>
+    <a class="button-primary m" (click)="setEntry('M')">Termin (M)</a>
     <a class="button-action" (click)="setEntry('')">Löschen</a>
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
   </div>
-  
+
   <!-- Die Tabelle -->
   <div id="table-container">
     <table class="plan-table">
       <thead>
         <tr>
           <th class="sticky">Name</th>
-          <!-- Iteriert über die Tage des Monats -->
           @for (day of daysForMonth; track day) {
-            <th [class.weekend]="isWeekend(day)">
-              {{ day.getDate() }}
-              <br>
-              <!-- Wochentage, korrigiert für Sonntag (getDay() === 0) -->
-              {{ weekdays[day.getDay()] }}
-            </th>
+          <th>
+            {{ day.getDate() }}<br>
+            {{ weekdays[day.getDay()] }}
+          </th>
           }
         </tr>
       </thead>
       <tbody>
-        <!-- ÄUSSERE SCHLEIFE: Iteriert jetzt über das `employees`-Array von Objekten -->
         @for (employee of employees; track employee.id) {
-          <tr>
-            <!-- Zeigt den Namen des Mitarbeiters an -->
-            <td class="sticky">{{ employee.name }}</td>
-            
-            <!-- INNERE SCHLEIFE: Iteriert über die Tage -->
-            @for (day of daysForMonth; track day) {
-              
-              <!-- Die Zelle: Alle Aufrufe verwenden jetzt `employee.id` -->
-              <td (click)="selectCell(employee.id, day, $event)" 
-                  [ngClass]="getCellClasses(employee.id, day)">
-                  {{ getCellType(employee.id, day) }}
-              </td>
+        <tr>
+          <!-- Passe hier "employee.name" an, falls dein Employee-Objekt z.B. "display_name" hat -->
+          <td class="sticky">{{ employee.name }}</td>
+
+          @for (day of daysForMonth; track day) {
+          <td (click)="selectCell(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
+            [attr.data-status]="getStatus(employee.id, day)">
+            {{ statusLabel(getStatus(employee.id, day)) }}
+            </td>
             }
-          </tr>
+        </tr>
         }
       </tbody>
     </table>
   </div>
+  }
 </div>
 
 <!-- Fallback-Anzeige, wenn der Plan noch lädt oder nicht existiert -->
-<div class="comp-wrap" *ngIf="!currentPlan">
-    <p>Lade Dienstplan...</p>
+<div class="comp-wrap">
+  @if (planId === null) {
+  <p>Lade Dienstplan...</p>
+  }
 </div>
