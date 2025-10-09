@@ -26,8 +26,8 @@ export interface PlanDetails {
 }
 
 export type PlanEntryStatus =
-  | 'PRESENCE' | 'HOME' | 'MEETING' | 'FLEXTIME'
-  | 'TRAINING' | 'VACATION' | 'SICK' | 'OTHER';
+  | 'PRESENCE' | 'HOME' | 'FLEXTIME'
+  | 'TRAINING' | 'VACATION' | 'SICK' | 'OTHER' | 'APPOINTMENT';
 
 export interface PlanEntry {
   id: number;

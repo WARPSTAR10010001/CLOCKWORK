@@ -104,7 +104,13 @@ export class PlanComponent implements OnInit {
       if (!bundle) return;
 
       // 1) Entries in Map
-      this.monthEntries = bundle.entries.entries;
+      this.monthEntries = (bundle.entries.entries || []).map((e: any) => {
+        const entry_date = String(e.entry_date).slice(0, 10); // 'YYYY-MM-DD'
+        const status = e.status ?? e.entry_type ?? null;
+        return { ...e, entry_date, status };
+      });
+      this.buildEntryMap();
+
       this.buildEntryMap();
 
       // 2) Mitarbeitende nach plan-spezifischem Fenster filtern (Start/Ende monatsbasiert)
@@ -130,11 +136,12 @@ export class PlanComponent implements OnInit {
 
   private buildEntryMap(): void {
     this.entryMap.clear();
-    this.monthEntries.forEach(entry => {
-      const key = `${entry.employee_id}-${entry.entry_date}`; // exakt Serverformat
+    this.monthEntries.forEach((entry: any) => {
+      const key = `${entry.employee_id}-${entry.entry_date}`;
       this.entryMap.set(key, entry);
     });
   }
+
 
   /** erzeugt nur Montag–Freitag */
   private generateWeekdaysForMonth(year: number, month: number): Date[] {
@@ -214,16 +221,17 @@ export class PlanComponent implements OnInit {
   // === Aktionen ===
 
   private mapUiTypeToStatus(type: string): PlanEntryStatus | null {
-    const t = (type || '').toUpperCase();
-    if (t === 'PRESENCE' || t === 'P') return 'PRESENCE';
-    if (t === 'HOME' || t === 'H') return 'HOME';
-    if (t === 'MEETING' || t === 'M') return 'MEETING';
-    if (t === 'FLEXTIME' || t === 'F') return 'FLEXTIME';
-    if (t === 'TRAINING' || t === 'T') return 'TRAINING';
-    if (t === 'VACATION' || t === 'U' || t === 'V') return 'VACATION';
-    if (t === 'SICK' || t === 'K') return 'SICK';
-    if (t === 'OTHER' || t === 'O') return 'OTHER';
-    return null;
+    switch ((type || '').trim().toUpperCase()) {
+      case 'U': return 'VACATION';
+      case 'H': return 'HOME';
+      case 'K': return 'SICK';
+      case 'L': return 'TRAINING';
+      case 'G': return 'FLEXTIME';
+      case 'T': return 'APPOINTMENT'; // 👈 neu
+      case 'O': return 'OTHER';
+      case '': return null;
+      default: return null;
+    }
   }
 
   setEntry(type: string): void {
@@ -264,18 +272,31 @@ export class PlanComponent implements OnInit {
     if (calls.length === 0) { this.deselect(); return; }
 
     forkJoin(calls).pipe(
-      switchMap(() => this.backend.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month)))
-    ).subscribe({
-      next: (res) => {
-        this.monthEntries = res.entries;
-        this.buildEntryMap();
-        this.deselect();
-      },
-      error: (err) => {
-        this.overlay.showOverlay('error', err?.error?.error || 'Aktion konnte nicht ausgeführt werden.');
-        this.deselect();
-      }
-    });
+      switchMap((results: any[]) => {
+        // Summe der geänderten Einträge und übersprungenen Wochenendtage
+        const updated = results.reduce((sum, r) => sum + (r?.updated || 0), 0);
+        const weekendSkipped = results.reduce((sum, r) => sum + (r?.skipped?.weekend || 0), 0);
+        if (updated > 0 || weekendSkipped > 0) {
+          const msg = [
+            updated ? `${updated} Tag(e) gesetzt` : null,
+            weekendSkipped ? `${weekendSkipped} Wochenendtag(e) übersprungen` : null
+          ].filter(Boolean).join(' • ');
+          this.overlay.showOverlay('success', msg);
+        }
+        return this.backend.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month));
+      })
+    )
+      .subscribe({
+        next: (res) => {
+          this.monthEntries = res.entries;
+          this.buildEntryMap();
+          this.deselect();
+        },
+        error: (err) => {
+          this.overlay.showOverlay('error', err?.error?.error || 'Aktion konnte nicht ausgeführt werden.');
+          this.deselect();
+        }
+      });
   }
 
   getCellClasses(employeeId: number, day: Date): any {
@@ -290,21 +311,22 @@ export class PlanComponent implements OnInit {
 
   getStatus(employeeId: number, day: Date): PlanEntryStatus | null {
     const key = `${employeeId}-${this.toIso(day)}`;
-    return (this.entryMap.get(key)?.status as PlanEntryStatus) || null;
+    const e: any = this.entryMap.get(key);
+    // toleriert alte Feldnamen
+    return (e?.status ?? e?.entry_type ?? null) as PlanEntryStatus | null;
   }
 
   statusLabel(status: PlanEntryStatus | null): string {
     if (!status) return '';
-    // kurze Kürzel fürs Grid
     const map: Record<PlanEntryStatus, string> = {
-      PRESENCE: '',
-      HOME: 'H',
-      MEETING: 'M',
-      FLEXTIME: 'G',
-      TRAINING: 'L',
       VACATION: 'U',
+      HOME: 'H',
       SICK: 'K',
-      OTHER: '•'
+      TRAINING: 'L',
+      FLEXTIME: 'G',
+      APPOINTMENT: 'T',
+      OTHER: 'O',
+      PRESENCE: 'P'
     };
     return map[status] ?? '';
   }

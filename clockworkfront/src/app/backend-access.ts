@@ -10,7 +10,7 @@ import {
 export class BackendAccess {
   private base = 'http://localhost:4000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // === PLANS ===
 
@@ -103,15 +103,17 @@ export class BackendAccess {
 
   // === EMPLOYEES (Minimal – für Setup Screens später praktisch) ===
 
-  getEmployees(departmentId: number): Observable<{ employees: Array<{
-    id: number;
-    display_name: string;
-    start_month: string;
-    end_month: string | null;
-    annual_leave_days: number;
-    carryover_days: number;
-    is_active: boolean;
-  }> }> {
+  getEmployees(departmentId: number): Observable<{
+    employees: Array<{
+      id: number;
+      display_name: string;
+      start_month: string;
+      end_month: string | null;
+      annual_leave_days: number;
+      carryover_days: number;
+      is_active: boolean;
+    }>
+  }> {
     return this.http.get<{ employees: any[] }>(`${this.base}/employees`, { params: { departmentId } as any });
   }
 
@@ -126,9 +128,7 @@ export class BackendAccess {
     return this.http.post(`${this.base}/employees`, payload);
   }
 
-  // === HOLIDAYS ===
-
-  getHolidays(year: number, stateCode: 'NW' = 'NW'): Observable<{ holidays: Array<{ id:number; date:string; name:string }> }> {
+  getHolidays(year: number, stateCode: 'NW' = 'NW'): Observable<{ holidays: Array<{ id: number; date: string; name: string }> }> {
     return this.http.get<{ holidays: any[] }>(`${this.base}/holidays`, { params: { year, stateCode } as any });
   }
 }

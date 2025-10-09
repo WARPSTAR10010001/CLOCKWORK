@@ -11,10 +11,12 @@
     <a class="button-primary h" (click)="setEntry('H')">Homeoffice (H)</a>
     <a class="button-primary k" (click)="setEntry('K')">Krank (K)</a>
     <a class="button-primary l" (click)="setEntry('L')">Lehrgang (L)</a>
-    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (F)</a>
-    <a class="button-primary m" (click)="setEntry('M')">Termin (M)</a>
+    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (G)</a>
+    <a class="button-primary t" (click)="setEntry('T')">Termin (T)</a>
+    <a class="button-primary o" (click)="setEntry('O')">Anderes (O)</a>
     <a class="button-action" (click)="setEntry('')">Löschen</a>
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
+
   </div>
 
   <!-- Die Tabelle -->
@@ -41,8 +43,8 @@
           <td (click)="selectCell(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
             [attr.data-status]="getStatus(employee.id, day)">
             {{ statusLabel(getStatus(employee.id, day)) }}
-            </td>
-            }
+          </td>
+          }
         </tr>
         }
       </tbody>

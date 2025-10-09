@@ -1,0 +1,11 @@
+Must-Do:
+Edit Plan Component (add, remove, edit users) + delete plan routes (Mod or Admin only?)
+German error messages
+Software documentation
+Changelog updates
+APPOINTMENTS error
+
+QOL:
+Loading animation
+Visual upgrades + more themes
+Back button to specific year
