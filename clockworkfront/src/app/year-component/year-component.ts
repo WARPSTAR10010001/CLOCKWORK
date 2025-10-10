@@ -7,7 +7,6 @@ import { AuthService } from '../auth-service';
 import { map, switchMap, take, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-// shape aus BackendAccess (Plan-List-Items)
 interface PlanListItem {
   id: number;
   departmentId: number;
@@ -32,7 +31,7 @@ export class YearComponent implements OnInit {
 
   constructor(
     private backend: BackendAccess,
-    private auth: AuthService,
+    public auth: AuthService,
     private overlay: OverlayService
   ) {}
 
@@ -61,7 +60,10 @@ export class YearComponent implements OnInit {
 
         this.years = cards;
 
-        if (this.years.length === 0) {
+        if(this.auth.isAdmin()) {
+          this.overlay.showOverlay('info', 'nice!! du hast ein easter egg gefunden! jetzt meld dich mit einem it konto an du troll :p');
+        }
+        if (this.years.length === 0 && !this.auth.isAdmin()) {
           this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.');
         }
       });

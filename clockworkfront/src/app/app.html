@@ -1,19 +1,34 @@
 <div id="pagecontainer">
   <div id="header">
+    @if (authService.isMod()) {
+    <a id="root-link" [routerLink]="['/']">
+      <img src="cw-mono.png" height="100%" alt="logo">
+      <span id="root-header">CLOCKWORK</span>
+      <span id="edition">Moderator</span>
+    </a>
+    } @else if (authService.isAdmin()) {
+    <a id="root-link" [routerLink]="['/admin']">
+      <img src="cw-mono.png" height="100%" alt="logo">
+      <span id="root-header">CLOCKWORK</span>
+      <span id="edition">Admin</span>
+    </a>
+    } @else {
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
     </a>
+    }
     @if (authService.isLoggedIn()) {
     <div id="nav">
       @if (authService.isAdmin()) {
       <a [routerLink]="['/admin']">Adminpanel</a>
       <a [routerLink]="['/mod']">Modpanel</a>
-      }
-      @if (authService.isMod()) {
+      } @else if (authService.isMod()) {
       <a [routerLink]="['/mod']">Modpanel</a>
-      }
       <a [routerLink]="['/']">Jahresübersicht</a>
+      } @else {
+      <a [routerLink]="['/']">Jahresübersicht</a>
+      }
       <a (click)="logout()">Abmelden</a>
     </div>
     } @else {

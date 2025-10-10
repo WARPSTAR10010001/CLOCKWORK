@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, switchMap, take } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthService } from './auth-service';
 
 export interface Employee {
@@ -22,48 +22,50 @@ export class EmployeeService {
   constructor(
     private http: HttpClient,
     private auth: AuthService
-  ) { }
+  ) {}
 
   /**
    * Holt die Mitarbeiter eines Fachbereichs.
-   * - Aufruf mit Parameter: deptId wird verwendet.
-   * - Aufruf ohne Parameter: deptId wird aus dem AuthService (JWT) gelesen.
+   * - Mit departmentId: Admin-spezifische Auswahl
+   * - Ohne: nimmt Dept-ID aus dem JWT (scope im Backend enforced)
    */
   getEmployeesForDepartment(departmentId?: number): Observable<Employee[]> {
     if (typeof departmentId === 'number') {
+      const params = new HttpParams().set('departmentId', String(departmentId));
       return this.http
-        .get<{ employees: any[] }>(`${this.base}/employees`, { params: { departmentId } as any })
-        .pipe(map(res => res.employees.map(this.serverToEmployee)));
+        .get<{ employees: any[] }>(`${this.base}/employees`, { params, withCredentials: true })
+        .pipe(map(res => (res.employees || []).map(this.serverToEmployee)));
     }
 
-    // ohne Parameter: Dept-ID aus dem Auth-Status ziehen
+    // ohne Parameter: Dept-ID aus Auth-Status ziehen
     return this.auth.authStatus$.pipe(
       take(1),
       switchMap(status => {
         const depId = status?.user?.departmentId;
-        if (depId == null) throw new Error('No department in auth context');
-        return this.http.get<{ employees: any[] }>(`${this.base}/employees`, { params: { departmentId: depId } as any });
+        if (depId == null) return throwError(() => new Error('No department in auth context'));
+        const params = new HttpParams().set('departmentId', String(depId));
+        return this.http.get<{ employees: any[] }>(`${this.base}/employees`, { params, withCredentials: true });
       }),
-      map(res => res.employees.map(this.serverToEmployee))
+      map(res => (res.employees || []).map(this.serverToEmployee))
     );
   }
 
   /**
-   * Legt einen neuen Mitarbeiter im aktuellen Department an
-   * (wird in der Plan-Erstellung genutzt).
+   * Legt einen neuen Mitarbeiter im angegebenen Department an.
+   * Gibt mindestens { id } zurück (reicht für Moderator-Flow).
    */
   createEmployee(payload: {
     departmentId: number;
-    displayName: string;   // <— wichtig
-    startMonth: string;    // 'YYYY-MM-01'
+    displayName: string;     // wichtig: Backend erwartet displayName
+    startMonth: string;      // 'YYYY-MM-01'
     endMonth?: string | null;
     annualLeaveDays?: number;
     carryoverDays?: number;
-  }) {
-    return this.http.post<any>(`${this.base}/employees`, payload)
-      .pipe(map(this.serverToEmployee));
+  }): Observable<{ id: number }> {
+    return this.http
+      .post<any>(`${this.base}/employees`, payload, { withCredentials: true })
+      .pipe(map((res: any) => ({ id: res.id })));
   }
-
 
   // --- Mapper server -> client ---
   private serverToEmployee = (row: any): Employee => ({

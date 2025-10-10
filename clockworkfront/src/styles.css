@@ -2,6 +2,10 @@
     --red: #ff1342;
 }
 
+*::selection {
+    background: #00D5F4;
+}
+
 body.light {
     --bgc: #fff;
     --tc: #000;
@@ -140,7 +144,8 @@ a:hover {
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
-input {
+input,
+select {
     font-family: inherit;
     margin-bottom: 10px;
     border-radius: 10px;
@@ -153,7 +158,8 @@ input {
     transition: box-shadow 0.2s ease-in-out;
 }
 
-input:focus {
+input:focus,
+select:focus {
     outline: none;
     box-shadow: 0px 0px 30px var(--bsc);
 }

@@ -8,6 +8,8 @@ const planEntriesRoutes = require('./routes/planEntries.routes');
 const holidaysRoutes = require('./routes/holidays.routes');
 const employeesRoutes = require('./routes/employees.routes');
 const usersRoutes = require('./routes/users.routes');
+const departmentsRoutes = require('./routes/departments.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.use('/api', planEntriesRoutes);
 app.use('/api', holidaysRoutes);
 app.use('/api', employeesRoutes);
 app.use('/api', usersRoutes);
+app.use('/api', departmentsRoutes);
+app.use('/api', adminRoutes);
 
 app.get('/', (_req, res) => res.send('CLOCKWORK Server läuft!'));
 app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));

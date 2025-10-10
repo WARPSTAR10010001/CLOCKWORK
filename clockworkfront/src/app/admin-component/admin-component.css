@@ -1,0 +1,71 @@
+input {
+    text-align: center;
+}
+
+.details {
+    margin: 8px 0 12px;
+}
+
+.hint {
+    font-size: 1.5em;
+    margin: 6px 0 0 0;
+}
+
+.dept-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.dept-title {
+    font-size: 2em;
+}
+
+.dept-users {
+    font-size: 1.4em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.tag {
+    border: 3px solid var(--tc);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 1em;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+details summary {
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#optional {
+    margin-top: 20px;
+}
+
+#new {
+    margin-top: -20px;
+}
+
+.dept-card {
+    border-radius: 10px;
+    padding: 15px 12px;
+    display: flex;
+    gap: 30px;
+}
+
+:host-context(body.light) .dept-card:nth-child(odd) {
+    background: #f0f0f5;
+}
+
+:host-context(body.dim) .dept-card:nth-child(odd),
+:host-context(body.dark) .dept-card:nth-child(odd) {
+    background: #252525;
+}

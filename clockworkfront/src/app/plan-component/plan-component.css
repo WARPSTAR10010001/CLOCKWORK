@@ -70,7 +70,7 @@ td {
     border: 3px solid #2a2a2a;
 }
 
-:host-context(body.dark) tbody tr:nth-child(odd) td {
+:host-context(body.dark) tr:nth-child(odd) td {
     background-color: #2a2a2a;
     border: 3px solid #2a2a2a;
 }
@@ -170,32 +170,32 @@ td {
     background-color: var(--bgc) !important;
 }
 
-.u-cell {
+.vacation-cell {
     background-color: #88ff00 !important;
     border: 3px solid #88ff00 !important;
 }
 
-.h-cell {
+.home-cell {
     background-color: #00aeff !important;
     border: 3px solid #00aeff !important;
 }
 
-.k-cell {
+.sick-cell {
     background-color: #ff00bf !important;
     border: 3px solid #ff00bf !important;
 }
 
-.l-cell {
+.training-cell {
     background-color: #ffa318 !important;
     border: 3px solid #ffa318 !important;
 }
 
-.g-cell {
+.flextime-cell {
     background-color: #864eff !important;
     border: 3px solid #864eff !important;
 }
 
-.t-cell {
+.appointment-cell {
     background-color: #00ffaa !important;
     border: 3px solid #00ffaa !important;
 }

@@ -14,7 +14,7 @@ import { OverlayService } from '../overlay-service';
 export class AuthComponent {
   username: string = '';
   password: string = '';
-  isSubmitting = false; // Für besseres User-Feedback
+  isSubmitting = false;
 
   constructor(
     private authService: AuthService, 
@@ -36,8 +36,13 @@ export class AuthComponent {
       // Die Erfolgslogik (Weiterleitung, Erfolgsmeldung) wird
       // komplett vom `tap`-Operator im AuthService übernommen.
       next: () => {
-        this.router.navigate(["/years"]);
-        this.isSubmitting = false;
+        if (this.authService.isAdmin()) {
+          this.router.navigate(["/admin"]);
+          this.isSubmitting = false;
+        } else {
+          this.router.navigate(["/years"]);
+          this.isSubmitting = false;
+        }
       },
       // Der `error`-Block ist weiterhin wichtig, um auf fehlgeschlagene Logins zu reagieren.
       error: (err) => {

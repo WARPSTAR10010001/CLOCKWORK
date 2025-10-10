@@ -1,4 +1,47 @@
 <div class="comp-wrap">
     <h1 class="emp page-header">Adminpanel</h1>
-    <h1></h1>
+    <h1 id="new">Neuen Fachbereich erstellen</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-row">
+            <label for="depName">Fachbereichsname:</label>
+            <input id="depName" type="text" formControlName="name" placeholder="z.B. IT, Finanzen">
+        </div>
+
+        <details class="details">
+            <summary>Optionale Benutzernamen festlegen</summary>
+            <div id="optional">
+                <div class="form-row">
+                    <label for="userU">Username:</label>
+                    <input id="userU" type="text" formControlName="userUsername" placeholder="leer = auto (user-it)">
+                </div>
+                <div class="form-row">
+                    <label for="modU">Moderatorname:</label>
+                    <input id="modU" type="text" formControlName="modUsername" placeholder="leer = auto (mod-it)">
+                </div>
+                <p class="hint">Initiales Passwort für beide: init (muss bei Login geändert werden).</p>
+            </div>
+        </details>
+
+        <div class="button-row">
+            <button class="button-primary" type="submit" [disabled]="form.invalid || submitting">
+                {{ submitting ? 'Erstelle…' : 'Fachbereich & Nutzer anlegen' }}
+            </button>
+        </div>
+    </form>
+
+    <hr>
+
+    <h1>Bestehende Fachbereiche</h1>
+    <div class="dept-list">
+        @for (d of departments; track d.id) {
+        <div class="dept-card">
+            <div class="dept-title">{{ d.name }}</div>
+            <div class="dept-users">
+                @for (u of d.users; track u.id) {
+                <span class="tag">{{ u.role }}: {{ u.username }}</span>
+                }
+            </div>
+        </div>
+        }
+    </div>
 </div>

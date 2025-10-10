@@ -2,64 +2,75 @@
   <h1 class="emp page-header">Modpanel</h1>
 
   <form [formGroup]="planForm" (ngSubmit)="submit()">
-
-    <div class="form-group year-group">
+    <!-- Obere Formularzeilen: Label links, Feld rechts -->
+    <div class="form-row">
       <label for="year">Dienstplan für das Jahr:</label>
       <input id="year" type="number" class="num-entry" formControlName="year">
     </div>
+
+    @if (auth.isAdmin()) {
+      <div class="form-row">
+        <label for="department">Fachbereich/Gruppe:</label>
+        <select id="department" class="dep-entry" formControlName="departmentId" (change)="onDepartmentChange()">
+          <option [ngValue]="null">— bitte wählen —</option>
+          @for (d of departments; track d.id) {
+            <option [ngValue]="d.id">{{ d.name }}</option>
+          }
+        </select>
+      </div>
+    }
+
     <hr>
 
-    <h3>Mitarbeiter für dieses Jahr</h3>
-    <div formArrayName="employees">
-      <!-- Kopfzeile für die Mitarbeitertabelle -->
-      <div class="employee-header-row">
-        <div>Name</div>
-        <div>Einstellungsdatum</div>
-        <div>Kündigungsdatum</div>
-        <div>Resturlaub (Vorjahr)</div>
-        <div>Urlaubsanspruch</div>
-        <div>Aktion</div>
-      </div>
+    <h1>Mitarbeiter für diesen Plan</h1>
 
-      <!-- Loop über alle Mitarbeiter im Formular -->
+    <!-- Kopfzeile (tabellenartige Beschriftung) -->
+    <div class="employee-header-row">
+      <div>Name</div>
+      <div>Startdatum</div>
+      <div>Enddatum</div>
+      <div>Übertrag Urlaub</div>
+      <div>Urlaub dieses Jahr</div>
+      <div>Aktion</div>
+    </div>
+
+    <!-- Wrapper für saubere :nth-child(even) Zebra-Streifen -->
+    <div class="employees-container" formArrayName="employees">
       @for (employeeGroup of employees.controls; track employeeGroup; let i = $index) {
-      <div [formGroupName]="i" class="employee-entry-row">
+        <div class="employee-entry-row" [formGroupName]="i">
+          <input type="text"
+                 placeholder="Name eingeben oder wählen"
+                 formControlName="name"
+                 list="employee-suggestions"
+                 autocomplete="off">
 
-        <!-- Name mit Autocomplete-Vorschlägen -->
-        <input type="text" placeholder="Name eingeben oder wählen" formControlName="name" list="employee-suggestions"
-          autocomplete="off">
+          <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
+          <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
 
-        <!-- Einstellungsdatum -->
-        <input type="date" formControlName="start_date">
+          <input type="number" class="num-entry-small" formControlName="vacation_days_carryover" min="0">
+          <input type="number" class="num-entry-small" formControlName="vacation_days_total" min="0">
 
-        <!-- Kündigungsdatum -->
-        <input type="date" formControlName="end_date">
-
-        <!-- Urlaubstage -->
-        <input type="number" class="num-entry-small" formControlName="vacation_days_carryover" min="0">
-        <input type="number" class="num-entry-small" formControlName="vacation_days_total" min="0">
-
-        <!-- Löschen-Button, sichtbar ab der zweiten Zeile -->
-        <div class="action-cell">
-          @if (i > 0) {
-          <a class="button-action" (click)="removeEmployee(i)">Löschen</a>
-          }
+          <div class="action-cell">
+            @if (i > 0) {
+              <a class="button-action" (click)="removeEmployee(i)">Löschen</a>
+            } @else {
+              <a class="button-action" id="unclickable">Löschen</a>
+            }
+          </div>
         </div>
-      </div>
       }
     </div>
 
-    <!-- Datalist für Namensvorschläge -->
     <datalist id="employee-suggestions">
       @for (emp of availableEmployees; track emp.id) {
-      <option [value]="emp.name"></option>
+        <option [value]="emp.name"></option>
       }
     </datalist>
 
-
     <div class="button-row">
-      <a class="button-secondary" (click)="addEmployee()">Mitarbeiter hinzufügen</a>
-      <button type="submit" class="button-primary" [disabled]="submitting || planForm.invalid || !departmentId">
+      <a class="button-primary" (click)="addEmployee()">Mitarbeiter hinzufügen</a>
+      <button type="submit" class="button-primary"
+              [disabled]="submitting || planForm.invalid || !effectiveDepartmentId">
         {{ submitting ? 'Wird erstellt...' : 'Jahresplan erstellen & Speichern' }}
       </button>
     </div>

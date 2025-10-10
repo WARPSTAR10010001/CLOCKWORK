@@ -1,23 +1,149 @@
-input {
+/* Globale Feld-Ausrichtung */
+input,
+select {
     text-align: center;
+    margin: 0;
+    /* fix: verhindert abweichende Browser-Einrückung */
 }
 
-.employee-row input {
-    margin-right: 20px;
+/* Obere Formularzeilen: Label links, Feld rechts */
+.form-row {
+    display: grid;
+    grid-template-columns: 220px minmax(260px, 1fr);
+    align-items: center;
+    gap: 12px 16px;
+    margin: 10px 0;
 }
 
-.employee-row {
-    margin-bottom: 20px;
-}
-
-.button-row {
-    margin-right: 20px;
+.form-row label {
+    justify-self: start;
+    font-size: 2em;
+    /* 👈 größer & besser lesbar */
 }
 
 .num-entry {
-    width: 300px;
+    width: 200px;
+}
+
+.dep-entry {
+    width: 400px;
+}
+
+/* Mitarbeitertabelle: Header als Grid */
+.employee-header-row {
+    width: 90%;
+    display: grid;
+    grid-template-columns: 2.1fr 1.2fr 1.2fr 0.8fr 0.9fr 0.6fr;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+:host-context(body.light) .employee-header-row {
+    background: #f0f0f5;
+}
+
+:host-context(body.dim) .employee-header-row,
+:host-context(body.dark) .employee-header-row {
+    background: #252525;
+}
+
+/* Mitarbeiterzeilen (gleiche Spalten wie Header) */
+.employees-container {
+    margin-top: 6px;
+    box-sizing: border-box;
+}
+
+.employee-entry-row {
+    display: grid;
+    width: 90%;
+    grid-template-columns: 2.1fr 1.2fr 1.2fr 0.8fr 0.9fr 0.6fr;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Zebra-Streifen */
+.employees-container>.employee-entry-row:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+:host-context(body.light) .employees-container>.employee-entry-row:nth-child(even) {
+    background-color: #efefef;
+}
+
+:host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even),
+:host-context(body.dark) .employees-container>.employee-entry-row:nth-child(even) {
+    background-color: #2a2a2a;
+}
+
+.employee-entry-row input[type='text'] {
+    min-width: 260px;
+}
+
+.employee-entry-row input[type='date'] {
+    min-width: 160px;
+}
+
+.employee-entry-row .num-entry-small {
+    width: 120px;
+}
+
+.employee-entry-row .action-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.button-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .page-header {
-    margin-bottom: -20px;
+    margin-bottom: -6px;
+}
+
+/* Optional: etwas Innenabstand für die Felder */
+.employee-entry-row input,
+.employee-entry-row select,
+.num-entry,
+.dep-entry {
+    padding: 6px 10px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* fix: sorgt dafür, dass erste Zeile exakt fluchtet */
+.employees-container>.employee-entry-row:first-child {
+    margin-left: 0;
+    padding-left: 12px;
+}
+
+.employee-header-row div {
+    font-size: 1.3em;
+}
+
+#unclickable {
+    cursor:not-allowed !important;
+    border: 4px solid #585858;
+    color: #585858 !important;
+    text-decoration: none;
+    font-size: 2em;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 5px 10px;
+    box-shadow: 0px 0px 30px #00000000;
+    background-color: var(--bgc);
+    transition: none !important;
+}
+
+#unclickable:hover {
+    background-color: var(--bgc) !important;
 }
