@@ -5,9 +5,12 @@ Software documentation
 Changelog updates
 Add global plan overview for admins
 Delete/edit departments (names, passwords) for admins
+Force new password on first login & on password reset
 
 QOL:
 Loading animation
-Rework dark theme + more themes
+Rework dark theme
+Implement "Soft" Colorscheme
 Add "Monatsübersicht"-button in header
 Press enter to login
+Implement QuickAction Overlay

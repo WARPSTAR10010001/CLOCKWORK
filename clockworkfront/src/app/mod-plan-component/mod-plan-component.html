@@ -1,5 +1,5 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Modpanel</h1>
+  <h1 class="emp page-header">Neuer Plan</h1>
 
   <form [formGroup]="planForm" (ngSubmit)="submit()">
     <!-- Obere Formularzeilen: Label links, Feld rechts -->
@@ -71,7 +71,7 @@
       <a class="button-primary" (click)="addEmployee()">Mitarbeiter hinzufügen</a>
       <button type="submit" class="button-primary"
               [disabled]="submitting || planForm.invalid || !effectiveDepartmentId">
-        {{ submitting ? 'Wird erstellt...' : 'Jahresplan erstellen & Speichern' }}
+        {{ submitting ? 'Wird erstellt...' : 'Jahresplan erstellen' }}
       </button>
     </div>
   </form>

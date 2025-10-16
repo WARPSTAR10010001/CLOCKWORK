@@ -42,3 +42,14 @@ input {
 #login {
     text-decoration: none;
 }
+
+p {
+    font-size: 1.5em;
+    margin-bottom: -20px;
+    margin-top: 20px;
+}
+
+p:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

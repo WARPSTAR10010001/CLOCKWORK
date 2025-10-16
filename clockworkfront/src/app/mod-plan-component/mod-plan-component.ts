@@ -22,10 +22,10 @@ interface RowForPlan {
   selector: 'app-moderator-component',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './moderator-component.html',
-  styleUrls: ['./moderator-component.css']
+  templateUrl: './mod-plan-component.html',
+  styleUrls: ['./mod-plan-component.css']
 })
-export class ModeratorComponent implements OnInit {
+export class ModPlanComponent implements OnInit {
   planForm: FormGroup;
   submitting = false;
 

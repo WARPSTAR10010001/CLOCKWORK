@@ -54,4 +54,8 @@ export class AuthComponent {
       }
     });
   }
+
+  unlockAccess() {
+    this.overlayService.showOverlay("info", "Um Zugang zu CLOCKWORK zu erhalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+  }
 }
