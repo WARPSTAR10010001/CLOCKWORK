@@ -63,11 +63,29 @@
   } @else if (overlayState.type === "passwordReset") {
     <div id="passwordReset-overlay">
       <h1 class="emp page-header">Passwort ändern</h1>
-      <h1>Das Passwort muss mindestens 5 Zeichen lang sein</h1>
+      <h1>Das Passwort muss mindestens 5 Zeichen lang sein.</h1>
       <input type="password" placeholder="Neues Passwort eingeben">
       <input type="password" placeholder="Neues Passwort wiederholen">
-      <h1></h1>
+      <h1>Hinweis: ...</h1>
       <a (click)="close()" class="button-primary">Passwort speichern</a>
+    </div>
+  } @else if (overlayState.type === "quickAction") {
+    <div id="quickAction-overlay">
+      <h1 class="emp page-header">QuickAction</h1>
+      <input type="text" placeholder="Befehl eingeben...">
+    </div>
+  } @else if (overlayState.type === "feedback") {
+    <div id="feedback-overlay">
+      <h1 class="emp page-header">Feedback geben</h1>
+      <select>
+        <option>-- KATEGORIE WÄHLEN --</option>
+        <option>Verbesserungsvorschlag</option>
+        <option>Featureanfrage</option>
+        <option>Visuelle- und/oder Logikfehler</option>
+        <option>Lob</option>
+      </select>
+      <textarea></textarea>
+      <a (click)="close()" class="button-primary">Feedback schicken</a>
     </div>
   } @else if (overlayState.type === "error") {
   <div id="error-overlay">

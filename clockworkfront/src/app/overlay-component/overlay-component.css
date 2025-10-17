@@ -11,11 +11,18 @@
   align-items: center;
 }
 
+input[type="text"],
+input[type="password"] {
+  width: 95%;
+}
+
 #style-overlay,
 #error-overlay,
 #success-overlay,
 #info-overlay,
-#passwordReset-overlay {
+#passwordReset-overlay,
+#quickAction-overlay,
+#feedback-overlay {
   padding: 40px 50px;
   border-radius: 10px;
   width: 40%;
@@ -42,7 +49,9 @@ h1 {
 :host-context(body.outlines) #error-overlay,
 :host-context(body.outlines) #success-overlay,
 :host-context(body.outlines) #info-overlay,
-:host-context(body.outlines) #passwordReset-overlay {
+:host-context(body.outlines) #passwordReset-overlay,
+:host-context(body.outlines) #quickAction-overlay,
+:host-context(body.outlines) #feedback-overlay {
   outline: 3px solid var(--olc);
 }
 
@@ -68,4 +77,12 @@ h1 {
   flex-direction: row;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+#quickAction-overlay h1 {
+  margin-bottom: 0;
+}
+
+#quickAction-overlay {
+  margin-top: -500px;
 }

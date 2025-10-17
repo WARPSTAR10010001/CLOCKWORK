@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type OverlayType = 'style' | 'error' | 'success' | 'info' | 'passwordReset';
+export type OverlayType = 'style' | 'error' | 'success' | 'info' | 'passwordReset' | 'quickAction' | 'feedback';
 
 export interface OverlayState {
   show: boolean;

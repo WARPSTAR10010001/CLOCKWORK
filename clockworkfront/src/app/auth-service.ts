@@ -7,11 +7,11 @@ import { OverlayService } from './overlay-service';
 type Role = 'admin' | 'mod' | 'user';
 
 interface User {
-  id: number;           // from JWT sub
-  username?: string;    // we’ll set it from login form (backend doesn’t return it)
+  id: number;
+  username?: string;
   role: Role;
-  passwordReset: boolean;
   departmentId?: number | null;
+  passwordReset?: boolean; // 👈 optional, falls du es im State brauchst
 }
 
 interface AuthStatus {
@@ -25,8 +25,8 @@ export class AuthService {
   private authStatusSubject = new BehaviorSubject<AuthStatus>({ loggedIn: false, user: null, exp: null });
   public authStatus$ = this.authStatusSubject.asObservable();
 
-  // backend base (adjust if you use environments)
-  private baseUrl = 'http://localhost:4000/api/auth';
+  // 👇 Route-Fix: zusammengeführtes Backend nutzt /api/login
+  private baseUrl = 'http://localhost:4000/api';
   private tokenKey = 'clockwork_token';
 
   constructor(
@@ -34,10 +34,9 @@ export class AuthService {
     private router: Router,
     private overlay: OverlayService
   ) {
-    this.restoreSession(); // try to load token from localStorage on app start
+    this.restoreSession();
   }
 
-  // ===== helpers =====
   private decodeJwt(token: string): any | null {
     try {
       const payload = token.split('.')[1];
@@ -67,10 +66,9 @@ export class AuthService {
     const role = this.toRole(decoded.role);
     const user: User | null = role ? {
       id: Number(decoded.sub),
-      username: usernameFromForm, // we only know it during login
+      username: usernameFromForm,
       role,
-      passwordReset: decoded.passwort_Reset,
-      departmentId: decoded.departmentId ?? null,
+      departmentId: decoded.departmentId ?? null
     } : null;
 
     const exp = typeof decoded.exp === 'number' ? decoded.exp : null;
@@ -86,96 +84,58 @@ export class AuthService {
 
   private restoreSession() {
     const token = localStorage.getItem(this.tokenKey);
-    if (!token) {
-      this.clearSession();
-      return;
-    }
+    if (!token) return this.clearSession();
     const decoded = this.decodeJwt(token);
-    if (!decoded) {
-      this.clearSession();
-      return;
-    }
+    if (!decoded) return this.clearSession();
     const exp = typeof decoded.exp === 'number' ? decoded.exp : null;
-    if (exp && Date.now() / 1000 >= exp) {
-      this.clearSession();
-      return;
-    }
-    // we don’t know username on refresh -> omit it
+    if (exp && Date.now() / 1000 >= exp) return this.clearSession();
+
     const role = this.toRole(decoded.role);
     const user: User | null = role ? {
       id: Number(decoded.sub),
       role,
-      passwordReset: decoded.passwordReset,
-      departmentId: decoded.departmentId ?? null
+      departmentId: decoded.departmentId ?? null,
     } : null;
 
     this.authStatusSubject.next({ loggedIn: !!user, user, exp });
   }
 
-  // ===== public API =====
-
-  // since backend has no /status, we synthesize it from the token
   checkStatus(): Observable<AuthStatus> {
-    // if you want a ping to backend, hit /api/health here.
     return of(this.authStatusSubject.value);
   }
 
   login(username: string, password: string): Observable<AuthStatus> {
-  type LoginResponse = {
-    token?: string;                     // optional – Cookie reicht, lassen wir aber drin
-    loggedIn: boolean;
-    user: User;                         // enthält passwordReset: boolean
-    expHours?: number;                  // kommt vom Backend (optional)
-  };
+    return this.http.post<{
+      token: string;
+      user?: { passwordReset?: boolean };
+    }>(
+      `${this.baseUrl}/auth/login`,
+      { username, password },
+      { withCredentials: true }
+    ).pipe(
+      tap((res) => {
+        this.setSession(res.token, username);
+        const status = this.authStatusSubject.value;
 
-  return this.http.post<LoginResponse>(
-    `${this.baseUrl}/login`,
-    { username, password },
-    { withCredentials: true }
-  ).pipe(
-    tap((res) => {
-      if (!res || !res.loggedIn || !res.user) {
-        this.authStatusSubject.next({ loggedIn: false, user: null });
+        if (status.loggedIn) {
+          if (res.user?.passwordReset === true) {
+            this.overlay.showOverlay('passwordReset', username);
+          } else {
+            this.overlay.showOverlay('success', `Willkommen, ${username}!`);
+            this.router.navigate(['/years']);
+          }
+        }
+      }),
+      catchError((err) => {
         this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
-        return;
-      }
-
-      // Optional: Token lokal merken, falls du ihn zusätzlich brauchst
-      if (res.token) {
-        // Falls du eine setSession hattest: Token + Username setzen
-        // this.setSession(res.token, username);
-      }
-
-      // Auth-Status global aktualisieren
-      const nextStatus: AuthStatus = {
-        loggedIn: true,
-        user: res.user,
-        exp: res.expHours ? res.expHours * 3600 : undefined
-      };
-      this.authStatusSubject.next(nextStatus);
-
-      // Passwort-Reset erzwungen?
-      if (res.user.passwordReset) {
-        // 👉 Overlay-Typ "resetPassword" anzeigen; du übernimmst die Logik im Overlay
-        this.overlay.showOverlay("passwordReset");
-        // Keine Navigation – Nutzer bleibt auf der Seite / sieht das Overlay
-        return;
-      }
-
-      // Normaler Login-Flow
-      this.overlay.showOverlay('success', `Willkommen, ${res.user.username}!`);
-      this.router.navigate(['/years']);
-    }),
-    catchError(() => {
-      this.authStatusSubject.next({ loggedIn: false, user: null });
-      this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
-      return of({ loggedIn: false, user: null } as AuthStatus);
-    })
-  );
-}
+        this.clearSession();
+        return of({ loggedIn: false, user: null, exp: null });
+      }),
+      tap(() => { }),
+    ) as unknown as Observable<AuthStatus>;
+  }
 
   logout(): void {
-    // server has no /logout — just drop token client-side
     this.clearSession();
     this.overlay.showOverlay('success', 'Erfolgreich abgemeldet.');
     this.router.navigate(['/auth']);

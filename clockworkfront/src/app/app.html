@@ -45,10 +45,10 @@
   </div>
   <div id="footer">
     <div id="footer-link">
-      <a [routerLink]="['/changelog']">Changelog</a>
+      <a (click)="openFeedbackOverlay()">Feedback</a>
       <a [routerLink]="['/documentation']">Dokumentation</a>
       <a (click)="openStyleOverlay()">Ansicht</a>
     </div>
-    <p class="emp">V0.2.1 // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp"><a id="version" [routerLink]="['/changelog']">V0.2.2</a> // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

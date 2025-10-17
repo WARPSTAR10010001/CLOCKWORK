@@ -38,7 +38,8 @@
     line-height: 1;
 }
 
-#credit:hover {
+#credit:hover,
+#version:hover {
     text-decoration: none;
 }
 

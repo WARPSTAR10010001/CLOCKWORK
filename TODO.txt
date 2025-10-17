@@ -2,15 +2,16 @@ Must-Do:
 Edit Plan Component (add, remove, edit users) + delete plan (Mod or Admin only?)
 German error messages
 Software documentation
-Changelog updates
 Add global plan overview for admins
 Delete/edit departments (names, passwords) for admins
 Force new password on first login & on password reset
+-> check on reload if passwordReset is still true, otherwise users can skip the overlay which is not intended
+-> Make passwordReset overlay priority higher than quickAction overlay
+restructure modpanel
 
 QOL:
 Loading animation
 Rework dark theme
 Implement "Soft" Colorscheme
 Add "Monatsübersicht"-button in header
-Press enter to login
 Implement QuickAction Overlay

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { AuthService } from '../auth-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -56,6 +56,11 @@ export class AuthComponent {
   }
 
   unlockAccess() {
-    this.overlayService.showOverlay("passwordReset", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+    this.overlayService.showOverlay("info", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+  }
+
+  @HostListener('document:keydown.enter', ['$event'])
+  onEscHandler(event: Event) {
+    this.login();
   }
 }
