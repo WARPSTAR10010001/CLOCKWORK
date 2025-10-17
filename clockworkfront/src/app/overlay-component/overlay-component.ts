@@ -56,7 +56,9 @@ export class OverlayComponent implements OnInit {
   @HostListener('document:keydown.escape', ['$event'])
   onEscHandler(event: Event) {
     if (this.overlayState.show) {
-      this.close();
+      if (this.overlayState.type !== 'passwordReset') {
+        this.close();
+      }
     }
   }
 }

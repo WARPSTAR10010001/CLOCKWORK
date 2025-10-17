@@ -13,7 +13,63 @@
         </div>
         <hr>
         -->
-        <div id="016">
+        <div id="0-2-1">
+            <h2>[V0.2.1 // 17.10.2025]: Quality-of-Life Features & Vorbereitung Impersonation</h2>
+            <ul>
+                <li>Automatische Anmeldung hinzugefügt: Benutzer werden beim Öffnen der URL automatisch eingeloggt,
+                    sofern ein valider und nicht abgelaufener Token besteht.</li>
+                <li>Admins können nun Fachbereiche anlegen, um organisatorische Strukturen abzubilden.</li>
+                <li>Beginn der Implementierung eines Impersonationsmodus: Admins sollen sich in verschiedene
+                    Fachbereiche einloggen und Mod-Aktionen ausführen können. Dies dient der vereinfachten
+                    Fehlerreplikation und Analyse.</li>
+                <li>Neue Overlay-Art hinzugefügt, die nicht mit Escape geschlossen werden kann. Dieses Overlay zwingt
+                    zur Passwortänderung beim ersten Login oder nach Passwort-Reset.</li>
+                <li>Deploy-Vorgang auf den Server verschoben, da Fehler im Code entdeckt wurden, darunter das Blockieren
+                    der Enter-Taste beim Login sowie Authentifizierungsprobleme bei zugewiesenen Rollen.</li>
+            </ul>
+            <p>V0.2.1 setzt auf weitere Quality-of-Life-Optimierungen und legt die Grundlage für den
+                Impersonationsmodus. Das System wird nutzerfreundlicher durch automatische Logins bei gültigen Tokens
+                und klarere Sicherheitsmaßnahmen beim Passwortmanagement. Das Deployment verzögert sich jedoch aufgrund
+                letzter Bugfixes.</p>
+        </div>
+        <hr>
+        <div id="0-2-0">
+            <h2>[V0.2.0 // 09.10.2025]: Backend-Neustrukturierung & Vorbereitung auf Deployment</h2>
+            <ul>
+                <li>Komplette Backend-Infrastruktur überarbeitet und optimiert, wodurch der Server nun deutlich
+                    schneller arbeitet.</li>
+                <li>Alle Routen und Requests laufen nun stabil und ohne Fehler.</li>
+                <li>Umstellung von JSON auf PostgreSQL vollständig abgeschlossen, wodurch viele Logikfehler und Probleme
+                    der alten Datenspeicherung behoben wurden.</li>
+                <li>System ist nun theoretisch produktiv einsetzbar, weshalb die Einrichtung eines Servers für das
+                    CLOCKWORK-Deployment gestartet wurde.</li>
+                <li>Erste Testphase des produktiven Deployments in der IT-Abteilung geplant.</li>
+            </ul>
+            <p>V0.2.0 markiert den größten infrastrukturellen Sprung bisher. Das Backend wurde vollständig
+                restrukturiert, die Performance gesteigert und die Kompatibilität zwischen Frontend und Datenbank
+                perfektioniert. Damit ist CLOCKWORK erstmals bereit für den produktiven Betrieb.</p>
+        </div>
+        <hr>
+        <div id="0-1-7">
+            <h2>[V0.1.7 // 17.09.2025]: Verbesserungen am Frontend & Mod-Panel-Erweiterung</h2>
+            <ul>
+                <li>Frontend weiter überarbeitet und robuster gemacht, zahlreiche kleine Tweaks und
+                    Stabilitätsverbesserungen umgesetzt.</li>
+                <li>Navigation verbessert, flüssigere Übergänge und intuitivere Menüstruktur.</li>
+                <li>Mod-Panel erweitert: neben der Planverwaltung können nun auch Mitarbeiter- und Systemnutzer-Daten
+                    verwaltet werden.</li>
+                <li>Im Header wird nun die aktuelle Berechtigungsstufe (Admin, Mod) angezeigt - normale User sehen
+                    keinen Hinweis.</li>
+                <li>Auf der Anmeldungsseite wurde ein kurzer Hinweis ergänzt, der erklärt, wie man Zugang zum System
+                    erhält.</li>
+                <li>Einige Fehlermeldungen wurden sprachlich überarbeitet, um klarer und verständlicher zu sein.</li>
+            </ul>
+            <p>V0.1.7 stärkt die Stabilität und Bedienbarkeit des Frontends. Das Mod-Panel wächst zu einem vollwertigen
+                Verwaltungstool mit Zugriff auf Pläne, Mitarbeiter und Systemnutzer. Zusätzlich wurden neue UI-Hinweise
+                und klarere Fehlermeldungen integriert, um die Benutzererfahrung weiter zu verbessern.</p>
+        </div>
+        <hr>
+        <div id="0-1-6">
             <h2>[V0.1.6 // 11.09.2025]: Moderator-Komponente & UX-Verbesserungen</h2>
             <ul>
                 <li>Moderator-Komponente hinzugefügt, da die Datenbank-Rollen nun implementiert sind. Die
@@ -32,7 +88,7 @@
                 Admin-Komponente wird in einem späteren Update vollständig migriert.</p>
         </div>
         <hr>
-        <div id="015">
+        <div id="0-1-5">
             <h2>[V0.1.5 // 09.09.2025]: Verbesserte UX, Login & Farbauswahl</h2>
             <ul>
                 <li>CSS für alle Overlays und Komponenten konsistenter gestaltet, globale Variablen für Themes
@@ -51,7 +107,7 @@
                 Barrierefreiheit erweitert.</p>
         </div>
         <hr>
-        <div id="014">
+        <div id="0-1-4">
             <h2>[V0.1.4 // 08.09.2025]: Globale Overlay-Komponente & Themes</h2>
             <ul>
                 <li>Globale Overlay-Komponente implementiert, die Fehler, Hinweise und Nutzerinformationen anzeigt.</li>
@@ -67,7 +123,7 @@
                 gestalten.</p>
         </div>
         <hr>
-        <div id="013">
+        <div id="0-1-3">
             <h2>[V0.1.3 // 05.09.2025]: Bulk-Einträge & Darkmode</h2>
             <ul>
                 <li>Bulk-Einträge im Planviewer möglich.</li>
@@ -81,7 +137,7 @@
                 verfügbar, visuelle Feinheiten wie Umrisse werden im nächsten Update fertiggestellt.</p>
         </div>
         <hr>
-        <div id="012">
+        <div id="0-1-2">
             <h2>[V0.1.2 // 03.09.2025]: Visuelle Fehler & Datenbankanbindung</h2>
             <ul>
                 <li>Navigation und Ordnung im Changelog überarbeitet.</li>
@@ -93,7 +149,7 @@
             </p>
         </div>
         <hr>
-        <div id="011">
+        <div id="0-1-1">
             <h2>[V0.1.1 // 02.09.2025]: Planviewer Verbesserungen & Vorbereitung für Datenbankanbindung</h2>
             <ul>
                 <li>Visuelle Verbesserungen im Planviewer umgesetzt</li>
@@ -108,7 +164,7 @@
                 Bulk-Operationen und Datenbankintegration.</p>
         </div>
         <hr>
-        <div id="010">
+        <div id="0-1-0">
             <h2>[V0.1.0 // 27.08.2025]: Grundgerüst & Basisfunktionen fertiggestellt</h2>
             <ul>
                 <li>Systemrobustheit verbessert</li>
@@ -119,7 +175,7 @@
         </div>
         <hr>
         <h1 class="emp" id="alpha">Alpha Versionen</h1>
-        <div id="004">
+        <div id="0-0-4">
             <h2>[V0.0.4 // 26.08.2025]: UI/UX Optimierungen & JWT-basierte Authentifizierung</h2>
             <ul>
                 <li>Die Benutzeroberfläche und Nutzerführung wurden weiter verfeinert, um ein intuitiveres und
@@ -139,7 +195,7 @@
                 zukünftige Erweiterungen vor.</p>
         </div>
         <hr>
-        <div id="003">
+        <div id="0-0-3">
             <h2>[V0.0.3 // 19.08.2025]: UI-Verbesserungen & Admin-Komponente</h2>
             <ul>
                 <li>Die Benutzeroberfläche wurde weiter überarbeitet und konsistenter gestaltet, insbesondere im Bereich
@@ -158,7 +214,7 @@
                 Admin-Bereich und ein stabiles Backend. Die Planung für die Beta-Phase hat begonnen.</p>
         </div>
         <hr>
-        <div id="002">
+        <div id="0-0-2">
             <h2>[V0.0.2 // 18.08.2025]: Verbesserungen & Fehlerbehebungen</h2>
             <ul>
                 <li>Routing-Fehler im Frontend behoben, sodass die Benutzeroberfläche jetzt zuverlässig lädt und alle
@@ -179,7 +235,7 @@
             </p>
         </div>
         <hr>
-        <div id="001">
+        <div id="0-0-1">
             <h2>[V0.0.1 // 15.08.2025]: Grundfunktionen & Struktur</h2>
             <ul>
                 <li>Initiale Backend-Struktur für Nutzerverwaltung und Dienstplanung aufgebaut (Express & Sessions).

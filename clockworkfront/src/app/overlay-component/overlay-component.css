@@ -14,7 +14,8 @@
 #style-overlay,
 #error-overlay,
 #success-overlay,
-#info-overlay {
+#info-overlay,
+#passwordReset-overlay {
   padding: 40px 50px;
   border-radius: 10px;
   width: 40%;
@@ -40,7 +41,8 @@ h1 {
 :host-context(body.outlines) #style-overlay,
 :host-context(body.outlines) #error-overlay,
 :host-context(body.outlines) #success-overlay,
-:host-context(body.outlines) #info-overlay {
+:host-context(body.outlines) #info-overlay,
+:host-context(body.outlines) #passwordReset-overlay {
   outline: 3px solid var(--olc);
 }
 

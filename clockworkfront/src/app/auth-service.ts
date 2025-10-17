@@ -10,6 +10,7 @@ interface User {
   id: number;           // from JWT sub
   username?: string;    // we’ll set it from login form (backend doesn’t return it)
   role: Role;
+  passwordReset: boolean;
   departmentId?: number | null;
 }
 
@@ -68,7 +69,8 @@ export class AuthService {
       id: Number(decoded.sub),
       username: usernameFromForm, // we only know it during login
       role,
-      departmentId: decoded.departmentId ?? null
+      passwordReset: decoded.passwort_Reset,
+      departmentId: decoded.departmentId ?? null,
     } : null;
 
     const exp = typeof decoded.exp === 'number' ? decoded.exp : null;
@@ -103,6 +105,7 @@ export class AuthService {
     const user: User | null = role ? {
       id: Number(decoded.sub),
       role,
+      passwordReset: decoded.passwordReset,
       departmentId: decoded.departmentId ?? null
     } : null;
 
@@ -118,28 +121,58 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<AuthStatus> {
-    // backend returns: { token, role, departmentId }
-    return this.http.post<{ token: string; role: string; departmentId: number | null }>(
-      `${this.baseUrl}/login`,
-      { username, password }
-    ).pipe(
-      tap((res) => {
-        this.setSession(res.token, username);
-        const status = this.authStatusSubject.value;
-        if (status.loggedIn) {
-          this.overlay.showOverlay('success', `Willkommen, ${username}!`);
-          this.router.navigate(['/years']);
-        }
-      }),
-      catchError((err) => {
+  type LoginResponse = {
+    token?: string;                     // optional – Cookie reicht, lassen wir aber drin
+    loggedIn: boolean;
+    user: User;                         // enthält passwordReset: boolean
+    expHours?: number;                  // kommt vom Backend (optional)
+  };
+
+  return this.http.post<LoginResponse>(
+    `${this.baseUrl}/login`,
+    { username, password },
+    { withCredentials: true }
+  ).pipe(
+    tap((res) => {
+      if (!res || !res.loggedIn || !res.user) {
+        this.authStatusSubject.next({ loggedIn: false, user: null });
         this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
-        this.clearSession();
-        return of({ loggedIn: false, user: null, exp: null });
-      }),
-      // map to current status for subscribers
-      tap(() => {}),
-    ) as unknown as Observable<AuthStatus>;
-  }
+        return;
+      }
+
+      // Optional: Token lokal merken, falls du ihn zusätzlich brauchst
+      if (res.token) {
+        // Falls du eine setSession hattest: Token + Username setzen
+        // this.setSession(res.token, username);
+      }
+
+      // Auth-Status global aktualisieren
+      const nextStatus: AuthStatus = {
+        loggedIn: true,
+        user: res.user,
+        exp: res.expHours ? res.expHours * 3600 : undefined
+      };
+      this.authStatusSubject.next(nextStatus);
+
+      // Passwort-Reset erzwungen?
+      if (res.user.passwordReset) {
+        // 👉 Overlay-Typ "resetPassword" anzeigen; du übernimmst die Logik im Overlay
+        this.overlay.showOverlay("passwordReset");
+        // Keine Navigation – Nutzer bleibt auf der Seite / sieht das Overlay
+        return;
+      }
+
+      // Normaler Login-Flow
+      this.overlay.showOverlay('success', `Willkommen, ${res.user.username}!`);
+      this.router.navigate(['/years']);
+    }),
+    catchError(() => {
+      this.authStatusSubject.next({ loggedIn: false, user: null });
+      this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
+      return of({ loggedIn: false, user: null } as AuthStatus);
+    })
+  );
+}
 
   logout(): void {
     // server has no /logout — just drop token client-side

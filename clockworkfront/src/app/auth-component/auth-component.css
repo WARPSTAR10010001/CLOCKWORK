@@ -14,7 +14,7 @@ input {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 50px;
     background-color: var(--bgc);
     border: 1px solid var(--bgc);
