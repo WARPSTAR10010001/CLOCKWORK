@@ -9,6 +9,7 @@ Force new password on first login & on password reset
 -> Make passwordReset overlay priority higher than quickAction overlay
 QuickAction overlay logic
 Employee logic is faulted
+Polish employee component + fix date problems
 
 QOL:
 Loading animation

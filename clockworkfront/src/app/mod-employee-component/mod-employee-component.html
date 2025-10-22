@@ -1,8 +1,30 @@
 <div class="comp-wrap">
   <h1 class="emp page-header">Mitarbeiter verwalten</h1>
 
+  <!-- Neuer Mitarbeiter -->
+  <div class="new-employee-card" [formGroup]="newEmployeeForm">
+    <h2>Neuen Mitarbeiter anlegen</h2>
+    <div class="new-grid">
+      <div class="cell">
+        <label>Name</label>
+        <input type="text" formControlName="name" placeholder="z. B. Max Mustermann">
+      </div>
+      <div class="cell">
+        <label>Startdatum</label>
+        <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
+      </div>
+      <div class="cell">
+        <label>Enddatum</label>
+        <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
+      </div>
+      <div class="cell actions">
+        <button class="button-primary" (click)="createEmployee()" [disabled]="newEmployeeForm.invalid">Anlegen</button>
+      </div>
+    </div>
+  </div>
+
   <!-- AKTIVE -->
-  <h1 class="subtitle">Aktive Mitarbeiter</h1>
+  <h2>Aktive Mitarbeiter</h2>
   <div class="employee-header-row">
     <div>Name</div>
     <div>Startdatum</div>
@@ -16,7 +38,6 @@
         <input type="text" formControlName="name" placeholder="Name">
         <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
         <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
-
         <div class="action-cell">
           <button class="button-primary" (click)="saveRow(i, 'active')" [disabled]="row.invalid">Speichern</button>
           <a class="button-action" (click)="deleteRow(i, 'active')">Löschen</a>
@@ -31,7 +52,7 @@
   <hr>
 
   <!-- INAKTIVE -->
-  <h1 class="subtitle">Ehemalige / Deaktiviert</h1>
+  <h2>Ehemalige / Deaktiviert</h2>
   <div class="employee-header-row">
     <div>Name</div>
     <div>Startdatum</div>
@@ -45,7 +66,6 @@
         <input type="text" formControlName="name" placeholder="Name">
         <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
         <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
-
         <div class="action-cell">
           <button class="button-primary" (click)="saveRow(i, 'inactive')" [disabled]="row.invalid">Speichern</button>
           <a class="button-action" (click)="deleteRow(i, 'inactive')">Löschen</a>

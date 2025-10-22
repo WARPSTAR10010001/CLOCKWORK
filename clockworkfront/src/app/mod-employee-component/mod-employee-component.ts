@@ -11,9 +11,17 @@ import {
 import { EmployeeService, Employee } from '../employee-service';
 import { OverlayService } from '../overlay-service';
 import { AuthService } from '../auth-service';
+import { take } from 'rxjs/operators';
+
 
 type RowForm = {
   id: FormControl<number>;
+  name: FormControl<string>;
+  start_date: FormControl<string | null>; // 'YYYY-MM-DD' oder null
+  end_date: FormControl<string | null>;   // 'YYYY-MM-DD' oder null
+};
+
+type NewForm = {
   name: FormControl<string>;
   start_date: FormControl<string | null>;
   end_date: FormControl<string | null>;
@@ -31,6 +39,7 @@ export class ModEmployeeComponent implements OnInit {
   private employeesApi = inject(EmployeeService);
   private overlay = inject(OverlayService);
   private auth = inject(AuthService);
+  private deptId: number | null = null;
 
   loading = false;
 
@@ -40,10 +49,21 @@ export class ModEmployeeComponent implements OnInit {
   activeFa = this.fb.array<FormGroup<RowForm>>([]);
   inactiveFa = this.fb.array<FormGroup<RowForm>>([]);
 
+  // Neuer Mitarbeiter (oben)
+  newEmployeeForm = this.fb.group<NewForm>({
+    name: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.minLength(2)] }),
+    start_date: this.fb.control<string | null>(null),
+    end_date: this.fb.control<string | null>(null),
+  });
+
   ngOnInit(): void {
+    this.auth.authStatus$.pipe(take(1)).subscribe(s => {
+      this.deptId = s?.user?.departmentId ?? null;
+    });
     this.loadAll();
   }
 
+  // ---------- Laden & Split ----------
   private loadAll(): void {
     this.loading = true;
     this.employeesApi.getEmployeesForDepartment().subscribe({
@@ -83,15 +103,22 @@ export class ModEmployeeComponent implements OnInit {
     return { actives, inactives };
   }
 
+  // ---------- String-only Date Utils (keine TZ-Probleme) ----------
   private monthToInputDate(s?: string | null): string | null {
     if (!s) return null;
-    return s.slice(0, 10); // 'YYYY-MM-DD'
-  }
-  private inputToMonthStart(s?: string | null): string | null {
-    if (!s) return null;
-    return `${s.slice(0, 7)}-01`;
+    return s.slice(0, 10);
   }
 
+  /** Input 'YYYY-MM-DD' → 'YYYY-MM-01' (Monatsanfang), ohne Date() */
+  private inputToMonthStart(s?: string | null): string | null {
+    if (!s) return null;
+    const y = s.slice(0, 4);
+    const m = s.slice(5, 7);
+    if (!/^\d{4}$/.test(y) || !/^\d{2}$/.test(m)) return null;
+    return `${y}-${m}-01`;
+  }
+
+  // ---------- Form-Factories ----------
   private rowToForm(e: Employee): FormGroup<RowForm> {
     return this.fb.group<RowForm>({
       id: this.fb.nonNullable.control(e.id),
@@ -103,6 +130,7 @@ export class ModEmployeeComponent implements OnInit {
     });
   }
 
+  // ---------- Aktionen: Update / Delete ----------
   saveRow(index: number, which: 'active' | 'inactive'): void {
     const fa = which === 'active' ? this.activeFa : this.inactiveFa;
     const group = fa.at(index);
@@ -114,7 +142,7 @@ export class ModEmployeeComponent implements OnInit {
       return;
     }
 
-    const v = group.getRawValue(); // v: { id, name, start_date, end_date }
+    const v = group.getRawValue();
     const payload = {
       displayName: v.name.trim(),
       startMonth: this.inputToMonthStart(v.start_date),
@@ -138,7 +166,6 @@ export class ModEmployeeComponent implements OnInit {
     if (!group) return;
 
     const { id, name } = group.getRawValue();
-
     if (!confirm(`Mitarbeiter "${name}" wirklich löschen?`)) return;
 
     this.employeesApi.deleteEmployee(id).subscribe({
@@ -152,11 +179,43 @@ export class ModEmployeeComponent implements OnInit {
     });
   }
 
+  // ---------- Neuer Mitarbeiter ----------
+  createEmployee(): void {
+    if (this.newEmployeeForm.invalid) {
+      this.newEmployeeForm.markAllAsTouched();
+      this.overlay.showOverlay('error', 'Bitte Name angeben (mind. 2 Zeichen).');
+      return;
+    }
+    if (!this.deptId) {
+      this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+      return;
+    }
+
+    const v = this.newEmployeeForm.getRawValue();
+
+    this.employeesApi.createEmployee({
+      departmentId: this.deptId,
+      displayName: v.name.trim(),
+      startMonth: this.inputToMonthStart(v.start_date) ?? this.todayMonthStart(), // 👈 garantiert string
+      endMonth: this.inputToMonthStart(v.end_date) ?? null
+    }).subscribe({
+      next: () => {
+        this.overlay.showOverlay('success', 'Mitarbeiter angelegt.');
+        this.newEmployeeForm.reset({ name: '', start_date: null, end_date: null });
+        this.loadAll();
+      },
+      error: (err) => this.overlay.showOverlay('error', err?.error?.error || 'Anlegen fehlgeschlagen.')
+    });
+  }
+
+  private todayMonthStart(): string {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-01`;
+  }
+
   // Getter fürs Template
-  get activeRows(): FormArray<FormGroup<RowForm>> {
-    return this.activeFa;
-  }
-  get inactiveRows(): FormArray<FormGroup<RowForm>> {
-    return this.inactiveFa;
-  }
+  get activeRows(): FormArray<FormGroup<RowForm>> { return this.activeFa; }
+  get inactiveRows(): FormArray<FormGroup<RowForm>> { return this.inactiveFa; }
 }

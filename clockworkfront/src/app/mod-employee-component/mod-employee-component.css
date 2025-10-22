@@ -1,7 +1,51 @@
+.page-header {
+    margin-bottom: 6px;
+}
+
+h2 {
+    margin: 14px 0 8px;
+}
+
+/* Neuer Mitarbeiter – Card */
+.new-employee-card {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+:host-context(body.light) .new-employee-card {
+    background: #f7f7fa;
+}
+
+:host-context(body.dim) .new-employee-card,
+:host-context(body.dark) .new-employee-card {
+    background: #242424;
+}
+
+.new-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    gap: 10px;
+    align-items: end;
+}
+
+.new-grid .cell label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    /* etwas größer */
+}
+
+.new-grid .cell.actions {
+    display: flex;
+    justify-content: center;
+}
+
 /* Kopfzeile */
 .employee-header-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.9fr;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
@@ -25,7 +69,8 @@
 
 .employee-entry-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.9fr;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    /* identisch zur Header-Zeile */
     gap: 10px;
     align-items: center;
     padding: 8px 12px;
@@ -45,6 +90,10 @@
     background: #2a2a2a;
 }
 
+.employee-entry-row.inactive {
+    opacity: 0.95;
+}
+
 /* Inputs */
 .employee-entry-row input[type="text"] {
     min-width: 260px;
@@ -54,13 +103,25 @@
     min-width: 160px;
 }
 
-/* Aktionen */
+/* Aktionen: wirklich mittig */
 .action-cell {
     display: flex;
-    gap: 10px;
     justify-content: center;
+    /* horizontal mittig */
+    align-items: center;
+    /* vertikal mittig */
+    gap: 10px;
+    text-align: center;
 }
-/* Hinweise */
+
+.action-cell .button-primary,
+.action-cell .button-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+}
+
 .hint {
     margin: 8px 0 12px;
 }
