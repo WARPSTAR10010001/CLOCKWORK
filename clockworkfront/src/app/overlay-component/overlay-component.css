@@ -22,7 +22,8 @@ input[type="password"] {
 #info-overlay,
 #passwordReset-overlay,
 #quickAction-overlay,
-#feedback-overlay {
+#feedback-overlay,
+#confirm-overlay {
   padding: 40px 50px;
   border-radius: 10px;
   width: 40%;
@@ -51,7 +52,8 @@ h1 {
 :host-context(body.outlines) #info-overlay,
 :host-context(body.outlines) #passwordReset-overlay,
 :host-context(body.outlines) #quickAction-overlay,
-:host-context(body.outlines) #feedback-overlay {
+:host-context(body.outlines) #feedback-overlay,
+:host-context(body.outlines) #confirm-overlay {
   outline: 3px solid var(--olc);
 }
 
@@ -85,4 +87,22 @@ h1 {
 
 #quickAction-overlay {
   margin-top: -500px;
+}
+
+select {
+  margin-top: 30px;
+  width: 770px;
+  text-align: center;
+}
+
+textarea {
+  margin-top: 0;
+  margin-bottom: 30px;
+  width: 720px;
+  height: 250px;
+}
+
+#confirm-overlay a,
+#feedback-overlay a {
+  margin-right: 20px;
 }

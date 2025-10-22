@@ -4,6 +4,7 @@
         <h1 class="subtitle">Pläne verwalten</h1>
         @if (authService.isAdmin()) {
             <!-- fachbereich auswählen-->
+             <a class="card" [routerLink]="['/years']">Impersonationsmodus</a>
         }
         <a class="card" [routerLink]="['/mod/employees']">Mitarbeiter bearbeiten & anlegen</a>
         <a class="card" [routerLink]="['/mod/plans']">Pläne erstellen</a>

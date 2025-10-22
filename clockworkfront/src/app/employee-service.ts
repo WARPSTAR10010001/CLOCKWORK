@@ -22,7 +22,7 @@ export class EmployeeService {
   constructor(
     private http: HttpClient,
     private auth: AuthService
-  ) {}
+  ) { }
 
   /**
    * Holt die Mitarbeiter eines Fachbereichs.
@@ -78,4 +78,21 @@ export class EmployeeService {
     carryover_days: row.carryover_days,
     is_active: row.is_active
   });
+
+  // EmployeeService.ts – innerhalb der Klasse ergänzen
+
+  /** PATCH /api/employees/:id  (displayName, startMonth, endMonth) */
+  updateEmployee(id: number, payload: {
+    displayName?: string;
+    startMonth?: string | null; // 'YYYY-MM-01' oder null
+    endMonth?: string | null;   // 'YYYY-MM-01' oder null
+  }) {
+    return this.http.patch<any>(`${this.base}/employees/${id}`, payload, { withCredentials: true });
+  }
+
+  /** DELETE /api/employees/:id */
+  deleteEmployee(id: number) {
+    return this.http.delete<any>(`${this.base}/employees/${id}`, { withCredentials: true });
+  }
+
 }

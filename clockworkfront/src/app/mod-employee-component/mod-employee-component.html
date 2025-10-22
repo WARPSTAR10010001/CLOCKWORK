@@ -1,1 +1,59 @@
-<p>mod-employee-component works!</p>
+<div class="comp-wrap">
+  <h1 class="emp page-header">Mitarbeiter verwalten</h1>
+
+  <!-- AKTIVE -->
+  <h1 class="subtitle">Aktive Mitarbeiter</h1>
+  <div class="employee-header-row">
+    <div>Name</div>
+    <div>Startdatum</div>
+    <div>Enddatum</div>
+    <div>Aktion</div>
+  </div>
+
+  <div class="employees-container">
+    @for (row of activeRows.controls; track row; let i = $index) {
+      <div class="employee-entry-row" [formGroup]="row">
+        <input type="text" formControlName="name" placeholder="Name">
+        <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
+        <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
+
+        <div class="action-cell">
+          <button class="button-primary" (click)="saveRow(i, 'active')" [disabled]="row.invalid">Speichern</button>
+          <a class="button-action" (click)="deleteRow(i, 'active')">Löschen</a>
+        </div>
+      </div>
+    }
+    @if (activeRows.length === 0) {
+      <p class="hint">Kein aktiver Mitarbeiter.</p>
+    }
+  </div>
+
+  <hr>
+
+  <!-- INAKTIVE -->
+  <h1 class="subtitle">Ehemalige / Deaktiviert</h1>
+  <div class="employee-header-row">
+    <div>Name</div>
+    <div>Startdatum</div>
+    <div>Enddatum</div>
+    <div>Aktion</div>
+  </div>
+
+  <div class="employees-container">
+    @for (row of inactiveRows.controls; track row; let i = $index) {
+      <div class="employee-entry-row inactive" [formGroup]="row">
+        <input type="text" formControlName="name" placeholder="Name">
+        <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
+        <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
+
+        <div class="action-cell">
+          <button class="button-primary" (click)="saveRow(i, 'inactive')" [disabled]="row.invalid">Speichern</button>
+          <a class="button-action" (click)="deleteRow(i, 'inactive')">Löschen</a>
+        </div>
+      </div>
+    }
+    @if (inactiveRows.length === 0) {
+      <p class="hint">Keine ehemaligen Mitarbeiter.</p>
+    }
+  </div>
+</div>

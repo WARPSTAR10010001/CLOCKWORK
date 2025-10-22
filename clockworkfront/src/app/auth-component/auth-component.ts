@@ -56,7 +56,7 @@ export class AuthComponent {
   }
 
   unlockAccess() {
-    this.overlayService.showOverlay("info", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+    this.overlayService.showOverlay("confirm", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
   }
 
   @HostListener('document:keydown.enter', ['$event'])
