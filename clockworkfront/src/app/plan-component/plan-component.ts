@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OverlayService } from '../overlay-service';
 import { BackendAccess } from '../backend-access';
@@ -17,7 +17,7 @@ interface SelectedCell {
 @Component({
   selector: 'app-plan',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
 })
@@ -227,7 +227,7 @@ export class PlanComponent implements OnInit {
       case 'K': return 'SICK';
       case 'L': return 'TRAINING';
       case 'G': return 'FLEXTIME';
-      case 'T': return 'APPOINTMENT'; // 👈 neu
+      case 'T': return 'APPOINTMENT';
       case 'O': return 'OTHER';
       case '': return null;
       default: return null;

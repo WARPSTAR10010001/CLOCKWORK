@@ -204,3 +204,8 @@ td {
     background-color: var(--bgc) !important;
     border: 3px solid var(--olc) !important;
 }
+
+#back {
+    color: #fff !important;
+    text-decoration: none;
+}

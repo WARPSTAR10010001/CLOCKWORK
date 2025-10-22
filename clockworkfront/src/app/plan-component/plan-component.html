@@ -1,11 +1,8 @@
 <div class="comp-wrap">
   <!-- Header mit Monatsanzeige -->
   @if (planId !== null) {
-  <h1 class="emp page-header">
-    Dienstplan {{ month.toString().padStart(2, '0') }}/{{ year }}
-  </h1>
+  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back" [routerLink]="['/plan', year]">{{ year }}</a></h1>
 
-  <!-- Aktions-Buttons (Mapping an neue Statuswerte angepasst) -->
   <div id="entry-buttons">
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
     <a class="button-primary h" (click)="setEntry('H')">Homeoffice (H)</a>
@@ -56,6 +53,6 @@
 <!-- Fallback-Anzeige, wenn der Plan noch lädt oder nicht existiert -->
 <div class="comp-wrap">
   @if (planId === null) {
-  <p>Lade Dienstplan...</p>
+  <h1>Lade Dienstplan...</h1>
   }
 </div>

@@ -10,8 +10,8 @@ import { CreditComponent } from './credit-component/credit-component';
 import { ModPlanComponent } from './mod-plan-component/mod-plan-component';
 import { ModOverviewComponent } from './mod-overview-component/mod-overview-component';
 import { ModEmployeeComponent } from './mod-employee-component/mod-employee-component';
-import { ModUserComponent } from './mod-user-component/mod-user-component';
 import { AuthGuard, ModGuard, AdminGuard, LoginGuard } from './auth-guard';
+import { ModEditPlanComponent } from './mod-edit-plan-component/mod-edit-plan-component';
 
 export const routes: Routes = [
     {
@@ -59,12 +59,6 @@ export const routes: Routes = [
         canActivate: [AuthGuard, ModGuard]
     },
     {
-        path: 'mod/users',
-        component: ModUserComponent,
-        title: 'Mitarbeiter verwalten - CLOCKWORK',
-        canActivate: [AuthGuard, ModGuard]
-    },
-    {
         path: 'mod/employees',
         component: ModEmployeeComponent,
         title: 'Systemnutzer verwalten - CLOCKWORK',
@@ -75,6 +69,12 @@ export const routes: Routes = [
         component: AuthComponent,
         title: 'Anmeldung - CLOCKWORK',
         canActivate: [LoginGuard]
+    },
+    {
+        path: 'plan/edit/:year',
+        component: ModEditPlanComponent,
+        title: 'Dienstplan bearbeiten - CLOCKWORK',
+        canActivate: [AuthGuard, ModGuard]
     },
     {
         path: 'plan/:year',

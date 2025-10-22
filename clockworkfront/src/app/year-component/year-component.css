@@ -52,3 +52,16 @@
 .gradient-6 {
     background: radial-gradient(circle at center, #00d5f4 0%, #00f5d1 50%, #00a3b3 100%);
 }
+
+.incard {
+    font-size: 0.4em;
+    margin-left: 40px;
+    color: var(--tc) !important;
+    background-color: var(--bgc) !important;
+    border-color: var(--bgc) !important;
+}
+
+.incard:hover {
+    color: var(--bgc) !important;
+    background-color: var(--tc) !important;
+}

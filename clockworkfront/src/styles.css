@@ -223,3 +223,8 @@ label {
 button {
     font-family: inherit;
 }
+
+.subtitle {
+    font-size: 2.6em;
+    margin-top: -20px;
+}
