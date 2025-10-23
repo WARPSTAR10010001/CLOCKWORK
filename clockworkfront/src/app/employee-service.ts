@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map, switchMap, take } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from './auth-service';
+import { ImpersonationService } from './impersonation-service';
 
 export interface Employee {
   id: number;
-  name: string;                 // client-friendly alias für display_name
+  name: string;
   department_id: number;
   start_month?: string | null;
   end_month?: string | null;
@@ -21,53 +22,44 @@ export class EmployeeService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthService
-  ) { }
+    private auth: AuthService,
+    private imp: ImpersonationService
+  ) {}
 
-  /**
-   * Holt die Mitarbeiter eines Fachbereichs.
-   * - Mit departmentId: Admin-spezifische Auswahl
-   * - Ohne: nimmt Dept-ID aus dem JWT (scope im Backend enforced)
-   */
   getEmployeesForDepartment(departmentId?: number): Observable<Employee[]> {
-    if (typeof departmentId === 'number') {
-      const params = new HttpParams().set('departmentId', String(departmentId));
-      return this.http
-        .get<{ employees: any[] }>(`${this.base}/employees`, { params, withCredentials: true })
-        .pipe(map(res => (res.employees || []).map(this.serverToEmployee)));
-    }
+    const dep = departmentId ?? this.imp.getEffectiveDepartmentId();
+    if (dep == null) return of([]);
 
-    // ohne Parameter: Dept-ID aus Auth-Status ziehen
-    return this.auth.authStatus$.pipe(
-      take(1),
-      switchMap(status => {
-        const depId = status?.user?.departmentId;
-        if (depId == null) return throwError(() => new Error('No department in auth context'));
-        const params = new HttpParams().set('departmentId', String(depId));
-        return this.http.get<{ employees: any[] }>(`${this.base}/employees`, { params, withCredentials: true });
-      }),
-      map(res => (res.employees || []).map(this.serverToEmployee))
-    );
+    return this.http
+      .get<{ employees: any[] }>(`${this.base}/employees`, { params: { departmentId: dep } as any })
+      .pipe(map(res => (res.employees || []).map(this.serverToEmployee)));
   }
 
-  /**
-   * Legt einen neuen Mitarbeiter im angegebenen Department an.
-   * Gibt mindestens { id } zurück (reicht für Moderator-Flow).
-   */
   createEmployee(payload: {
     departmentId: number;
-    displayName: string;     // wichtig: Backend erwartet displayName
-    startMonth: string;      // 'YYYY-MM-01'
+    displayName: string;
+    startMonth: string;         // immer string → kein TS-Error
     endMonth?: string | null;
     annualLeaveDays?: number;
     carryoverDays?: number;
-  }): Observable<{ id: number }> {
-    return this.http
-      .post<any>(`${this.base}/employees`, payload, { withCredentials: true })
-      .pipe(map((res: any) => ({ id: res.id })));
+  }) {
+    return this.http.post<any>(`${this.base}/employees`, payload)
+      .pipe(map(this.serverToEmployee));
   }
 
-  // --- Mapper server -> client ---
+  updateEmployee(id: number, payload: {
+    displayName?: string;
+    startMonth?: string | null;
+    endMonth?: string | null;
+  }) {
+    return this.http.patch<any>(`${this.base}/employees/${id}`, payload)
+      .pipe(map(this.serverToEmployee));
+  }
+
+  deleteEmployee(id: number) {
+    return this.http.delete<void>(`${this.base}/employees/${id}`);
+  }
+
   private serverToEmployee = (row: any): Employee => ({
     id: row.id,
     name: row.display_name ?? row.name ?? '',
@@ -78,21 +70,4 @@ export class EmployeeService {
     carryover_days: row.carryover_days,
     is_active: row.is_active
   });
-
-  // EmployeeService.ts – innerhalb der Klasse ergänzen
-
-  /** PATCH /api/employees/:id  (displayName, startMonth, endMonth) */
-  updateEmployee(id: number, payload: {
-    displayName?: string;
-    startMonth?: string | null; // 'YYYY-MM-01' oder null
-    endMonth?: string | null;   // 'YYYY-MM-01' oder null
-  }) {
-    return this.http.patch<any>(`${this.base}/employees/${id}`, payload, { withCredentials: true });
-  }
-
-  /** DELETE /api/employees/:id */
-  deleteEmployee(id: number) {
-    return this.http.delete<any>(`${this.base}/employees/${id}`, { withCredentials: true });
-  }
-
 }

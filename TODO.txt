@@ -8,8 +8,8 @@ Force new password on first login & on password reset
 -> check on reload if passwordReset is still true, otherwise users can skip the overlay which is not intended
 -> Make passwordReset overlay priority higher than quickAction overlay
 QuickAction overlay logic
-Employee logic is faulted
 Polish employee component + fix date problems
+Replace browser default "confirm" overlay with custom overlay
 
 QOL:
 Loading animation

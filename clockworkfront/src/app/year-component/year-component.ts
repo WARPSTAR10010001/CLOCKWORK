@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { OverlayService } from '../overlay-service';
 import { BackendAccess } from '../backend-access';
 import { AuthService } from '../auth-service';
+import { ImpersonationService } from '../impersonation-service';
 import { map, switchMap, take, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -28,23 +29,40 @@ interface YearCard {
 })
 export class YearComponent implements OnInit {
   years: YearCard[] = [];
+  showDeptHint = false;
 
   constructor(
     private backend: BackendAccess,
     public auth: AuthService,
-    private overlay: OverlayService
+    private overlay: OverlayService,
+    private imp: ImpersonationService
   ) {}
 
   ngOnInit(): void {
+    // 1️⃣ Department-ID abrufen (Impersonation → JWT)
     this.auth.authStatus$
       .pipe(
         take(1),
-        map(status => status?.user?.departmentId ?? null),
+        map(status => {
+          // falls Admin im Impersonationsmodus
+          const impDepId = this.imp.getEffectiveDepartmentId();
+          if (this.auth.isAdmin() && impDepId) return impDepId;
+
+          // sonst JWT-DeptId
+          return status?.user?.departmentId ?? null;
+        }),
         switchMap(depId => {
-          if (depId == null) {
-            this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+          if (this.auth.isAdmin() && depId === null) {
+            this.showDeptHint = true;
             return of<{ plans: PlanListItem[] }>({ plans: [] });
           }
+
+          if (depId === null) {
+            this.overlay.showOverlay('error', 'Kein Fachbereich im Kontext gefunden.');
+            return of<{ plans: PlanListItem[] }>({ plans: [] });
+          }
+
+          // 2️⃣ Backend-Aufruf mit der finalen Department-ID
           return this.backend.getPlansForDepartment(depId);
         }),
         catchError(() => {
@@ -53,16 +71,17 @@ export class YearComponent implements OnInit {
         })
       )
       .subscribe(({ plans }) => {
-        // Ein Plan je Jahr (Unique-Constraint vorhanden) – wir mappen direkt
-        const cards = plans
+        const cards = (plans || [])
           .map(p => ({ value: p.year, colorClass: this.randomClass() }))
+          .reduce<YearCard[]>((acc, cur) => {
+            if (!acc.some(x => x.value === cur.value)) acc.push(cur);
+            return acc;
+          }, [])
           .sort((a, b) => b.value - a.value);
 
         this.years = cards;
 
-        if(this.auth.isAdmin()) {
-          this.overlay.showOverlay('info', 'nice!! du hast ein easter egg gefunden! jetzt meld dich mit einem it konto an du troll :p');
-        }
+        // Hinweis für normale User ohne Pläne
         if (this.years.length === 0 && !this.auth.isAdmin()) {
           this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.');
         }

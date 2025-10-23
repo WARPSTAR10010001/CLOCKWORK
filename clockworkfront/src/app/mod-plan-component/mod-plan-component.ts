@@ -7,13 +7,11 @@ import { BackendAccess } from '../backend-access';
 import { EmployeeService, Employee } from '../employee-service';
 import { AuthService } from '../auth-service';
 import { forkJoin, of, Observable } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { DepartmentsService, Department } from '../departments-service';
+import { catchError, switchMap, take } from 'rxjs/operators';
+import { ImpersonationService } from '../impersonation-service';
 
 interface RowForPlan {
   employeeId: number;
-  start_date: string | null;  // optional
-  end_date: string | null;    // optional
   carryover: number;
   annual: number;
 }
@@ -29,97 +27,77 @@ export class ModPlanComponent implements OnInit {
   planForm: FormGroup;
   submitting = false;
 
-  departments: Department[] = [];
-  availableEmployees: Employee[] = [];
-
-  // aus JWT (für Nicht-Admins) – Admins wählen explizit
-  jwtDepartmentId: number | null = null;
+  // aktive Mitarbeitende (vereinheitlicht)
+  activeEmployees: Employee[] = [];
 
   constructor(
     private overlay: OverlayService,
     private fb: FormBuilder,
     private backend: BackendAccess,
     private employeeService: EmployeeService,
-    private departmentsService: DepartmentsService,
+    private imp: ImpersonationService,
     public auth: AuthService,
     private router: Router
   ) {
     this.planForm = this.fb.group({
       year: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2100)]],
-      departmentId: [''], // nur erforderlich, wenn Admin (siehe getter unten)
       employees: this.fb.array([], Validators.required)
     });
   }
 
   ngOnInit(): void {
-    // eigene DepId aus JWT merken
-    this.auth.authStatus$.subscribe(s => this.jwtDepartmentId = s.user?.departmentId ?? null);
-
-    // Admins: FB-Liste laden; Nicht-Admins: nichts laden
-    if (this.auth.isAdmin()) {
-      this.departmentsService.getAllDepartments().subscribe(deps => {
-        this.departments = deps || [];
-      });
+    const depId = this.effectiveDepartmentId;
+    if (!depId) {
+      // Admin hat noch keinen FB gewählt
+      this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
+      this.router.navigate(['/mod']);
+      return;
     }
-
-    // initial Mitarbeiterliste basierend auf "effectiveDepartmentId"
-    this.reloadEmployees();
-
-    // mit einer Zeile starten
-    this.addEmployee();
+    this.loadActiveEmployees(depId);
   }
 
+  /** effektive Dept-ID: Impersonation > eigenes Dept */
+  get effectiveDepartmentId(): number | null {
+    return this.imp.getEffectiveDepartmentId();
+  }
+
+  /** FormArray Accessor */
   get employees(): FormArray {
     return this.planForm.get('employees') as FormArray;
   }
 
-  /** Die effektive DepartmentId (Admin = Auswahl, User/Mod = JWT) */
-  get effectiveDepartmentId(): number | null {
-    if (this.auth.isAdmin()) {
-      const v = this.planForm.value as { departmentId?: number | string };
-      const id = Number(v.departmentId);
-      return Number.isFinite(id) && id > 0 ? id : null;
-    }
-    return this.jwtDepartmentId;
+  /** Mitarbeiter laden (nur aktive) + FormArray füllen */
+  private loadActiveEmployees(departmentId: number): void {
+    this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1))
+      .subscribe({
+        next: (emps) => {
+          // nur aktive anzeigen
+          this.activeEmployees = (emps || []).filter(e => e.is_active !== false);
+          // Form neu aufbauen
+          this.employees.clear();
+          for (const e of this.activeEmployees) {
+            this.employees.push(this.rowFromEmployee(e));
+          }
+        },
+        error: () => this.overlay.showOverlay('error', 'Mitarbeiter konnten nicht geladen werden.')
+      });
   }
 
-  onDepartmentChange(): void {
-    this.reloadEmployees(); // Vorschlagsliste nach Auswahl neu laden
-  }
-
-  private reloadEmployees(): void {
-    const depId = this.effectiveDepartmentId;
-    if (!depId) { this.availableEmployees = []; return; }
-    this.employeeService.getEmployeesForDepartment(depId).subscribe(emps => {
-      this.availableEmployees = emps || [];
-    });
-  }
-
-  private pad2(n: number) { return String(n).padStart(2, '0'); }
-
-  /** Normalisiert Eingaben:
-   *  - leer/null  => null zurück (heißt: später Default anwenden)
-   *  - sonst auf 'YYYY-MM-01' (Monatsanfang) */
-  private toMonthStartOrNull(dateStr: string | null | undefined, fallbackYear: number): string | null {
-    if (!dateStr) return null;
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return `${fallbackYear}-01-01`; // sehr defensiv: notfalls Jan des Planjahres
-    return `${d.getFullYear()}-${this.pad2(d.getMonth() + 1)}-01`;
-  }
-
-  // Formularzeile
-  createEmployeeGroup(): FormGroup {
+  /** Eine Formularzeile pro aktivem Employee */
+  private rowFromEmployee(e: Employee): FormGroup {
     return this.fb.group({
-      name: ['', Validators.required],
-      start_date: [null], // optional
-      end_date: [null],   // optional
-      vacation_days_carryover: [0, [Validators.required, Validators.min(0)]],
-      vacation_days_total: [30, [Validators.required, Validators.min(0)]]
+      id: [e.id, Validators.required],
+      name: [{ value: e.name ?? '', disabled: true }],   // read-only Anzeige
+      vacation_days_carryover: [e.carryover_days ?? 0, [Validators.required, Validators.min(0)]],
+      vacation_days_total: [e.annual_leave_days ?? 30, [Validators.required, Validators.min(0)]],
     });
   }
 
-  addEmployee(): void { this.employees.push(this.createEmployeeGroup()); }
-  removeEmployee(index: number): void { this.employees.removeAt(index); }
+  /** sichere YYYY-MM-01 für Start/Ende, damit Server happy ist */
+  private yearMonthStart(year: number, month = 1): string {
+    const mm = String(month).padStart(2, '0');
+    return `${year}-${mm}-01`;
+  }
 
   submit(): void {
     const depId = this.effectiveDepartmentId;
@@ -132,68 +110,28 @@ export class ModPlanComponent implements OnInit {
     this.submitting = true;
     const { year } = this.planForm.value as { year: number };
 
-    // 1) Für jede Zeile: existierenden Employee finden ODER erstellen
-    const employeeIdCalls: Observable<RowForPlan>[] = this.employees.controls.map(ctrl => {
-      const v = ctrl.value as {
-        name: string;
-        start_date: string | null;
-        end_date: string | null;
-        vacation_days_carryover: number;
-        vacation_days_total: number;
-      };
+    // 1) Payload-Zeilen aus FormArray ziehen
+    const rows: RowForPlan[] = (this.employees.getRawValue() as any[]).map(g => ({
+      employeeId: g.id,
+      carryover: Number(g.vacation_days_carryover) || 0,
+      annual: Number(g.vacation_days_total) || 0,
+    }));
 
-      const existing = this.availableEmployees.find(e =>
-        (e.name ?? '').trim().toLowerCase() === (v.name ?? '').trim().toLowerCase()
-      );
+    // 2) /api/plans Payload bauen
+    const employeesPayload = rows.map(r => ({
+      employeeId: r.employeeId,
+      startMonth: this.yearMonthStart(year, 1), // Monatsfenster standardisieren (Januar–Dezember)
+      endMonth: null,
+      initialBalance: r.carryover
+    }));
 
-      if (existing) {
-        return of<RowForPlan>({
-          employeeId: existing.id,
-          start_date: v.start_date,
-          end_date: v.end_date,
-          carryover: v.vacation_days_carryover,
-          annual: v.vacation_days_total
-        });
-      } else {
-        // Neuer Mitarbeiter im gewählten Department
-        return this.employeeService.createEmployee({
-          departmentId: depId,
-          displayName: v.name, // Backend erwartet displayName
-          startMonth: this.toMonthStartOrNull(v.start_date, year) ?? `${year}-01-01`,
-          endMonth: this.toMonthStartOrNull(v.end_date, year), // darf null sein
-          annualLeaveDays: v.vacation_days_total,
-          carryoverDays: v.vacation_days_carryover
-        }).pipe(
-          switchMap(created => of<RowForPlan>({
-            employeeId: created.id,
-            start_date: v.start_date,
-            end_date: v.end_date,
-            carryover: v.vacation_days_carryover,
-            annual: v.vacation_days_total
-          }))
-        );
-      }
-    });
+    const payload = {
+      departmentId: depId,
+      year,
+      employees: employeesPayload
+    };
 
-    // 2) Plan erstellen (für gewählten/effektiven Fachbereich)
-    forkJoin(employeeIdCalls).pipe(
-      switchMap((rows: RowForPlan[]) => {
-        const employeesPayload = rows.map(r => ({
-          employeeId: r.employeeId,
-          // Wenn Start leer → Standard 01.01.des Planjahres
-          startMonth: this.toMonthStartOrNull(r.start_date, year) ?? `${year}-01-01`,
-          endMonth: this.toMonthStartOrNull(r.end_date, year), // null erlaubt
-          initialBalance: r.carryover
-        }));
-
-        const payload = {
-          departmentId: depId,
-          year,
-          employees: employeesPayload
-        };
-
-        return this.backend.createPlan(payload);
-      }),
+    this.backend.createPlan(payload).pipe(
       catchError(err => {
         this.submitting = false;
         this.overlay.showOverlay('error', err?.error?.error || 'Fehler beim Erstellen des Jahresplans.');

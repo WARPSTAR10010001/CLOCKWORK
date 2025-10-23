@@ -3,7 +3,8 @@ input,
 select {
     text-align: center;
     margin: 0;
-    /* fix: verhindert abweichende Browser-Einrückung */
+    /* verhindert abweichende Browser-Einrückung */
+    box-sizing: border-box;
 }
 
 /* Obere Formularzeilen: Label links, Feld rechts */
@@ -18,7 +19,7 @@ select {
 .form-row label {
     justify-self: start;
     font-size: 2em;
-    /* 👈 größer & besser lesbar */
+    /* größer & besser lesbar */
 }
 
 .num-entry {
@@ -29,11 +30,11 @@ select {
     width: 400px;
 }
 
-/* Mitarbeitertabelle: Header als Grid */
+/* Mitarbeitertabelle: Header als Grid (3 Spalten: Name | Übertrag | Urlaub) */
 .employee-header-row {
-    width: 90%;
+    width: 100%;
     display: grid;
-    grid-template-columns: 2.1fr 1.2fr 1.2fr 0.8fr 0.9fr 0.6fr;
+    grid-template-columns: 2fr 1fr 1fr;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
@@ -52,6 +53,10 @@ select {
     background: #252525;
 }
 
+.employee-header-row div {
+    font-size: 1.3em;
+}
+
 /* Mitarbeiterzeilen (gleiche Spalten wie Header) */
 .employees-container {
     margin-top: 6px;
@@ -59,14 +64,24 @@ select {
 }
 
 .employee-entry-row {
+    width: 100%;
     display: grid;
-    width: 90%;
-    grid-template-columns: 2.1fr 1.2fr 1.2fr 0.8fr 0.9fr 0.6fr;
+    grid-template-columns: 2fr 1fr 1fr;
+    /* identisch zum Header */
     gap: 10px;
     align-items: center;
     padding: 8px 12px;
     border-radius: 10px;
     box-sizing: border-box;
+}
+
+/* Name-Cell (read-only Anzeige) */
+.name-cell {
+    font-size: 2em;
+    padding: 6px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Zebra-Streifen */
@@ -83,67 +98,40 @@ select {
     background-color: #2a2a2a;
 }
 
-.employee-entry-row input[type='text'] {
-    min-width: 260px;
-}
-
-.employee-entry-row input[type='date'] {
-    min-width: 160px;
-}
-
+/* Eingabefelder pro Zeile */
 .employee-entry-row .num-entry-small {
-    width: 120px;
+    width: 140px;
+    /* etwas komfortabler */
+    padding: 6px 10px;
+    border-radius: 10px;
 }
 
-.employee-entry-row .action-cell {
-    display: flex;
-    justify-content: center;
-}
-
+/* Buttons-Zeile unter der Tabelle */
 .button-row {
     display: flex;
     gap: 12px;
     margin-top: 18px;
 }
 
+/* Seitenkopf */
 .page-header {
     margin-bottom: -6px;
 }
 
-/* Optional: etwas Innenabstand für die Felder */
-.employee-entry-row input,
-.employee-entry-row select,
+/* Optional: etwas Innenabstand für die Felder oben */
 .num-entry,
 .dep-entry {
     padding: 6px 10px;
     border-radius: 10px;
-    box-sizing: border-box;
 }
 
-/* fix: sorgt dafür, dass erste Zeile exakt fluchtet */
+/* Fix: erste Mitarbeiterzeile bündig mit Header */
 .employees-container>.employee-entry-row:first-child {
     margin-left: 0;
     padding-left: 12px;
 }
 
-.employee-header-row div {
-    font-size: 1.3em;
-}
-
-#unclickable {
-    cursor:not-allowed !important;
-    border: 4px solid #585858;
-    color: #585858 !important;
-    text-decoration: none;
-    font-size: 2em;
-    cursor: pointer;
+#employee {
+    border: 4px solid var(--tc);
     border-radius: 10px;
-    padding: 5px 10px;
-    box-shadow: 0px 0px 30px #00000000;
-    background-color: var(--bgc);
-    transition: none !important;
-}
-
-#unclickable:hover {
-    background-color: var(--bgc) !important;
 }

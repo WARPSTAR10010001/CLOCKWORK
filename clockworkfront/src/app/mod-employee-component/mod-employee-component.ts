@@ -12,7 +12,7 @@ import { EmployeeService, Employee } from '../employee-service';
 import { OverlayService } from '../overlay-service';
 import { AuthService } from '../auth-service';
 import { take } from 'rxjs/operators';
-
+import { ImpersonationService } from '../impersonation-service';
 
 type RowForm = {
   id: FormControl<number>;
@@ -39,8 +39,9 @@ export class ModEmployeeComponent implements OnInit {
   private employeesApi = inject(EmployeeService);
   private overlay = inject(OverlayService);
   private auth = inject(AuthService);
-  private deptId: number | null = null;
+  private imp = inject(ImpersonationService);
 
+  private deptId: number | null = null;
   loading = false;
 
   activeEmployees: Employee[] = [];
@@ -57,16 +58,37 @@ export class ModEmployeeComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.auth.authStatus$.pipe(take(1)).subscribe(s => {
-      this.deptId = s?.user?.departmentId ?? null;
+    // Dept ermitteln: Admin → Impersonation, sonst JWT
+    this.resolveDepartmentOnceAndLoad();
+  }
+
+  private resolveDepartmentOnceAndLoad(): void {
+    this.auth.authStatus$.pipe(take(1)).subscribe(status => {
+      const fromJwt = status?.user?.departmentId ?? null;
+      const impDep = this.imp.getEffectiveDepartmentId?.() ?? null;
+
+      this.deptId = this.auth.isAdmin() ? impDep : fromJwt;
+
+      if (this.auth.isAdmin() && !this.deptId) {
+        this.overlay.showOverlay('info', 'Bitte zuerst einen Fachbereich im Modpanel auswählen.');
+        this.loading = false;
+        return; // blockt bis Impersonation gesetzt wurde
+      }
+
+      if (!this.deptId) {
+        this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+        return;
+      }
+
+      this.loadAll();
     });
-    this.loadAll();
   }
 
   // ---------- Laden & Split ----------
   private loadAll(): void {
+    if (!this.deptId) return;
     this.loading = true;
-    this.employeesApi.getEmployeesForDepartment().subscribe({
+    this.employeesApi.getEmployeesForDepartment(this.deptId).subscribe({
       next: (list) => {
         const { actives, inactives } = this.splitEmployees(list || []);
         this.activeEmployees = actives;
@@ -88,7 +110,9 @@ export class ModEmployeeComponent implements OnInit {
   }
 
   private splitEmployees(list: Employee[]) {
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    // Monatsanfang ohne TZ-Drift
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const actives: Employee[] = [];
     const inactives: Employee[] = [];
 
@@ -103,7 +127,7 @@ export class ModEmployeeComponent implements OnInit {
     return { actives, inactives };
   }
 
-  // ---------- String-only Date Utils (keine TZ-Probleme) ----------
+  // ---------- String-only Date Utils ----------
   private monthToInputDate(s?: string | null): string | null {
     if (!s) return null;
     return s.slice(0, 10);
@@ -187,7 +211,7 @@ export class ModEmployeeComponent implements OnInit {
       return;
     }
     if (!this.deptId) {
-      this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+      this.overlay.showOverlay('error', 'Kein Fachbereich ausgewählt.');
       return;
     }
 
@@ -196,7 +220,7 @@ export class ModEmployeeComponent implements OnInit {
     this.employeesApi.createEmployee({
       departmentId: this.deptId,
       displayName: v.name.trim(),
-      startMonth: this.inputToMonthStart(v.start_date) ?? this.todayMonthStart(), // 👈 garantiert string
+      startMonth: this.inputToMonthStart(v.start_date) ?? this.todayMonthStart(),
       endMonth: this.inputToMonthStart(v.end_date) ?? null
     }).subscribe({
       next: () => {

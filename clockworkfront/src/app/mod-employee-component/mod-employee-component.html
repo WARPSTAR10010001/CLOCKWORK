@@ -1,9 +1,11 @@
 <div class="comp-wrap">
   <h1 class="emp page-header">Mitarbeiter verwalten</h1>
 
+  @if (false) { <p class="hint">Bitte zuerst einen Fachbereich auswählen.</p> }
+
   <!-- Neuer Mitarbeiter -->
+  <h1 id="new-emp" class="subtitle">Neuen Mitarbeiter anlegen</h1>
   <div class="new-employee-card" [formGroup]="newEmployeeForm">
-    <h2>Neuen Mitarbeiter anlegen</h2>
     <div class="new-grid">
       <div class="cell">
         <label>Name</label>
@@ -23,17 +25,20 @@
     </div>
   </div>
 
-  <!-- AKTIVE -->
-  <h2>Aktive Mitarbeiter</h2>
-  <div class="employee-header-row">
-    <div>Name</div>
-    <div>Startdatum</div>
-    <div>Enddatum</div>
-    <div>Aktion</div>
-  </div>
+  <hr>
 
-  <div class="employees-container">
-    @for (row of activeRows.controls; track row; let i = $index) {
+  <!-- AKTIVE -->
+  <h1 class="subtitle">Aktive Mitarbeiter</h1>
+  <div class="active-employees">
+    <div class="employee-header-row">
+      <div>Name</div>
+      <div>Startdatum</div>
+      <div>Enddatum</div>
+      <div>Aktion</div>
+    </div>
+
+    <div class="employees-container">
+      @for (row of activeRows.controls; track row; let i = $index) {
       <div class="employee-entry-row" [formGroup]="row">
         <input type="text" formControlName="name" placeholder="Name">
         <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
@@ -43,25 +48,27 @@
           <a class="button-action" (click)="deleteRow(i, 'active')">Löschen</a>
         </div>
       </div>
-    }
-    @if (activeRows.length === 0) {
+      }
+      @if (activeRows.length === 0) {
       <p class="hint">Kein aktiver Mitarbeiter.</p>
-    }
+      }
+    </div>
   </div>
 
   <hr>
 
   <!-- INAKTIVE -->
-  <h2>Ehemalige / Deaktiviert</h2>
-  <div class="employee-header-row">
-    <div>Name</div>
-    <div>Startdatum</div>
-    <div>Enddatum</div>
-    <div>Aktion</div>
-  </div>
+  <h1 class="subtitle">Ehemalige / Deaktiviert</h1>
+  <div class="inactive-employees">
+    <div class="employee-header-row">
+      <div>Name</div>
+      <div>Startdatum</div>
+      <div>Enddatum</div>
+      <div>Aktion</div>
+    </div>
 
-  <div class="employees-container">
-    @for (row of inactiveRows.controls; track row; let i = $index) {
+    <div class="employees-container">
+      @for (row of inactiveRows.controls; track row; let i = $index) {
       <div class="employee-entry-row inactive" [formGroup]="row">
         <input type="text" formControlName="name" placeholder="Name">
         <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
@@ -71,9 +78,10 @@
           <a class="button-action" (click)="deleteRow(i, 'inactive')">Löschen</a>
         </div>
       </div>
-    }
-    @if (inactiveRows.length === 0) {
+      }
+      @if (inactiveRows.length === 0) {
       <p class="hint">Keine ehemaligen Mitarbeiter.</p>
-    }
+      }
+    </div>
   </div>
 </div>

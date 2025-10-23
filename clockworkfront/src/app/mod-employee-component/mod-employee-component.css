@@ -1,8 +1,22 @@
+/* Grund-Resets für konsistente Alignment */
+input,
+select,
+button {
+    margin: 0;
+    vertical-align: middle;
+}
+
+input,
+select {
+    text-align: center;
+}
+
+/* Headlines */
 .page-header {
     margin-bottom: 6px;
 }
 
-h2 {
+.subtitle {
     margin: 14px 0 8px;
 }
 
@@ -11,6 +25,11 @@ h2 {
     padding: 12px;
     border-radius: 12px;
     margin-bottom: 16px;
+}
+
+/* Rahmen NUR wenn outlines aktiv */
+:host-context(body.outlines) .new-employee-card {
+    border: 4px solid var(--tc);
 }
 
 :host-context(body.light) .new-employee-card {
@@ -22,27 +41,30 @@ h2 {
     background: #242424;
 }
 
+/* Grid oben – alles vertikal ausgerichtet */
 .new-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 0.8fr;
     gap: 10px;
-    align-items: end;
+    align-items: center;
 }
 
 .new-grid .cell label {
     display: block;
     margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    /* etwas größer */
+    font-weight: 700;
+    font-size: 1.1rem;
+    /* 👈 größer */
 }
 
+/* Aktionen-Zelle */
 .new-grid .cell.actions {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
-/* Kopfzeile */
+/* Tabellen-Header */
 .employee-header-row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 0.8fr;
@@ -50,7 +72,12 @@ h2 {
     align-items: center;
     padding: 10px 12px;
     border-radius: 10px;
-    font-weight: 700;
+    font-weight: 800;
+}
+
+.employee-header-row>div {
+    font-size: 1.2rem;
+    /* 👈 größer */
 }
 
 :host-context(body.light) .employee-header-row {
@@ -62,7 +89,19 @@ h2 {
     background: #252525;
 }
 
-/* Container & Zeilen */
+/* Listen-Container, Rahmen NUR bei outlines */
+.active-employees,
+.inactive-employees {
+    border-radius: 10px;
+    padding: 6px 0;
+}
+
+:host-context(body.outlines) .active-employees,
+:host-context(body.outlines) .inactive-employees {
+    border: 4px solid var(--tc);
+}
+
+/* Zeilen */
 .employees-container {
     margin-top: 6px;
 }
@@ -70,9 +109,10 @@ h2 {
 .employee-entry-row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 0.8fr;
-    /* identisch zur Header-Zeile */
+    /* identisch zum Header */
     gap: 10px;
     align-items: center;
+    /* 👈 alle Inputs/Aktionen vertikal zentriert */
     padding: 8px 12px;
     border-radius: 8px;
 }
@@ -107,9 +147,7 @@ h2 {
 .action-cell {
     display: flex;
     justify-content: center;
-    /* horizontal mittig */
     align-items: center;
-    /* vertikal mittig */
     gap: 10px;
     text-align: center;
 }
@@ -122,6 +160,12 @@ h2 {
     min-width: 110px;
 }
 
+/* Hinweise */
 .hint {
-    margin: 8px 0 12px;
+    margin: 8px 15px 12px;
+    font-size: 1.5em;
+}
+
+#new-emp {
+    margin-top: -20px;
 }
