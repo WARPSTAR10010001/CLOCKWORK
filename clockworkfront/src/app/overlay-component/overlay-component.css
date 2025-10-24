@@ -106,3 +106,11 @@ textarea {
 #feedback-overlay a {
   margin-right: 20px;
 }
+
+.pw-hints h1 {
+  margin-bottom: -40px;
+}
+
+.pw-hints {
+  margin-bottom: 50px;
+}

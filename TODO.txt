@@ -2,17 +2,15 @@ Must-Do:
 Edit Plan Component (add, remove, edit users) + delete plan (Mod or Admin only?)
 German error messages
 Software documentation
-Add global plan overview for admins
 Delete/edit departments (names, passwords) for admins
-Force new password on first login & on password reset
--> check on reload if passwordReset is still true, otherwise users can skip the overlay which is not intended
--> Make passwordReset overlay priority higher than quickAction overlay
 QuickAction overlay logic
-Polish employee component + fix date problems
 Replace browser default "confirm" overlay with custom overlay
+Implement feedback logic
+Fix resetPassword Logic + fix errors in console
 
 QOL:
 Loading animation
 Rework dark theme
 Implement "Soft" Colorscheme
 Set quickaction input as focused when shift+k is pressed
+Shortcuts with "k" for sickness, "u" for vacation etc in plan component

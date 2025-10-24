@@ -1,4 +1,3 @@
-// src/routes/authUsers.routes.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -12,19 +11,14 @@ function jwtCookieOptions() {
   return {
     httpOnly: true,
     sameSite: 'lax',
-    secure: !!(process.env.COOKIE_SECURE === 'true'), // setze in PROD auf true
+    secure: !!(process.env.COOKIE_SECURE === 'true'),
     maxAge: 1000 * 60 * 60 * 12, // 12h
     path: '/',
   };
 }
 
-/* =========================
-   AUTH: LOGIN / LOGOUT / STATUS
-   ========================= */
-
-// POST /api/login
-// Body: { username, password }
-router.post('/login', async (req, res) => {
+// POST /api/auth/login
+router.post('/auth/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password required' });
@@ -46,18 +40,18 @@ router.post('/login', async (req, res) => {
     const payload = { sub: user.id, role: user.role, departmentId: user.department_id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' });
 
-    // Cookie + JSON zurückgeben (Frontend nutzt withCredentials)
+    // Optional cookie (you’re using a Bearer token via interceptor; cookie doesn’t hurt)
     res.cookie('token', token, jwtCookieOptions());
 
     return res.json({
-      token, // optional; Cookie reicht, aber lassen wir zur Kompatibilität drin
+      token,
       loggedIn: true,
       user: {
         id: user.id,
         username: user.username,
         role: user.role,
         departmentId: user.department_id,
-        passwordReset: !!user.password_reset, // 👈 wichtig fürs Overlay im FE
+        passwordReset: !!user.password_reset,
       },
       expHours: 12,
     });
@@ -67,8 +61,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST /api/logout
-router.post('/logout', (req, res) => {
+// POST /api/auth/logout
+router.post('/auth/logout', (_req, res) => {
   res.clearCookie('token', { path: '/' });
   return res.json({ loggedIn: false });
 });
@@ -92,7 +86,7 @@ router.get('/auth/status', requireAuth, async (req, res) => {
         username: u.username,
         role: u.role,
         departmentId: u.department_id,
-        passwordReset: !!u.password_reset, // 👈 mitgeben
+        passwordReset: !!u.password_reset,
       }
     });
   } catch (err) {
@@ -103,10 +97,14 @@ router.get('/auth/status', requireAuth, async (req, res) => {
 
 /* =========================
    USER MANAGEMENT
-   ========================= */
+   =========================
+   Mounted at /api  →  effective paths:
+   POST   /api/users
+   PATCH  /api/users/password
+   POST   /api/users/:id/reset-password
+*/
 
 // POST /api/users
-// Body: { departmentId (nullable for ADMIN), username, password, role: 'ADMIN'|'MOD'|'USER' }
 router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const { departmentId, username, password, role } = req.body || {};
   if (!username || !password || !role) {
@@ -118,7 +116,6 @@ router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) 
   if (role !== 'ADMIN' && !departmentId) {
     return res.status(400).json({ error: 'departmentId required for non-ADMIN users' });
   }
-  // MOD darf nur im eigenen Department anlegen
   if (req.user.role === 'MOD' && String(req.user.departmentId) !== String(departmentId)) {
     return res.status(403).json({ error: 'MOD can only create users in own department' });
   }
@@ -140,9 +137,6 @@ router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) 
 });
 
 // PATCH /api/users/password
-// Self-change ODER Admin/Mod für targetUserId
-// - Self-change: oldPassword required; setzt password_reset = FALSE
-// - Admin/Mod  : darf targetUserId ändern (MOD nur im eigenen Department); setzt password_reset = TRUE (Reset-Flow)
 router.patch('/users/password', requireAuth, async (req, res) => {
   const { oldPassword, newPassword, targetUserId } = req.body || {};
   if (!newPassword) return res.status(400).json({ error: 'newPassword required' });
@@ -166,13 +160,11 @@ router.patch('/users/password', requireAuth, async (req, res) => {
     if (u.rowCount === 0) return res.status(404).json({ error: 'User not found' });
     const user = u.rows[0];
 
-    // MOD darf nur innerhalb seines Departments an anderen Nutzern agieren
     if (!isSelf && req.user.role === 'MOD' &&
         String(req.user.departmentId) !== String(user.department_id)) {
       return res.status(403).json({ error: 'MOD can only change passwords in own department' });
     }
 
-    // Self-change: oldPassword prüfen
     if (isSelf) {
       if (!oldPassword) return res.status(400).json({ error: 'oldPassword required for self change' });
       const match = await bcrypt.compare(oldPassword, user.password_hash);
@@ -180,7 +172,6 @@ router.patch('/users/password', requireAuth, async (req, res) => {
     }
 
     const hash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    // isSelf → password_reset FALSE (erledigt), sonst TRUE (Reset erzwingen)
     const resetFlag = isSelf ? false : true;
 
     const upd = await client.query(
@@ -202,9 +193,6 @@ router.patch('/users/password', requireAuth, async (req, res) => {
 });
 
 // POST /api/users/:id/reset-password
-// Admin überall; Mod nur im eigenen Department.
-// Body: { newPassword? } – optional, default 'init'.
-// Setzt password_reset = TRUE.
 router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const targetUserId = req.params.id;
   const { newPassword } = req.body || {};

@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/api', plansRoutes);
 app.use('/api', planEntriesRoutes);
 app.use('/api', holidaysRoutes);
@@ -25,6 +25,6 @@ app.use('/api', departmentsRoutes);
 app.use('/api', adminRoutes);
 
 app.get('/', (_req, res) => res.send('CLOCKWORK Server läuft!'));
-app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get('/api/health', (_req, res) => res.json({ message: "CLOCKWORK Server läuft!", running: true, timestamp: Date.now() }));
 
 module.exports = app;

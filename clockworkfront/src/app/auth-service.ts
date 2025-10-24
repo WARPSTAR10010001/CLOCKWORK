@@ -1,32 +1,27 @@
+// src/app/auth-service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, tap, catchError } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { OverlayService } from './overlay-service';
+import { catchError, map, take, tap } from 'rxjs/operators';
 
 type Role = 'admin' | 'mod' | 'user';
-
 interface User {
   id: number;
   username?: string;
   role: Role;
   departmentId?: number | null;
-  passwordReset?: boolean; // 👈 optional, falls du es im State brauchst
+  passwordReset?: boolean;
 }
-
-interface AuthStatus {
-  loggedIn: boolean;
-  user: User | null;
-  exp?: number | null;
-}
+interface AuthStatus { loggedIn: boolean; user: User | null; exp?: number | null; }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private authStatusSubject = new BehaviorSubject<AuthStatus>({ loggedIn: false, user: null, exp: null });
-  public authStatus$ = this.authStatusSubject.asObservable();
+  public  authStatus$        = this.authStatusSubject.asObservable();
 
-  // 👇 Route-Fix: zusammengeführtes Backend nutzt /api/login
-  private baseUrl = 'http://localhost:4000/api';
+  private baseUrl  = 'http://localhost:4000/api';
   private tokenKey = 'clockwork_token';
 
   constructor(
@@ -35,104 +30,119 @@ export class AuthService {
     private overlay: OverlayService
   ) {
     this.restoreSession();
+    // only pings server; if no token → 401 caught → no overlay lock
+    this.ensurePasswordResetGate();
   }
 
+  // ---------- helpers ----------
   private decodeJwt(token: string): any | null {
-    try {
-      const payload = token.split('.')[1];
-      const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-      return JSON.parse(decodeURIComponent(escape(json)));
-    } catch {
-      return null;
+    try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))); }
+    catch { return null; }
+  }
+  private toRole(apiRole?: string): Role | null {
+    switch ((apiRole || '').toUpperCase()) {
+      case 'ADMIN': return 'admin';
+      case 'MOD'  : return 'mod';
+      case 'USER' : return 'user';
+      default: return null;
     }
   }
-
-  private toRole(apiRole: string | undefined): Role | null {
-    if (!apiRole) return null;
-    const r = apiRole.toUpperCase();
-    if (r === 'ADMIN') return 'admin';
-    if (r === 'MOD') return 'mod';
-    if (r === 'USER') return 'user';
-    return null;
-  }
-
   private setSession(token: string, usernameFromForm?: string) {
     localStorage.setItem(this.tokenKey, token);
-    const decoded = this.decodeJwt(token);
-    if (!decoded) {
-      this.clearSession();
-      return;
-    }
-    const role = this.toRole(decoded.role);
+    const dec = this.decodeJwt(token); if (!dec) return this.clearSession();
+    const role = this.toRole(dec.role);
     const user: User | null = role ? {
-      id: Number(decoded.sub),
-      username: usernameFromForm,
-      role,
-      departmentId: decoded.departmentId ?? null
+      id: Number(dec.sub), username: usernameFromForm, role, departmentId: dec.departmentId ?? null
     } : null;
-
-    const exp = typeof decoded.exp === 'number' ? decoded.exp : null;
-    const loggedIn = !!(user && (!exp || Date.now() / 1000 < exp));
-
+    const exp = typeof dec.exp === 'number' ? dec.exp : null;
+    const loggedIn = !!(user && (!exp || Date.now()/1000 < exp));
     this.authStatusSubject.next({ loggedIn, user, exp });
   }
-
   private clearSession() {
     localStorage.removeItem(this.tokenKey);
     this.authStatusSubject.next({ loggedIn: false, user: null, exp: null });
   }
-
   private restoreSession() {
-    const token = localStorage.getItem(this.tokenKey);
-    if (!token) return this.clearSession();
-    const decoded = this.decodeJwt(token);
-    if (!decoded) return this.clearSession();
-    const exp = typeof decoded.exp === 'number' ? decoded.exp : null;
-    if (exp && Date.now() / 1000 >= exp) return this.clearSession();
-
-    const role = this.toRole(decoded.role);
-    const user: User | null = role ? {
-      id: Number(decoded.sub),
-      role,
-      departmentId: decoded.departmentId ?? null,
-    } : null;
-
-    this.authStatusSubject.next({ loggedIn: !!user, user, exp });
+    const t = localStorage.getItem(this.tokenKey); if (!t) return this.clearSession();
+    const dec = this.decodeJwt(t); if (!dec) return this.clearSession();
+    if (dec.exp && Date.now()/1000 >= dec.exp) return this.clearSession();
+    const role = this.toRole(dec.role);
+    const user: User | null = role ? { id: Number(dec.sub), role, departmentId: dec.departmentId ?? null } : null;
+    this.authStatusSubject.next({ loggedIn: !!user, user, exp: dec.exp ?? null });
   }
 
-  checkStatus(): Observable<AuthStatus> {
-    return of(this.authStatusSubject.value);
+  // ---------- server status (uses Bearer via interceptor if token exists) ----------
+  private fetchServerStatus(): Observable<{loggedIn:boolean; user:any|null}> {
+    return this.http.get<{loggedIn:boolean; user:any|null}>(`${this.baseUrl}/auth/status`)
+      .pipe(catchError(() => of({ loggedIn: false, user: null })));
+  }
+  refreshStatus(): Observable<AuthStatus> {
+    return this.fetchServerStatus().pipe(
+      tap((srv) => {
+        if (!srv.loggedIn || !srv.user) {
+          this.authStatusSubject.next({ loggedIn: false, user: null, exp: null });
+          return;
+        }
+        const role = this.toRole(srv.user.role);
+        const curr = this.authStatusSubject.value;
+        const user: User | null = role ? {
+          id: Number(srv.user.id),
+          username: srv.user.username,
+          role,
+          departmentId: srv.user.departmentId ?? srv.user.department_id ?? null,
+          passwordReset: !!srv.user.passwordReset
+        } : null;
+        this.authStatusSubject.next({ loggedIn: !!user, user, exp: curr.exp ?? null });
+      }),
+      map(() => this.authStatusSubject.value)
+    );
+  }
+  ensurePasswordResetGate(): void {
+    this.fetchServerStatus().pipe(take(1)).subscribe((srv) => {
+      if (srv.loggedIn && srv.user?.passwordReset) {
+        this.overlay.lockToPasswordReset();
+        const cur = this.authStatusSubject.value;
+        if (cur.user) this.authStatusSubject.next({ ...cur, user: { ...cur.user, passwordReset: true } });
+      } else {
+        this.overlay.unlockPasswordReset();
+      }
+    });
   }
 
+  // ---------- public API ----------
+  checkStatus(): Observable<AuthStatus> { return of(this.authStatusSubject.value); }
+
+  // EXACT endpoint: http://localhost:4000/api/auth/login
   login(username: string, password: string): Observable<AuthStatus> {
-    return this.http.post<{
-      token: string;
-      user?: { passwordReset?: boolean };
-    }>(
+    return this.http.post<{ token:string; user?:{passwordReset?:boolean} }>(
       `${this.baseUrl}/auth/login`,
-      { username, password },
-      { withCredentials: true }
+      { username, password }
     ).pipe(
       tap((res) => {
         this.setSession(res.token, username);
-        const status = this.authStatusSubject.value;
-
-        if (status.loggedIn) {
-          if (res.user?.passwordReset === true) {
-            this.overlay.showOverlay('passwordReset', username);
+        // get passwordReset flag from server
+        this.refreshStatus().pipe(take(1)).subscribe((st) => {
+          const mustReset = !!st.user?.passwordReset;
+          if (mustReset) {
+            this.overlay.lockToPasswordReset();
           } else {
+            this.overlay.unlockPasswordReset();
             this.overlay.showOverlay('success', `Willkommen, ${username}!`);
-            this.router.navigate(['/years']);
           }
-        }
+        });
       }),
-      catchError((err) => {
+      catchError(() => {
         this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
         this.clearSession();
         return of({ loggedIn: false, user: null, exp: null });
       }),
-      tap(() => { }),
-    ) as unknown as Observable<AuthStatus>;
+      map(() => this.authStatusSubject.value)
+    );
+  }
+
+  changePasswordSelf(newPassword: string, oldPassword?: string) {
+    const body: any = { newPassword }; if (oldPassword) body.oldPassword = oldPassword;
+    return this.http.patch(`${this.baseUrl}/users/password`, body);
   }
 
   logout(): void {
@@ -141,23 +151,9 @@ export class AuthService {
     this.router.navigate(['/auth']);
   }
 
-  get token(): string | null {
-    return localStorage.getItem(this.tokenKey);
-  }
-
-  get currentUserRole(): Role | null {
-    return this.authStatusSubject.value.user?.role ?? null;
-  }
-
-  isAdmin(): boolean {
-    return this.currentUserRole === 'admin';
-  }
-
-  isMod(): boolean {
-    return this.currentUserRole === 'mod';
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.authStatusSubject.value.loggedIn;
-  }
+  get token(): string | null { return localStorage.getItem(this.tokenKey); }
+  get currentUserRole(): Role | null { return this.authStatusSubject.value.user?.role ?? null; }
+  isAdmin(): boolean { return this.currentUserRole === 'admin'; }
+  isMod(): boolean { return this.currentUserRole === 'mod'; }
+  isLoggedIn(): boolean { return !!this.authStatusSubject.value.loggedIn; }
 }

@@ -41,33 +41,52 @@ select {
     background: #242424;
 }
 
-/* Grid oben – alles vertikal ausgerichtet */
+/* Grid oben – exakt gleiche Spalten wie unten */
 .new-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    grid-template-columns: 2.1fr 1fr 1fr 1fr;
+    /* identisch zum Header/Rows */
     gap: 10px;
     align-items: center;
+    /* vertikal zentriert */
 }
 
+/* Nur Label dunkler (Inputs bleiben wie unten) */
 .new-grid .cell label {
     display: block;
     margin-bottom: 6px;
     font-weight: 700;
     font-size: 1.1rem;
-    /* 👈 größer */
+    color: var(--tc);
+    opacity: 0.85;
 }
 
-/* Aktionen-Zelle */
+/* Felder oben sollen identisch „strecken“ wie unten */
+.new-grid input[type="text"],
+.new-grid input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Aktionen-Zelle: Button in „doppelt“ breit */
 .new-grid .cell.actions {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.new-grid .cell.actions .button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 230px;
+    /* ~ zwei Buttons */
+}
+
 /* Tabellen-Header */
 .employee-header-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    grid-template-columns: 3fr 1.5fr 1.5fr 1.4fr;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
@@ -77,7 +96,6 @@ select {
 
 .employee-header-row>div {
     font-size: 1.2rem;
-    /* 👈 größer */
 }
 
 :host-context(body.light) .employee-header-row {
@@ -112,11 +130,11 @@ select {
     /* identisch zum Header */
     gap: 10px;
     align-items: center;
-    /* 👈 alle Inputs/Aktionen vertikal zentriert */
     padding: 8px 12px;
     border-radius: 8px;
 }
 
+/* Zebra-Streifen */
 .employees-container>.employee-entry-row:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.04);
 }
@@ -134,13 +152,13 @@ select {
     opacity: 0.95;
 }
 
-/* Inputs */
-.employee-entry-row input[type="text"] {
-    min-width: 260px;
-}
-
+/* Inputs unten füllen Spalten */
+.employee-entry-row input[type="text"],
 .employee-entry-row input[type="date"] {
-    min-width: 160px;
+    width: 100%;
+    min-width: 0;
+    /* verhindert Überlauf */
+    box-sizing: border-box;
 }
 
 /* Aktionen: wirklich mittig */
@@ -162,10 +180,16 @@ select {
 
 /* Hinweise */
 .hint {
-    margin: 8px 15px 12px;
+    margin: 15px;
     font-size: 1.5em;
 }
 
+/* optional: kleine optische Korrektur */
 #new-emp {
     margin-top: -20px;
+}
+
+#new-emp-btn {
+    margin-top: 25px;
+    width: 330px;
 }

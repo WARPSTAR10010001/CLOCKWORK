@@ -63,13 +63,34 @@
   } @else if (overlayState.type === "passwordReset") {
   <div id="passwordReset-overlay">
     <h1 class="emp page-header">Passwort ändern</h1>
-    <h1>Das Passwort muss mindestens 5 Zeichen lang sein.</h1>
-    <input type="password" placeholder="Neues Passwort eingeben">
-    <input type="password" placeholder="Neues Passwort wiederholen">
-    <h1>Hinweis: ...</h1>
-    <a (click)="close()" class="button-primary">Passwort speichern</a>
+    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich (außer dem Moderator), bitte sprechen Sie sich mit Ihren Kollegen ab um ein sicheres Passwort festzulegen.</h1>
+    <input
+      type="text"
+      placeholder="Neues Passwort eingeben"
+      [value]="pw1"
+      (input)="onPwInput(1, $event)" />
+
+    <input
+      type="text"
+      placeholder="Neues Passwort wiederholen"
+      [value]="pw2"
+      (input)="onPwInput(2, $event)" />
+
+    <div class="pw-hints">
+      <h1 [class.ok]="pwMinLenOk"    [class.bad]="!pwMinLenOk">1. ≥ 5 Zeichen</h1>
+      <h1 [class.ok]="pwNotBanned"   [class.bad]="!pwNotBanned">2. kein verbotenes Passwort</h1>
+      <h1 [class.ok]="pwMatch"       [class.bad]="!pwMatch">3. beide Eingaben identisch</h1>
+    </div>
+
+    <a
+      class="button-primary"
+      [class.disabled]="!canSubmit"
+      [attr.aria-disabled]="!canSubmit"
+      (click)="saveNewPassword()">
+      Passwort speichern
+    </a>
   </div>
-  } @else if (overlayState.type === "quickAction") {
+} @else if (overlayState.type === "quickAction") {
   <div id="quickAction-overlay">
     <h1 class="emp page-header">QuickAction</h1>
     <input type="text" placeholder="Befehl eingeben...">
