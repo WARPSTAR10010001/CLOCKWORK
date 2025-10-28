@@ -9,6 +9,7 @@ const holidaysRoutes = require('./routes/holidays.routes');
 const employeesRoutes = require('./routes/employees.routes');
 const departmentsRoutes = require('./routes/departments.routes');
 const adminRoutes = require('./routes/admin.routes');
+const feedbackRoutes = require('./routes/feedback.routes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api', holidaysRoutes);
 app.use('/api', employeesRoutes);
 app.use('/api', departmentsRoutes);
 app.use('/api', adminRoutes);
+app.use('/api', feedbackRoutes);
 
 app.get('/', (_req, res) => res.send('CLOCKWORK Server läuft!'));
 app.get('/api/health', (_req, res) => res.json({ message: "CLOCKWORK Server läuft!", running: true, timestamp: Date.now() }));

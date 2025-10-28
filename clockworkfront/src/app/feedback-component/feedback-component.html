@@ -1,3 +1,46 @@
 <div class="comp-wrap">
-    <h1 class="page-header emp">Erhaltenes Feedback</h1>
+  <h1 class="emp page-header">Erhaltenes Feedback</h1>
+
+  <div class="toolbar">
+    <label>Status-Filter:</label>
+    <select [(ngModel)]="filter" (change)="load()">
+      <option [ngValue]="''">Alle</option>
+      <option ngValue="neu">Neu</option>
+      <option ngValue="gelesen">Gelesen</option>
+      <option ngValue="bearbeitet">Bearbeitet</option>
+    </select>
+  </div>
+
+  <div class="list" *ngIf="!loading; else loadingTpl">
+    <div class="card" *ngFor="let f of items">
+      <div class="meta">
+        <span class="badge">{{ f.status }}</span>
+        <span>{{ f.category }}</span>
+        <span>•</span>
+        <span>{{ f.author_username || 'Unbekannt' }}</span>
+        <span>•</span>
+        <span>{{ f.created_at | date:'short' }}</span>
+        <span *ngIf="f.app_version">• v{{ f.app_version }}</span>
+      </div>
+
+      <pre class="content">{{ f.content }}</pre>
+
+      <div class="actions">
+        <label>Status:&nbsp;
+          <select [ngModel]="f.status" (ngModelChange)="changeStatus(f, $event)">
+            <option ngValue="neu">neu</option>
+            <option ngValue="gelesen">gelesen</option>
+            <option ngValue="bearbeitet">bearbeitet</option>
+          </select>
+        </label>
+        <button class="button-action" (click)="remove(f)">Löschen</button>
+      </div>
+    </div>
+
+    <p *ngIf="items.length === 0" class="hint">Kein Feedback gefunden.</p>
+  </div>
+
+  <ng-template #loadingTpl>
+    <p>Lade…</p>
+  </ng-template>
 </div>

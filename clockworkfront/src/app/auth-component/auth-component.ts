@@ -54,7 +54,7 @@ export class AuthComponent {
   }
 
   unlockAccess() {
-    this.overlayService.showOverlay("info", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+    this.overlayService.showOverlay("info", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden. Falls Sie Ihre Zugangsdaten vergessen haben, melden Sie sich entweder bei der IT oder beim Moderator Ihres Fachbereiches.");
   }
 
   @HostListener('document:keydown.enter', ['$event'])

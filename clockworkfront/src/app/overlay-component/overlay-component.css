@@ -91,14 +91,14 @@ h1 {
 
 select {
   margin-top: 30px;
-  width: 760px;
+  width: 90%;
   text-align: center;
 }
 
 textarea {
   margin-top: 0;
   margin-bottom: 30px;
-  width: 710px;
+  width: 90%;
   height: 250px;
 }
 
@@ -125,4 +125,10 @@ textarea {
 
 .button-row-pw a {
   margin-right: 20px;
+}
+
+#remaining {
+  margin-top: -20px;
+  margin-bottom: 5px;
+  font-size: 1.4em;
 }

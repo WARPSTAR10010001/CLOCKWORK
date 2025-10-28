@@ -24,22 +24,6 @@
       </div>
     </div>
     <hr>
-    <div id="outline-selection">
-      <h1>Kontur:</h1>
-      <div class="options">
-        <label>
-          <input type="radio" name="outline" [checked]="selectedOutline === 'outlines'"
-            (change)="changeOutline('outlines')">
-          An
-        </label>
-        <label>
-          <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'"
-            (change)="changeOutline('no-outlines')">
-          Aus
-        </label>
-      </div>
-    </div>
-    <hr>
     <div id="color-selection">
       <h1>Farbauswahl:</h1>
       <div class="options">
@@ -52,8 +36,25 @@
           Soft
         </label>
         <label>
-          <input type="radio" name="color" [checked]="selectedColor === 'color-wip'" (change)="changeColor('color-wip')">
+          <input type="radio" name="color" [checked]="selectedColor === 'color-wip'"
+            (change)="changeColor('color-wip')">
           (WIP)
+        </label>
+      </div>
+    </div>
+    <hr>
+    <div id="outline-selection">
+      <h1>Kontur:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="outline" [checked]="selectedOutline === 'no-outlines'"
+            (change)="changeOutline('no-outlines')">
+          Aus
+        </label>
+        <label>
+          <input type="radio" name="outline" [checked]="selectedOutline === 'outlines'"
+            (change)="changeOutline('outlines')">
+          An
         </label>
       </div>
     </div>
@@ -87,19 +88,29 @@
     <h1 class="emp page-header">QuickAction</h1>
     <input if="quickAction" type="text" placeholder="Befehl eingeben...">
   </div>
-  } @else if (overlayState.type === "feedback") {
+  } <!-- ...andere Overlay-Zweige... -->
+
+  @else if (overlayState.type === "feedback") {
   <div id="feedback-overlay">
     <h1 class="emp page-header">Feedback geben</h1>
-    <select>
-      <option>-- Kategorie --</option>
-      <option>Verbesserungsvorschlag</option>
-      <option>Featureanfrage</option>
-      <option>Visuelle- und/oder Logikfehler</option>
-      <option>Lob</option>
-      <option>Anderes</option>
+
+    <select [value]="feedbackCategory" (change)="onFeedbackCategoryChange($event)">
+      <option value="">-- Kategorie --</option>
+      <option value="Verbesserungsvorschlag">Verbesserungsvorschlag</option>
+      <option value="Featureanfrage">Featureanfrage</option>
+      <option value="Visuelle- und/oder Logikfehler">Visuelle- und/oder Logikfehler</option>
+      <option value="Lob">Lob</option>
+      <option value="Anderes">Anderes</option>
     </select>
-    <textarea placeholder="Hier Feedback eintippen... (erforderlich)"></textarea>
-    <a (click)="close()" class="button-primary">Feedback schicken (WIP)</a>
+
+    <textarea placeholder="Hier Feedback eintippen... (erforderlich)" [value]="feedbackContent"
+      (input)="onFeedbackContentInput($event)"></textarea>
+      <h1 id="remaining">{{ remainingFeedbackChars }} Zeichen verbleibend</h1>
+    <a class="button-primary" [class.disabled]="!canSendFeedback" [attr.aria-disabled]="!canSendFeedback"
+      (click)="sendFeedback()">
+      {{ 'Feedback schicken' }}
+    </a>
+
     <a (click)="close()" class="button-action">Schließen</a>
   </div>
   } @else if (overlayState.type === "error") {

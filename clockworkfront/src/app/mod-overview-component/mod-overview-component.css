@@ -40,3 +40,11 @@ select {
     text-align: center;
     width: 500px;
 }
+
+.systemuser-management a {
+    margin-right: 20px;
+}
+
+.card.disabled {
+    background-color: var(--tc) !important;
+}

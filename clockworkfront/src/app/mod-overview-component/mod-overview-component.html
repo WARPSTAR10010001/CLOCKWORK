@@ -11,7 +11,6 @@
             }
         </select>
         }
-
         <h1 class="subtitle">Plandaten verwalten</h1>
 
         @if (authService.isAdmin()) {
@@ -33,7 +32,12 @@
 
     <hr>
 
-    <div>
+    <div class="systemuser-management">
         <h1 class="subtitle">Systemnutzer verwalten</h1>
+        <a class="button-primary">Nutzerpasswort zurücksetzen</a>
+        @if (authService.isAdmin()) {
+            <a class="button-primary">Moderatorpasswort zurücksetzen</a>
+        }
+        <h1>Passwörter werden beim Zurücksetzen immer auf "reset" gesetzt und müssen beim ersten Login geändert werden. Bitte daran denken, dass alle Nutzer eines Fachbereiches mit der gleichen Berechtigungsrolle nun das gleiche Passwort haben.</h1>
     </div>
 </div>
