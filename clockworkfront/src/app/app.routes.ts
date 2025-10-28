@@ -13,6 +13,7 @@ import { ModEmployeeComponent } from './mod-employee-component/mod-employee-comp
 import { AuthGuard, ModGuard, AdminGuard, LoginGuard } from './auth-guard';
 import { ModEditPlanComponent } from './mod-edit-plan-component/mod-edit-plan-component';
 import { AdminDeptGuard } from './admin-dept-guard';
+import { FeedbackComponent } from './feedback-component/feedback-component';
 
 export const routes: Routes = [
     {
@@ -45,6 +46,12 @@ export const routes: Routes = [
         path: 'admin',
         component: AdminComponent,
         title: 'Adminpanel - CLOCKWORK',
+        canActivate: [AuthGuard, AdminGuard]
+    },
+    {
+        path: 'admin/feedback',
+        component: FeedbackComponent,
+        title: 'Feedback - CLOCKWORK',
         canActivate: [AuthGuard, AdminGuard]
     },
     {

@@ -24,11 +24,11 @@ router.get(
          FROM plans p WHERE p.id = $1`,
         [id]
       );
-      if (planRes.rowCount === 0) return res.status(404).json({ error: 'Plan not found' });
+      if (planRes.rowCount === 0) return res.status(404).json({ error: 'Plan wurde nicht gefunden' });
 
       const plan = planRes.rows[0];
       if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(plan.department_id)) {
-        return res.status(403).json({ error: 'Cross-department access denied' });
+        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
       }
 
       // Plan-Employees + Stammdaten
@@ -86,7 +86,7 @@ router.get(
       });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }
@@ -98,10 +98,10 @@ router.get(
   requireAuth,
   async (req, res) => {
     const { departmentId } = req.query || {};
-    if (!departmentId) return res.status(400).json({ error: 'departmentId required' });
+    if (!departmentId) return res.status(400).json({ error: 'departmentId benötigt' });
 
     if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-      return res.status(403).json({ error: 'Cross-department access denied' });
+      return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
     }
 
     try {
@@ -115,7 +115,7 @@ router.get(
       return res.json({ plans: rows });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     }
   }
 );
@@ -130,23 +130,23 @@ router.post(
 
     // Basic Validation
     if (!departmentId || !year || !Array.isArray(employees) || employees.length === 0) {
-      return res.status(400).json({ error: 'departmentId, year, employees[] required' });
+      return res.status(400).json({ error: 'departmentId, year und employees[] benötigt' });
     }
     if (!Number.isInteger(year) || year < 2000 || year > 2100) {
-      return res.status(400).json({ error: 'Invalid year' });
+      return res.status(400).json({ error: 'Ungültiges Jahr' });
     }
     for (const e of employees) {
       if (!e.employeeId || !e.startMonth || typeof e.initialBalance !== 'number') {
-        return res.status(400).json({ error: 'employees[].employeeId, startMonth, initialBalance required' });
+        return res.status(400).json({ error: 'employees[].employeeId, startMonth und initialBalance benötigt' });
       }
       if (!isIsoDate(e.startMonth)) {
-        return res.status(400).json({ error: 'employees[].startMonth must be YYYY-MM-DD' });
+        return res.status(400).json({ error: 'employees[].startMonth muss im Format YYYY-MM-DD sein' });
       }
       if (e.endMonth && !isIsoDate(e.endMonth)) {
-        return res.status(400).json({ error: 'employees[].endMonth must be YYYY-MM-DD or null' });
+        return res.status(400).json({ error: 'employees[].endMonth muss im Format YYYY-MM-DD sein oder null sein' });
       }
       if (e.initialBalance < 0) {
-        return res.status(400).json({ error: 'employees[].initialBalance must be >= 0' });
+        return res.status(400).json({ error: 'employees[].initialBalance muss >= 0 sein' });
       }
     }
 
@@ -158,7 +158,7 @@ router.post(
       const dep = await client.query('SELECT id FROM departments WHERE id = $1', [departmentId]);
       if (dep.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(404).json({ error: 'Department not found' });
+        return res.status(404).json({ error: 'Fachbereich wurde nicht gefunden' });
       }
 
       // Unique constraint (department_id, year) beachten: prüfen, ob es schon existiert
@@ -168,7 +168,7 @@ router.post(
       );
       if (existing.rowCount > 0) {
         await client.query('ROLLBACK');
-        return res.status(409).json({ error: 'Plan for this department and year already exists' });
+        return res.status(409).json({ error: 'Ein Plan existiert bereits für das ausgewählte Jahr' });
       }
 
       // Plan anlegen
@@ -190,7 +190,7 @@ router.post(
       for (const e of employees) {
         if (!validIds.has(e.employeeId)) {
           await client.query('ROLLBACK');
-          return res.status(400).json({ error: `Employee ${e.employeeId} does not belong to department ${departmentId}` });
+          return res.status(400).json({ error: `Mitarbeiter ${e.employeeId} gehört nicht zum Fachbereich ${departmentId}` });
         }
       }
 
@@ -222,9 +222,9 @@ router.post(
       console.error(err);
       // Unique-Constraint usw. nett abfangen
       if (err.code === '23505') {
-        return res.status(409).json({ error: 'Duplicate detected' });
+        return res.status(409).json({ error: 'Duplikat erkannt' });
       }
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }

@@ -35,7 +35,7 @@ router.get(
       }
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }

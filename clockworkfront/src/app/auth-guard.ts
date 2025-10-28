@@ -9,27 +9,27 @@ import { Observable } from 'rxjs';
  * Dieser Guard schützt Routen für eingeloggte Nutzer.
  */
 export const AuthGuard: CanActivateFn = (): Observable<boolean> => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
+    const authService = inject(AuthService);
+    const router = inject(Router);
 
-  return authService.authStatus$.pipe(
-    // HIER IST DIE MAGIE: Wir warten, bis der Status nicht mehr der initiale 'null'-Wert ist.
-    // Das stellt sicher, dass wir entweder das Ergebnis von checkStatus() (beim Neuladen)
-    // oder von login() abwarten.
-    filter(status => status !== null), 
-    
-    take(1), // Nimm den ersten "echten" Status, der durch den Filter kommt
-    map(authStatus => {
-      const isLoggedIn = authStatus?.loggedIn || false;
-      
-      if (isLoggedIn) {
-        return true; // Zugriff erlaubt
-      } else {
-        router.navigate(['/auth']); // Nicht eingeloggt, zum Login umleiten
-        return false; // Zugriff blockieren
-      }
-    })
-  );
+    return authService.authStatus$.pipe(
+        // HIER IST DIE MAGIE: Wir warten, bis der Status nicht mehr der initiale 'null'-Wert ist.
+        // Das stellt sicher, dass wir entweder das Ergebnis von checkStatus() (beim Neuladen)
+        // oder von login() abwarten.
+        filter(status => status !== null),
+
+        take(1), // Nimm den ersten "echten" Status, der durch den Filter kommt
+        map(authStatus => {
+            const isLoggedIn = authStatus?.loggedIn || false;
+
+            if (isLoggedIn) {
+                return true; // Zugriff erlaubt
+            } else {
+                router.navigate(['/auth']); // Nicht eingeloggt, zum Login umleiten
+                return false; // Zugriff blockieren
+            }
+        })
+    );
 };
 
 /**
@@ -42,14 +42,18 @@ export const LoginGuard: CanActivateFn = (): Observable<boolean> => {
     return authService.authStatus$.pipe(
         // Auch hier warten wir auf den ersten echten Status
         filter(status => status !== null),
-        
+
         take(1),
         map(authStatus => {
             const isLoggedIn = authStatus?.loggedIn || false;
 
             if (isLoggedIn) {
                 // Bereits eingeloggt? Weg von der Login-Seite, hin zur Jahresübersicht
-                router.navigate(['/years']); 
+                if (authService.isAdmin()) {
+                    router.navigate(['/admin']);
+                } else {
+                    router.navigate(['/years']);
+                }
                 return false; // Zugriff auf /auth blockieren
             } else {
                 return true; // Nicht eingeloggt? Zugriff auf /auth erlauben

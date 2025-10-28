@@ -114,3 +114,15 @@ textarea {
 .pw-hints {
   margin-bottom: 50px;
 }
+
+.ok {
+  color: var(--green);
+}
+
+.bad {
+  color: var(--red);
+}
+
+.button-row-pw a {
+  margin-right: 20px;
+}

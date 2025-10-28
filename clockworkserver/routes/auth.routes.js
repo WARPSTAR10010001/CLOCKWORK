@@ -21,7 +21,7 @@ function jwtCookieOptions() {
 router.post('/auth/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password required' });
+    return res.status(400).json({ error: 'Nutzername und Passwort erforderlich' });
   }
 
   try {
@@ -31,11 +31,11 @@ router.post('/auth/login', async (req, res) => {
         WHERE username = $1 AND is_active = TRUE`,
       [username]
     );
-    if (rows.length === 0) return res.status(401).json({ error: 'Invalid username or password' });
+    if (rows.length === 0) return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
 
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) return res.status(401).json({ error: 'Invalid username or password' });
+    if (!match) return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
 
     const payload = { sub: user.id, role: user.role, departmentId: user.department_id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' });
@@ -57,7 +57,7 @@ router.post('/auth/login', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Database error' });
+    return res.status(500).json({ error: 'Datenbankfehler' });
   }
 });
 
@@ -95,29 +95,19 @@ router.get('/auth/status', requireAuth, async (req, res) => {
   }
 });
 
-/* =========================
-   USER MANAGEMENT
-   =========================
-   Mounted at /api  →  effective paths:
-   POST   /api/users
-   PATCH  /api/users/password
-   POST   /api/users/:id/reset-password
-*/
-
-// POST /api/users
 router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const { departmentId, username, password, role } = req.body || {};
   if (!username || !password || !role) {
-    return res.status(400).json({ error: 'username, password, role required' });
+    return res.status(400).json({ error: 'Nutzername, Passwort und Rolle benötigt' });
   }
   if (!['ADMIN','MOD','USER'].includes(role)) {
-    return res.status(400).json({ error: 'invalid role' });
+    return res.status(400).json({ error: 'Ungültige Rolle' });
   }
   if (role !== 'ADMIN' && !departmentId) {
-    return res.status(400).json({ error: 'departmentId required for non-ADMIN users' });
+    return res.status(400).json({ error: 'departmentId benötigt für alle Moderatoren und Nutzer' });
   }
   if (req.user.role === 'MOD' && String(req.user.departmentId) !== String(departmentId)) {
-    return res.status(403).json({ error: 'MOD can only create users in own department' });
+    return res.status(403).json({ error: 'Moderatoren können nur für eigenen Fachbereich Mitarbeiter erstellen' });
   }
 
   try {
@@ -131,15 +121,15 @@ router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) 
     return res.status(201).json(rows[0]);
   } catch (err) {
     console.error(err);
-    if (err.code === '23505') return res.status(409).json({ error: 'username already exists' });
-    return res.status(500).json({ error: 'Internal error' });
+    if (err.code === '23505') return res.status(409).json({ error: 'Nutzername existiert bereits' });
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   }
 });
 
 // PATCH /api/users/password
 router.patch('/users/password', requireAuth, async (req, res) => {
-  const { oldPassword, newPassword, targetUserId } = req.body || {};
-  if (!newPassword) return res.status(400).json({ error: 'newPassword required' });
+  const { newPassword, targetUserId } = req.body || {};
+  if (!newPassword) return res.status(400).json({ error: 'Neues Passwort erforderlich' });
 
   const client = await pool.connect();
   try {
@@ -150,28 +140,25 @@ router.patch('/users/password', requireAuth, async (req, res) => {
       userId = targetUserId;
       isSelf = String(targetUserId) === String(req.user.sub);
     } else if (targetUserId && req.user.role === 'USER') {
-      return res.status(403).json({ error: 'User cannot change other users passwords' });
+      return res.status(403).json({ error: 'Nutzer kann nicht das Passwort eines anderen Nutzers ändern' });
     }
 
+    // password_reset mit auslesen
     const u = await client.query(
-      'SELECT id, password_hash, department_id, role FROM system_users WHERE id=$1',
+      'SELECT id, password_hash, department_id, role, password_reset FROM system_users WHERE id=$1',
       [userId]
     );
-    if (u.rowCount === 0) return res.status(404).json({ error: 'User not found' });
+    if (u.rowCount === 0) return res.status(404).json({ error: 'Nutzer wurde nicht gefunden' });
     const user = u.rows[0];
 
+    // MOD darf nur im eigenen Department
     if (!isSelf && req.user.role === 'MOD' &&
         String(req.user.departmentId) !== String(user.department_id)) {
-      return res.status(403).json({ error: 'MOD can only change passwords in own department' });
-    }
-
-    if (isSelf) {
-      if (!oldPassword) return res.status(400).json({ error: 'oldPassword required for self change' });
-      const match = await bcrypt.compare(oldPassword, user.password_hash);
-      if (!match) return res.status(401).json({ error: 'Old password incorrect' });
+      return res.status(403).json({ error: 'Moderator kann nur die Passwörter aus dem eigenen Fachbereich ändern' });
     }
 
     const hash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
     const resetFlag = isSelf ? false : true;
 
     const upd = await client.query(
@@ -186,7 +173,7 @@ router.patch('/users/password', requireAuth, async (req, res) => {
     return res.json({ success: true, user: upd.rows[0] });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Internal error' });
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   } finally {
     client.release();
   }
@@ -196,7 +183,7 @@ router.patch('/users/password', requireAuth, async (req, res) => {
 router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const targetUserId = req.params.id;
   const { newPassword } = req.body || {};
-  const tempPw = newPassword && String(newPassword).length >= 4 ? String(newPassword) : 'init';
+  const tempPw = newPassword && String(newPassword).length >= 4 ? String(newPassword) : 'reset';
 
   const client = await pool.connect();
   try {
@@ -204,13 +191,13 @@ router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD')
       `SELECT id, department_id FROM system_users WHERE id=$1`,
       [targetUserId]
     );
-    if (q.rowCount === 0) return res.status(404).json({ error: 'User not found' });
+    if (q.rowCount === 0) return res.status(404).json({ error: 'Nutzer wurde nicht gefunden' });
 
     const target = q.rows[0];
 
     if (req.user.role === 'MOD' &&
         String(req.user.departmentId) !== String(target.department_id)) {
-      return res.status(403).json({ error: 'MOD can only reset passwords in own department' });
+      return res.status(403).json({ error: 'Moderator kann nur die Passwörter aus dem eigenen Fachbereich ändern' });
     }
 
     const hash = await bcrypt.hash(tempPw, SALT_ROUNDS);
@@ -230,7 +217,7 @@ router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD')
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Internal error' });
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   } finally {
     client.release();
   }

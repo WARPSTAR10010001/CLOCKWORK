@@ -44,19 +44,17 @@ export class AuthComponent {
           this.isSubmitting = false;
         }
       },
-      // Der `error`-Block ist weiterhin wichtig, um auf fehlgeschlagene Logins zu reagieren.
       error: (err) => {
         this.isSubmitting = false;
         const message = err.error?.error || "Login fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben.";
         this.overlayService.showOverlay("error", message);
-        // Das Passwort-Feld leeren ist gute Praxis
         this.password = "";
       }
     });
   }
 
   unlockAccess() {
-    this.overlayService.showOverlay("confirm", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
+    this.overlayService.showOverlay("info", "Um den Zugang zu CLOCKWORK freizuschalten muss die IT unter der Durchwahl 180 kontaktiert werden.");
   }
 
   @HostListener('document:keydown.enter', ['$event'])

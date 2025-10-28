@@ -175,7 +175,7 @@ export class ModEmployeeComponent implements OnInit {
 
     this.employeesApi.updateEmployee(v.id, payload).subscribe({
       next: () => {
-        this.overlay.showOverlay('success', 'Gespeichert.');
+        this.overlay.showOverlay('success', 'Neue Daten wurden gespeichert.');
         this.loadAll();
       },
       error: (err) => {

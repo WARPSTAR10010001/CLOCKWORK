@@ -13,7 +13,7 @@ export class OverlayComponent implements OnInit {
   private overlayService = inject(OverlayService);
   private themeService = inject(ThemeService);
   private renderer = inject(Renderer2);
-  private auth = inject(AuthService);
+  public auth = inject(AuthService);
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
@@ -26,7 +26,7 @@ export class OverlayComponent implements OnInit {
   submitting = false;
   passwordResetRequired = false;
 
-  private banned = new Set(['12345', 'passwort', 'kennwort', 'organist']);
+  private banned = new Set(['12345', 'passwort', 'kennwort', 'organist', 'badehose', 'november11', ]);
 
   ngOnInit() {
     // Theme streams

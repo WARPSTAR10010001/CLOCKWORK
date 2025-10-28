@@ -45,10 +45,17 @@
   </div>
   <div id="footer">
     <div id="footer-link">
+      @if (authService.isAdmin()) {
+      <a [routerLink]="['admin', 'feedback']">Feedback</a>
+      } @else if (authService.isLoggedIn()) {
       <a (click)="openFeedbackOverlay()">Feedback</a>
+      } @else {
+        <a (click)="openFeedbackOverlayInfo()">Feedback</a>
+      }
       <a [routerLink]="['/documentation']">Dokumentation</a>
       <a (click)="openStyleOverlay()">Ansicht</a>
     </div>
-    <p class="emp"><a id="version" [routerLink]="['/changelog']">V0.2.3</a> // <a id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp"><a id="version" [routerLink]="['/changelog']">V0.2.4</a> // <a id="credit"
+        [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

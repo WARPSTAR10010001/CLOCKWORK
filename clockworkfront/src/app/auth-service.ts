@@ -19,9 +19,9 @@ interface AuthStatus { loggedIn: boolean; user: User | null; exp?: number | null
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private authStatusSubject = new BehaviorSubject<AuthStatus>({ loggedIn: false, user: null, exp: null });
-  public  authStatus$        = this.authStatusSubject.asObservable();
+  public authStatus$ = this.authStatusSubject.asObservable();
 
-  private baseUrl  = 'http://localhost:4000/api';
+  private baseUrl = 'http://localhost:4000/api';
   private tokenKey = 'clockwork_token';
 
   constructor(
@@ -36,14 +36,14 @@ export class AuthService {
 
   // ---------- helpers ----------
   private decodeJwt(token: string): any | null {
-    try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))); }
+    try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); }
     catch { return null; }
   }
   private toRole(apiRole?: string): Role | null {
     switch ((apiRole || '').toUpperCase()) {
       case 'ADMIN': return 'admin';
-      case 'MOD'  : return 'mod';
-      case 'USER' : return 'user';
+      case 'MOD': return 'mod';
+      case 'USER': return 'user';
       default: return null;
     }
   }
@@ -55,7 +55,7 @@ export class AuthService {
       id: Number(dec.sub), username: usernameFromForm, role, departmentId: dec.departmentId ?? null
     } : null;
     const exp = typeof dec.exp === 'number' ? dec.exp : null;
-    const loggedIn = !!(user && (!exp || Date.now()/1000 < exp));
+    const loggedIn = !!(user && (!exp || Date.now() / 1000 < exp));
     this.authStatusSubject.next({ loggedIn, user, exp });
   }
   private clearSession() {
@@ -65,15 +65,15 @@ export class AuthService {
   private restoreSession() {
     const t = localStorage.getItem(this.tokenKey); if (!t) return this.clearSession();
     const dec = this.decodeJwt(t); if (!dec) return this.clearSession();
-    if (dec.exp && Date.now()/1000 >= dec.exp) return this.clearSession();
+    if (dec.exp && Date.now() / 1000 >= dec.exp) return this.clearSession();
     const role = this.toRole(dec.role);
     const user: User | null = role ? { id: Number(dec.sub), role, departmentId: dec.departmentId ?? null } : null;
     this.authStatusSubject.next({ loggedIn: !!user, user, exp: dec.exp ?? null });
   }
 
   // ---------- server status (uses Bearer via interceptor if token exists) ----------
-  private fetchServerStatus(): Observable<{loggedIn:boolean; user:any|null}> {
-    return this.http.get<{loggedIn:boolean; user:any|null}>(`${this.baseUrl}/auth/status`)
+  private fetchServerStatus(): Observable<{ loggedIn: boolean; user: any | null }> {
+    return this.http.get<{ loggedIn: boolean; user: any | null }>(`${this.baseUrl}/auth/status`)
       .pipe(catchError(() => of({ loggedIn: false, user: null })));
   }
   refreshStatus(): Observable<AuthStatus> {
@@ -114,7 +114,7 @@ export class AuthService {
 
   // EXACT endpoint: http://localhost:4000/api/auth/login
   login(username: string, password: string): Observable<AuthStatus> {
-    return this.http.post<{ token:string; user?:{passwordReset?:boolean} }>(
+    return this.http.post<{ token: string; user?: { passwordReset?: boolean } }>(
       `${this.baseUrl}/auth/login`,
       { username, password }
     ).pipe(

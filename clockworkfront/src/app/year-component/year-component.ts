@@ -83,7 +83,7 @@ export class YearComponent implements OnInit {
 
         // Hinweis für normale User ohne Pläne
         if (this.years.length === 0 && !this.auth.isAdmin()) {
-          this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihre Abteilung erstellt.');
+          this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihren Fachbereich erstellt.');
         }
       });
   }

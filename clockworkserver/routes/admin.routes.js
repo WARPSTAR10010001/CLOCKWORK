@@ -28,14 +28,6 @@ async function nextFreeUsername(client, base) {
   }
 }
 
-/**
- * POST /api/admin/departments
- * body: { name: string, usernames?: { user?: string, mod?: string } }
- * erstellt:
- *   - department
- *   - system_users: USER-{slug}, MOD-{slug} (oder custom), PW = bcrypt("init")
- * returns: { department: {id,name}, users: [{id,username,role}] }
- */
 router.post(
   '/admin/departments',
   requireAuth,
@@ -45,7 +37,7 @@ router.post(
     const trimmed = (name || '').trim();
 
     if (!trimmed) {
-      return res.status(400).json({ error: 'Department name required' });
+      return res.status(400).json({ error: 'Fachbereichsname erforderlich' });
     }
 
     const client = await pool.connect();
@@ -61,7 +53,7 @@ router.post(
       );
       if (depIns.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(409).json({ error: 'Department name already exists' });
+        return res.status(409).json({ error: 'Fachbereichsname existiert bereits' });
       }
       const department = depIns.rows[0];
 
@@ -101,7 +93,7 @@ router.post(
     } catch (err) {
       await client.query('ROLLBACK');
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }
@@ -144,7 +136,7 @@ router.get(
       return res.json(Array.from(byDep.values()));
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }

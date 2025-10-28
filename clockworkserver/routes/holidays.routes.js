@@ -37,9 +37,9 @@ function fmt(d) {
 // GET /api/holidays?year=2025&stateCode=NW
 router.get('/holidays', requireAuth, async (req, res) => {
   const { year, stateCode } = req.query || {};
-  if (!year || !stateCode) return res.status(400).json({ error: 'year and stateCode required' });
+  if (!year || !stateCode) return res.status(400).json({ error: 'year und stateCode benötigt' });
   const y = Number(year);
-  if (!Number.isInteger(y)) return res.status(400).json({ error: 'invalid year' });
+  if (!Number.isInteger(y)) return res.status(400).json({ error: 'Ungültiges Jahr' });
 
   try {
     const { rows } = await pool.query(
@@ -52,7 +52,7 @@ router.get('/holidays', requireAuth, async (req, res) => {
     return res.json({ holidays: rows });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Internal error' });
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   }
 });
 
@@ -61,11 +61,11 @@ router.post('/holidays/seed', requireAuth, requireRole('MOD'), async (req, res) 
   const { year, stateCode } = req.body || {};
   const y = Number(year);
   if (!year || !stateCode || !Number.isInteger(y)) {
-    return res.status(400).json({ error: 'year (int) and stateCode required' });
+    return res.status(400).json({ error: 'year (int) und stateCode benötigt' });
   }
   if (stateCode !== 'NW') {
     // du kannst hier später mehrere Bundesländer ergänzen
-    return res.status(400).json({ error: 'Only NW supported in this seed' });
+    return res.status(400).json({ error: 'Nur NW wird akzeptiert' });
   }
 
   const e = easterDate(y); // Ostersonntag
@@ -110,7 +110,7 @@ router.post('/holidays/seed', requireAuth, requireRole('MOD'), async (req, res) 
   } catch (err) {
     await client.query('ROLLBACK');
     console.error(err);
-    return res.status(500).json({ error: 'Internal error' });
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   } finally {
     client.release();
   }

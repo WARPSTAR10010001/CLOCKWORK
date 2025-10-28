@@ -32,10 +32,10 @@ router.post(
         const { planId, departmentId, employeeId, date, status, description } = req.body || {};
 
         if (!planId || !departmentId || !employeeId || !date || !status) {
-            return res.status(400).json({ error: 'planId, departmentId, employeeId, date, status required' });
+            return res.status(400).json({ error: 'planId, departmentId, employeeId, date, status benötigt' });
         }
-        if (!isIsoDate(date)) return res.status(400).json({ error: 'date must be YYYY-MM-DD' });
-        if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'invalid status' });
+        if (!isIsoDate(date)) return res.status(400).json({ error: 'Datum muss im Format YYYY-MM-DD sein' });
+        if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungültiger Status' });
 
         const client = await pool.connect();
         try {
@@ -48,19 +48,19 @@ router.post(
             );
             if (planQ.rowCount === 0) {
                 await client.query('ROLLBACK');
-                return res.status(404).json({ error: 'Plan not found in department' });
+                return res.status(404).json({ error: 'Plan wurde nicht im Fachbereich gefunden' });
             }
             const plan = planQ.rows[0];
             if (parseInt(date.slice(0, 4), 10) !== plan.year) {
                 await client.query('ROLLBACK');
-                return res.status(400).json({ error: `date must be within plan year ${plan.year}` });
+                return res.status(400).json({ error: `Datum muss im folgenden Jahr liegen: ${plan.year}` });
             }
 
             // Wochenende blocken (ISO-DOW: 6=Sa, 7=So)
             const dowQ = await client.query('SELECT EXTRACT(ISODOW FROM $1::date) AS dow', [date]);
             if (Number(dowQ.rows[0].dow) >= 6) {
                 await client.query('ROLLBACK');
-                return res.status(400).json({ error: 'Weekend entries are not allowed' });
+                return res.status(400).json({ error: 'Einträge am Wochenende nicht zugelassen' });
             }
 
             // Mitarbeiter gehört zum Department?
@@ -70,7 +70,7 @@ router.post(
             );
             if (empQ.rowCount === 0) {
                 await client.query('ROLLBACK');
-                return res.status(400).json({ error: 'Employee not in department' });
+                return res.status(400).json({ error: 'Mitarbeiter gehört nicht zum Fachbereich' });
             }
 
             // plan_employees-Fenster (Monat/Jahr-basiert)
@@ -86,7 +86,7 @@ router.post(
             );
             if (peQ.rowCount === 0) {
                 await client.query('ROLLBACK');
-                return res.status(400).json({ error: 'Employee is not part of this plan' });
+                return res.status(400).json({ error: 'Mitarbeiter gehört nicht zum Plan' });
             }
             const { start_m, end_m } = peQ.rows[0];
 
@@ -98,7 +98,7 @@ router.post(
 
             if (entry_month < start_m || (end_m && entry_month > end_m)) {
                 await client.query('ROLLBACK');
-                return res.status(400).json({ error: 'date is outside employee active months for this plan' });
+                return res.status(400).json({ error: 'Datum liegt außerhalb der aktiven Monate des Mitarbeiters' });
             }
 
             // UPSERT: existierenden Tages-Eintrag ersetzen
@@ -123,7 +123,7 @@ router.post(
         } catch (err) {
             await client.query('ROLLBACK');
             console.error(err);
-            return res.status(500).json({ error: 'Internal error' });
+            return res.status(500).json({ error: 'Interner Serverfehler' });
         } finally {
             client.release();
         }
@@ -138,9 +138,9 @@ router.post(
   async (req, res) => {
     const { planId, departmentId, employeeId, status, dates, description } = req.body || {};
     if (!planId || !departmentId || !employeeId || !status || !Array.isArray(dates) || dates.length === 0) {
-      return res.status(400).json({ error: 'planId, departmentId, employeeId, status, dates[] required' });
+      return res.status(400).json({ error: 'planId, departmentId, employeeId, status und dates[] benötigt' });
     }
-    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'invalid status' });
+    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungültiger Status' });
 
     const client = await pool.connect();
     try {
@@ -153,7 +153,7 @@ router.post(
       );
       if (planQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(404).json({ error: 'Plan not found in department' });
+        return res.status(404).json({ error: 'Plan konnte nicht im Fachbereich gefunden werden' });
       }
       const plan = planQ.rows[0];
 
@@ -164,7 +164,7 @@ router.post(
       );
       if (empQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Employee not in department' });
+        return res.status(400).json({ error: 'Mitarbeiter nicht im Fachbereich' });
       }
 
       // plan_employees-Fenster (Monat-basiert)
@@ -178,7 +178,7 @@ router.post(
       );
       if (peQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Employee is not part of this plan' });
+        return res.status(400).json({ error: 'Mitarbeiter ist nicht Teil dieses Plans' });
       }
       const { start_m, end_m } = peQ.rows[0];
 
@@ -260,7 +260,7 @@ router.post(
     } catch (err) {
       await client.query('ROLLBACK');
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }
@@ -273,18 +273,18 @@ router.get(
     requireAuth,
     async (req, res) => {
         const { planId, month } = req.query || {};
-        if (!planId || !month) return res.status(400).json({ error: 'planId and month=YYYY-MM required' });
-        if (!isYearMonth(month)) return res.status(400).json({ error: 'month must be YYYY-MM' });
+        if (!planId || !month) return res.status(400).json({ error: 'planId und month=YYYY-MM benötigt' });
+        if (!isYearMonth(month)) return res.status(400).json({ error: 'month muss im Format YYYY-MM sein' });
 
         const client = await pool.connect();
         try {
             // Plan → Department ermitteln und Scope prüfen
             const plan = await client.query('SELECT id, department_id FROM plans WHERE id=$1', [planId]);
-            if (plan.rowCount === 0) return res.status(404).json({ error: 'Plan not found' });
+            if (plan.rowCount === 0) return res.status(404).json({ error: 'Plan wurde nicht gefunden' });
 
             const departmentId = plan.rows[0].department_id;
             if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-                return res.status(403).json({ error: 'Cross-department access denied' });
+                return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
             }
 
             // Monatsrange [month-01, next-month)
@@ -309,7 +309,7 @@ router.get(
             return res.json({ entries: rows, departmentId });
         } catch (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal error' });
+            return res.status(500).json({ error: 'Interner Serverfehler' });
         } finally {
             client.release();
         }
@@ -325,9 +325,9 @@ router.patch(
         const { id } = req.params;
         const { status, description } = req.body || {};
         if (!status && typeof description === 'undefined') {
-            return res.status(400).json({ error: 'status or description required' });
+            return res.status(400).json({ error: 'Status benötigt' });
         }
-        if (status && !VALID_STATUS.has(status)) return res.status(400).json({ error: 'invalid status' });
+        if (status && !VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungültiger Status' });
 
         const client = await pool.connect();
         try {
@@ -336,11 +336,11 @@ router.patch(
                 `SELECT pe.id, pe.department_id FROM plan_entries pe WHERE pe.id=$1`,
                 [id]
             );
-            if (q.rowCount === 0) return res.status(404).json({ error: 'Entry not found' });
+            if (q.rowCount === 0) return res.status(404).json({ error: 'Eintrag wurde nicht gefunden' });
 
             const departmentId = q.rows[0].department_id;
             if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-                return res.status(403).json({ error: 'Cross-department access denied' });
+                return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
             }
 
             const fields = [];
@@ -356,7 +356,7 @@ router.patch(
             return res.json(upd.rows[0]);
         } catch (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal error' });
+            return res.status(500).json({ error: 'Interner Serverfehler' });
         } finally {
             client.release();
         }
@@ -375,17 +375,17 @@ router.delete(
         try {
             // Scope check
             const q = await client.query('SELECT department_id FROM plan_entries WHERE id=$1', [id]);
-            if (q.rowCount === 0) return res.status(404).json({ error: 'Entry not found' });
+            if (q.rowCount === 0) return res.status(404).json({ error: 'Entry wurde nicht gefunden' });
             const departmentId = q.rows[0].department_id;
             if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-                return res.status(403).json({ error: 'Cross-department access denied' });
+                return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
             }
 
             await client.query('DELETE FROM plan_entries WHERE id=$1', [id]);
             return res.status(204).send();
         } catch (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal error' });
+            return res.status(500).json({ error: 'Interner Serverfehler' });
         } finally {
             client.release();
         }
@@ -400,7 +400,7 @@ router.post(
   async (req, res) => {
     const { planId, departmentId, employeeId, dates } = req.body || {};
     if (!planId || !departmentId || !employeeId || !Array.isArray(dates) || dates.length === 0) {
-      return res.status(400).json({ error: 'planId, departmentId, employeeId, dates[] required' });
+      return res.status(400).json({ error: 'planId, departmentId, employeeId und dates[] benötigt' });
     }
 
     const client = await pool.connect();
@@ -414,7 +414,7 @@ router.post(
       );
       if (planQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(404).json({ error: 'Plan not found in department' });
+        return res.status(404).json({ error: 'Plan wurde nicht im Fachbereich gefunden' });
       }
 
       const empQ = await client.query(
@@ -423,13 +423,13 @@ router.post(
       );
       if (empQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Employee not in department' });
+        return res.status(400).json({ error: 'Mitarbeiter nicht im Fachbereich gefunden' });
       }
 
       const filtered = dates.filter(isIsoDate);
       if (filtered.length === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'no valid dates' });
+        return res.status(400).json({ error: 'Keine gültigen Daten' });
       }
 
       const del = await client.query(
@@ -444,7 +444,7 @@ router.post(
     } catch (err) {
       await client.query('ROLLBACK');
       console.error(err);
-      return res.status(500).json({ error: 'Internal error' });
+      return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();
     }

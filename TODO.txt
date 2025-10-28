@@ -1,16 +1,21 @@
 Must-Do:
 Edit Plan Component (add, remove, edit users) + delete plan (Mod or Admin only?)
-German error messages
 Software documentation
-Delete/edit departments (names, passwords) for admins
-QuickAction overlay logic
-Replace browser default "confirm" overlay with custom overlay
+Revamp admin component
 Implement feedback logic
-Fix resetPassword Logic + fix errors in console
+Feiertags API
+
+!!! Chrome doesnt get data properly
 
 QOL:
+Replace browser default "confirm" overlay with custom overlay
 Loading animation
 Rework dark theme
 Implement "Soft" Colorscheme
-Set quickaction input as focused when shift+k is pressed
 Shortcuts with "k" for sickness, "u" for vacation etc in plan component
+Lock plans at end of january
+
+Future Updates (V1.2.0):
+QuickAction logic
+-> Set quickaction input as focused when shift+k is pressed
+Custom status for plan entry

@@ -63,37 +63,29 @@
   } @else if (overlayState.type === "passwordReset") {
   <div id="passwordReset-overlay">
     <h1 class="emp page-header">Passwort ändern</h1>
-    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich (außer dem Moderator), bitte sprechen Sie sich mit Ihren Kollegen ab um ein sicheres Passwort festzulegen.</h1>
-    <input
-      type="text"
-      placeholder="Neues Passwort eingeben"
-      [value]="pw1"
-      (input)="onPwInput(1, $event)" />
+    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich (außer dem Moderator), bitte sprechen Sie sich
+      mit Ihren Kollegen ab um ein sicheres Passwort festzulegen.</h1>
+    <input type="text" placeholder="Neues Passwort eingeben" [value]="pw1" (input)="onPwInput(1, $event)" />
 
-    <input
-      type="text"
-      placeholder="Neues Passwort wiederholen"
-      [value]="pw2"
-      (input)="onPwInput(2, $event)" />
+    <input type="text" placeholder="Neues Passwort wiederholen" [value]="pw2" (input)="onPwInput(2, $event)" />
 
     <div class="pw-hints">
-      <h1 [class.ok]="pwMinLenOk"    [class.bad]="!pwMinLenOk">1. ≥ 5 Zeichen</h1>
-      <h1 [class.ok]="pwNotBanned"   [class.bad]="!pwNotBanned">2. kein verbotenes Passwort</h1>
-      <h1 [class.ok]="pwMatch"       [class.bad]="!pwMatch">3. beide Eingaben identisch</h1>
+      <h1 [class.ok]="pwMinLenOk" [class.bad]="!pwMinLenOk">1. ≥ 5 Zeichen</h1>
+      <h1 [class.ok]="pwNotBanned" [class.bad]="!pwNotBanned">2. kein verbotenes Passwort</h1>
+      <h1 [class.ok]="pwMatch" [class.bad]="!pwMatch">3. beide Eingaben identisch</h1>
     </div>
-
-    <a
-      class="button-primary"
-      [class.disabled]="!canSubmit"
-      [attr.aria-disabled]="!canSubmit"
-      (click)="saveNewPassword()">
-      Passwort speichern
-    </a>
+    <div class="button-row-pw">
+      <a class="button-primary" [class.disabled]="!canSubmit" [attr.aria-disabled]="!canSubmit"
+        (click)="saveNewPassword()">
+        Passwort speichern
+      </a>
+      <a class="button-action" (click)="this.auth.logout()">Abmelden</a>
+    </div>
   </div>
-} @else if (overlayState.type === "quickAction") {
+  } @else if (overlayState.type === "quickAction") {
   <div id="quickAction-overlay">
     <h1 class="emp page-header">QuickAction</h1>
-    <input type="text" placeholder="Befehl eingeben...">
+    <input if="quickAction" type="text" placeholder="Befehl eingeben...">
   </div>
   } @else if (overlayState.type === "feedback") {
   <div id="feedback-overlay">
@@ -104,8 +96,9 @@
       <option>Featureanfrage</option>
       <option>Visuelle- und/oder Logikfehler</option>
       <option>Lob</option>
+      <option>Anderes</option>
     </select>
-    <textarea placeholder="Hier Feedback eintippen..."></textarea>
+    <textarea placeholder="Hier Feedback eintippen... (erforderlich)"></textarea>
     <a (click)="close()" class="button-primary">Feedback schicken (WIP)</a>
     <a (click)="close()" class="button-action">Schließen</a>
   </div>
