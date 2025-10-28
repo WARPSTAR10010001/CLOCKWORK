@@ -23,16 +23,45 @@ body.dim {
     --bc: #1e1e1e;
 }
 
-body.dark {
-    --bgc: #000;
+body.neon {
+    --bgc: #080022;
     --tc: #fff;
     --olc: #fff;
-    --bsc: #ffffff63;
-    --bc: #000;
+    --bsc: #3dc2ff30;
+    --bc: #0a002b;
 }
 
-body.bw {
-    filter: grayscale(100%);
+body.soft .emp{
+    background: linear-gradient(110deg, #76edff, #72ffea, #76edff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 3s linear infinite;
+}
+
+.emp {
+    background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 3s linear infinite;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+:root body.soft {
+    --red: #ff8282;
+    --green: #95ff87;
 }
 
 body {
@@ -59,14 +88,13 @@ body.dim {
     color: var(--tc);
 }
 
-body.dark {
+body.neon {
     background-color: var(--bgc);
     color: var(--tc);
 }
 
-body.hero {
-    background-color: var(--bgc);
-    color: var(--tc);
+body.bw {
+    filter: grayscale(100%);
 }
 
 a {
@@ -78,25 +106,6 @@ a {
 a:hover {
     cursor: pointer;
     text-decoration: underline;
-}
-
-.emp {
-    background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientMove 3s linear infinite;
-}
-
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    100% {
-        background-position: 200% 50%;
-    }
 }
 
 .page-header {

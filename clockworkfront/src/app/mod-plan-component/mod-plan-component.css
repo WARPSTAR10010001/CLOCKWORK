@@ -19,7 +19,6 @@ select {
 .form-row label {
     justify-self: start;
     font-size: 2em;
-    /* größer & besser lesbar */
 }
 
 .num-entry {
@@ -38,7 +37,6 @@ select {
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
-    margin-top: 12px;
     border-radius: 10px;
     font-weight: 700;
     box-sizing: border-box;
@@ -48,9 +46,12 @@ select {
     background: #f0f0f5;
 }
 
-:host-context(body.dim) .employee-header-row,
-:host-context(body.dark) .employee-header-row {
+:host-context(body.dim) .employee-header-row {
     background: #252525;
+}
+
+:host-context(body.neon) .employee-header-row {
+    background-color: #0b002e;
 }
 
 .employee-header-row div {
@@ -93,9 +94,12 @@ select {
     background-color: #efefef;
 }
 
-:host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even),
-:host-context(body.dark) .employees-container>.employee-entry-row:nth-child(even) {
+:host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even) {
     background-color: #2a2a2a;
+}
+
+:host-context(body.neon) .employees-container>.employee-entry-row:nth-child(even) {
+    background-color: #0b002e;
 }
 
 /* Eingabefelder pro Zeile */

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'dark' | 'dim';
+export type Theme = 'light' | 'neon' | 'dim';
 export type Outline = "outlines" | "no-outlines";
-export type Color = "standard" | "soft" | "bw";
+export type Color = "standard" | "soft" | "color-wip";
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +41,7 @@ export class ThemeService {
   }
 
   setTheme(theme: Theme, save = true) {
-    document.body.classList.remove('light', 'dark', 'dim');
+    document.body.classList.remove('light', 'neon', 'dim');
     document.body.classList.add(theme);
 
     this.currentThemeSubject.next(theme);
@@ -71,7 +71,7 @@ export class ThemeService {
   }
 
   setColor(color: Color, save = true) {
-    document.body.classList.remove("standard", "soft", "bw");
+    document.body.classList.remove("standard", "soft", "color-wip");
     document.body.classList.add(color);
 
     this.currentColorSubject.next(color);

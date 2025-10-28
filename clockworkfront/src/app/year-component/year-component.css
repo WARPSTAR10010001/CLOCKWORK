@@ -20,37 +20,61 @@
     color: var(--bgc);
 }
 
-:host-context(body.outlines) .year-card {
-    outline: 3px solid var(--olc);
-}
-
 .year-card:hover {
     box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
+}
+
+:host-context(body.outlines) .year-card {
+    outline: 3px solid var(--olc);
 }
 
 .gradient-1 {
     background: linear-gradient(120deg, #00f5d1 0%, #00d5f4 100%);
 }
 
+:host-context(body.soft) .gradient-1 {
+    background: linear-gradient(120deg, #72ffea 0%, #75edff 100%) !important;
+}
+
 .gradient-2 {
     background: radial-gradient(circle at top left, #00f5d1 0%, #00b3e6 70%, #00d5f4 100%);
+}
+
+:host-context(body.soft) .gradient-2 {
+    background: radial-gradient(circle at top left, #64ffe8 0%, #6cdfff 70%, #75edff 100%) !important;
 }
 
 .gradient-3 {
     background: linear-gradient(200deg, #00c8a0 0%, #00f5d1 50%, #00d5f4 100%);
 }
 
+:host-context(body.soft) .gradient-3 {
+    background: linear-gradient(200deg, #73ffe3 0%, #6effe9 50%, #6bebff 100%) !important;
+}
+
 .gradient-4 {
     background: radial-gradient(circle at bottom right, #00e0b0 0%, #00d5f4 60%, #0099cc 100%);
+}
+
+:host-context(body.soft) .gradient-4 {
+    background: radial-gradient(circle at bottom right, #70ffe0 0%, #70ecff 60%, #6cdaff 100%) !important;
 }
 
 .gradient-5 {
     background: linear-gradient(245deg, #00b3cc 0%, #00f5d1 40%, #00d5f4 80%);
 }
 
+:host-context(body.soft) .gradient-5 {
+    background: linear-gradient(245deg, #68edff 0%, #69ffe8 40%, #6decff 80%) !important;
+}
+
 .gradient-6 {
     background: radial-gradient(circle at center, #00d5f4 0%, #00f5d1 50%, #00a3b3 100%);
+}
+
+:host-context(body.soft) .gradient-6 {
+    background: radial-gradient(circle at center, #5be9ff 0%, #6effe9 50%, #72f3ff 100%) !important;
 }
 
 .incard {

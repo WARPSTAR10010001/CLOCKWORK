@@ -17,9 +17,9 @@
           Dim
         </label>
         <label>
-          <input type="radio" name="theme" value="dark" [checked]="selectedTheme === 'dark'"
-            (change)="changeTheme('dark')">
-          Dunkel
+          <input type="radio" name="theme" value="neon" [checked]="selectedTheme === 'neon'"
+            (change)="changeTheme('neon')">
+          Neon
         </label>
       </div>
     </div>
@@ -49,11 +49,11 @@
         </label>
         <label>
           <input type="radio" name="color" [checked]="selectedColor === 'soft'" (change)="changeColor('soft')">
-          Soft (WIP)
+          Soft
         </label>
         <label>
-          <input type="radio" name="color" [checked]="selectedColor === 'bw'" (change)="changeColor('bw')">
-          Schwarz & Weiß
+          <input type="radio" name="color" [checked]="selectedColor === 'color-wip'" (change)="changeColor('color-wip')">
+          (WIP)
         </label>
       </div>
     </div>

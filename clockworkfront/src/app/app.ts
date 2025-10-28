@@ -30,10 +30,12 @@ export class App {
     this.overlayService.showOverlay("info", "Um Feedback versenden zu können müssen Sie eingeloggt sein.");
   }
 
+  /*
   @HostListener('document:keydown.shift.k', ['$event'])
   onEscHandler(event: Event) {
     if (this.authService.isLoggedIn()) {
       this.overlayService.showOverlay("quickAction");
     }
   }
+    */
 }

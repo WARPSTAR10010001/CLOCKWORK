@@ -12,11 +12,14 @@ input {
 }
 
 .dept-list {
-    border: 4px solid var(--tc);
     border-radius: 10px;
     display: grid;
     gap: 10px;
     margin-top: 10px;
+}
+
+:host-context(body.outlines) .dept-list {
+    outline: 4px solid var(--tc);
 }
 
 .dept-title {
@@ -68,9 +71,12 @@ details summary {
     background: #f0f0f5;
 }
 
-:host-context(body.dim) .dept-card:nth-child(odd),
-:host-context(body.dark) .dept-card:nth-child(odd) {
+:host-context(body.dim) .dept-card:nth-child(odd) {
     background: #252525;
+}
+
+:host-context(body.neon) .dept-card:nth-child(odd) {
+    background: #0b002e;
 }
 
 .subtitle {
