@@ -45,6 +45,6 @@ select {
     margin-right: 20px;
 }
 
-.card.disabled {
+.disabled {
     background-color: var(--tc) !important;
 }

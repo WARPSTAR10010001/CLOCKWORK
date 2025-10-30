@@ -1,46 +1,59 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Erhaltenes Feedback</h1>
+    <h1 class="emp page-header">Erhaltenes Feedback</h1>
 
-  <div class="toolbar">
-    <label>Status-Filter:</label>
-    <select [(ngModel)]="filter" (change)="load()">
-      <option [ngValue]="''">Alle</option>
-      <option ngValue="neu">Neu</option>
-      <option ngValue="gelesen">Gelesen</option>
-      <option ngValue="bearbeitet">Bearbeitet</option>
-    </select>
-  </div>
-
-  <div class="list" *ngIf="!loading; else loadingTpl">
-    <div class="card" *ngFor="let f of items">
-      <div class="meta">
-        <span class="badge">{{ f.status }}</span>
-        <span>{{ f.category }}</span>
-        <span>•</span>
-        <span>{{ f.author_username || 'Unbekannt' }}</span>
-        <span>•</span>
-        <span>{{ f.created_at | date:'short' }}</span>
-        <span *ngIf="f.app_version">• v{{ f.app_version }}</span>
-      </div>
-
-      <pre class="content">{{ f.content }}</pre>
-
-      <div class="actions">
-        <label>Status:&nbsp;
-          <select [ngModel]="f.status" (ngModelChange)="changeStatus(f, $event)">
-            <option ngValue="neu">neu</option>
-            <option ngValue="gelesen">gelesen</option>
-            <option ngValue="bearbeitet">bearbeitet</option>
-          </select>
-        </label>
-        <button class="button-action" (click)="remove(f)">Löschen</button>
-      </div>
+    <div class="fb-toolbar">
+        <label class="fb-filter-label">Status-Filter:</label>
+        <select [(ngModel)]="filter" (change)="load()">
+            <option [ngValue]="''">Alle</option>
+            <option ngValue="neu">Neu</option>
+            <option ngValue="gelesen">Gelesen</option>
+            <option ngValue="bearbeitet">Bearbeitet</option>
+        </select>
     </div>
 
-    <p *ngIf="items.length === 0" class="hint">Kein Feedback gefunden.</p>
-  </div>
+    @if (!loading) {
+    @if (items.length === 0) {
+    <h1 class="subtitle">Kein Feedback gefunden.</h1>
+    } @else {
+    <div class="fb-list">
+        @for (f of items; track f.id) {
+        <article class="fb-card">
+            <!-- 1) META -->
+            <div class="fb-meta subtitle">
+                <span class="chip">{{ f.status }}</span>
+                <span>{{ f.category }} - {{ f.author_username }} - {{ f.created_at | date:'short' }}</span>
+                @if (f.app_version) {
+                <span>- V{{ f.app_version }}</span>
+                } @else {
+                <span>- Unbekannte Version</span>
+                }
+            </div>
 
-  <ng-template #loadingTpl>
-    <p>Lade…</p>
-  </ng-template>
+            <hr>
+
+            <!-- 2) CONTENT -->
+            <p class="fb-content">{{ f.content }}</p>
+
+            <hr>
+
+            <!-- 3) ACTIONS -->
+            <div class="fb-actions">
+                <label class="fb-status-label">
+                    Status:
+                    <select [ngModel]="f.status" (ngModelChange)="changeStatus(f, $event)">
+                        <option ngValue="neu">neu</option>
+                        <option ngValue="gelesen">gelesen</option>
+                        <option ngValue="bearbeitet">bearbeitet</option>
+                    </select>
+                </label>
+
+                <button class="button-action danger" (click)="remove(f)">Löschen</button>
+            </div>
+        </article>
+        }
+    </div>
+    }
+    } @else {
+    <p class="hint">Lade…</p>
+    }
 </div>

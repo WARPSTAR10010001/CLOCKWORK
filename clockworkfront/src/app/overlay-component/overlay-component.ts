@@ -8,14 +8,14 @@ import { FeedbackService, FeedbackCategory } from '../feedback-service';
 @Component({
   selector: 'app-overlay-component',
   templateUrl: './overlay-component.html',
-  styleUrls: ['./overlay-component.css']
+  styleUrls: ['./overlay-component.css'],
 })
 export class OverlayComponent implements OnInit {
   private overlayService = inject(OverlayService);
-  private themeService   = inject(ThemeService);
-  private renderer       = inject(Renderer2);
-  public  auth           = inject(AuthService);
-  private feedbackService= inject(FeedbackService);
+  private themeService = inject(ThemeService);
+  private renderer = inject(Renderer2);
+  public auth = inject(AuthService);
+  private feedbackService = inject(FeedbackService);
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
@@ -32,21 +32,21 @@ export class OverlayComponent implements OnInit {
   feedbackCategory: FeedbackCategory | '' = '';
   feedbackContent = '';
   sendingFeedback = false;           // 👈 Button-Disable & "Sende..."
-  readonly FEEDBACK_MAX = 250;      // 👈 weiches Limit (Client)
+  readonly FEEDBACK_MAX = 750;      // 👈 weiches Limit (Client)
   appVersion = '';                   // optional: App-Version (z. B. aus env)
 
   private banned = new Set([
-    '12345', 'passwort', 'kennwort', 'organist', 'badehose', 'november11'
+    '12345', '01234', 'passwort', 'kennwort', 'organist', 'badehose', 'november11', 'reset', 'organist01', 'autohaus', 'abcde', '47495', 'rheinberg', 'rheinberg47495'
   ]);
 
   ngOnInit() {
     // Theme streams
-    this.selectedTheme   = this.themeService.getTheme();
+    this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
-    this.selectedColor   = this.themeService.getColor();
-    this.themeService.currentTheme$.subscribe(v   => this.selectedTheme = v);
+    this.selectedColor = this.themeService.getColor();
+    this.themeService.currentTheme$.subscribe(v => this.selectedTheme = v);
     this.themeService.currentOutline$.subscribe(v => this.selectedOutline = v);
-    this.themeService.currentColor$.subscribe(v   => this.selectedColor = v);
+    this.themeService.currentColor$.subscribe(v => this.selectedColor = v);
 
     // Auth → Reset hat Vorrang
     this.auth.authStatus$.subscribe(status => {
@@ -79,10 +79,10 @@ export class OverlayComponent implements OnInit {
   }
 
   // ===== Password-Reset =====
-  get pwMinLenOk(): boolean   { return this.pw1.trim().length >= 5; }
-  get pwNotBanned(): boolean  { return !this.banned.has(this.pw1.trim().toLowerCase()); }
-  get pwMatch(): boolean      { return this.pw1 === this.pw2 && this.pw2.length > 0; }
-  get canSubmit(): boolean    { return this.pwMinLenOk && this.pwNotBanned && this.pwMatch && !this.submitting; }
+  get pwMinLenOk(): boolean { return this.pw1.trim().length >= 5; }
+  get pwNotBanned(): boolean { return !this.banned.has(this.pw1.trim().toLowerCase()); }
+  get pwMatch(): boolean { return this.pw1 === this.pw2 && this.pw2.length > 0; }
+  get canSubmit(): boolean { return this.pwMinLenOk && this.pwNotBanned && this.pwMatch && !this.submitting; }
 
   onPwInput(which: 1 | 2, ev: Event) {
     const val = (ev.target as HTMLInputElement)?.value ?? '';
@@ -134,9 +134,9 @@ export class OverlayComponent implements OnInit {
     }
   }
 
-  changeTheme(theme: Theme)      { this.themeService.setTheme(theme); }
-  changeOutline(outline: Outline){ this.themeService.setOutline(outline); }
-  changeColor(color: Color)      { this.themeService.setColor(color); }
+  changeTheme(theme: Theme) { this.themeService.setTheme(theme); }
+  changeOutline(outline: Outline) { this.themeService.setOutline(outline); }
+  changeColor(color: Color) { this.themeService.setColor(color); }
 
   // ===== Feedback =====
   get remainingFeedbackChars(): number {
@@ -145,10 +145,10 @@ export class OverlayComponent implements OnInit {
 
   get canSendFeedback(): boolean {
     return !!this.feedbackCategory &&
-           this.feedbackContent.trim().length > 0 &&
-           this.feedbackContent.length <= this.FEEDBACK_MAX &&
-           !this.passwordResetRequired &&
-           !this.sendingFeedback;
+      this.feedbackContent.trim().length > 0 &&
+      this.feedbackContent.length <= this.FEEDBACK_MAX &&
+      !this.passwordResetRequired &&
+      !this.sendingFeedback;
   }
 
   onFeedbackCategoryChange(ev: Event) {
@@ -164,8 +164,8 @@ export class OverlayComponent implements OnInit {
 
   private resetFeedbackFields(resetCategory = true) {
     if (resetCategory) this.feedbackCategory = '';
-    this.feedbackContent  = '';
-    this.sendingFeedback  = false;
+    this.feedbackContent = '';
+    this.sendingFeedback = false;
   }
 
   sendFeedback() {
@@ -173,8 +173,8 @@ export class OverlayComponent implements OnInit {
 
     this.sendingFeedback = true;
     const category = this.feedbackCategory as FeedbackCategory;
-    const content  = this.feedbackContent.trim();
-    const version  = this.appVersion || undefined;
+    const content = this.feedbackContent.trim();
+    const version = this.appVersion || undefined;
 
     this.feedbackService.send(category, content, version).pipe(take(1)).subscribe({
       next: () => {

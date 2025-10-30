@@ -93,10 +93,6 @@ body.neon {
     color: var(--tc);
 }
 
-body.bw {
-    filter: grayscale(100%);
-}
-
 a {
     text-decoration: none;
     color: var(--tc);

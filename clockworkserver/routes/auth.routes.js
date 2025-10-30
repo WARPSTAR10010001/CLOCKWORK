@@ -223,4 +223,93 @@ router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD')
   }
 });
 
+// =========================
+// PASSWORT-RESETS NACH ROLLE & DEPARTMENT
+// =========================
+
+// POST /api/departments/:deptId/reset-user-password
+// Erlaubt: ADMIN und MOD
+// MOD darf nur im eigenen Department.
+// Setzt das Passwort des *USER*-Kontos dieses Fachbereichs auf 'reset' und aktiviert password_reset.
+router.post('/departments/:deptId/reset-user-password', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
+  const deptId = req.params.deptId;
+
+  const client = await pool.connect();
+  try {
+    // MOD darf nur im eigenen Dept
+    if (req.user.role === 'MOD' && String(req.user.departmentId) !== String(deptId)) {
+      return res.status(403).json({ error: 'Moderator darf nur im eigenen Fachbereich zurücksetzen.' });
+    }
+
+    // Ziel-User (role USER) im Dept finden
+    const q = await client.query(
+      `SELECT id, username, role, department_id
+         FROM system_users
+        WHERE role = 'USER' AND department_id = $1 AND is_active = TRUE
+        LIMIT 1`,
+      [deptId]
+    );
+    if (q.rowCount === 0) return res.status(404).json({ error: 'Kein USER-Konto in diesem Fachbereich gefunden.' });
+
+    const target = q.rows[0];
+    const hash = await bcrypt.hash('reset', SALT_ROUNDS);
+
+    const upd = await client.query(
+      `UPDATE system_users
+          SET password_hash = $1,
+              password_reset = TRUE
+        WHERE id = $2
+        RETURNING id, username, role, department_id, password_reset`,
+      [hash, target.id]
+    );
+
+    return res.json({ success: true, user: upd.rows[0], initialPassword: 'reset' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Interner Serverfehler' });
+  } finally {
+    client.release();
+  }
+});
+
+
+// POST /api/departments/:deptId/reset-mod-password
+// Erlaubt: nur ADMIN
+// Setzt das Passwort des *MOD*-Kontos dieses Fachbereichs auf 'reset' und aktiviert password_reset.
+router.post('/departments/:deptId/reset-mod-password', requireAuth, requireRole('ADMIN'), async (req, res) => {
+  const deptId = req.params.deptId;
+
+  const client = await pool.connect();
+  try {
+    // Ziel-User (role MOD) im Dept finden
+    const q = await client.query(
+      `SELECT id, username, role, department_id
+         FROM system_users
+        WHERE role = 'MOD' AND department_id = $1 AND is_active = TRUE
+        LIMIT 1`,
+      [deptId]
+    );
+    if (q.rowCount === 0) return res.status(404).json({ error: 'Kein MOD-Konto in diesem Fachbereich gefunden.' });
+
+    const target = q.rows[0];
+    const hash = await bcrypt.hash('reset', SALT_ROUNDS);
+
+    const upd = await client.query(
+      `UPDATE system_users
+          SET password_hash = $1,
+              password_reset = TRUE
+        WHERE id = $2
+        RETURNING id, username, role, department_id, password_reset`,
+      [hash, target.id]
+    );
+
+    return res.json({ success: true, user: upd.rows[0], initialPassword: 'reset' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Interner Serverfehler' });
+  } finally {
+    client.release();
+  }
+});
+
 module.exports = router;

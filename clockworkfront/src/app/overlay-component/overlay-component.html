@@ -88,9 +88,7 @@
     <h1 class="emp page-header">QuickAction</h1>
     <input if="quickAction" type="text" placeholder="Befehl eingeben...">
   </div>
-  } <!-- ...andere Overlay-Zweige... -->
-
-  @else if (overlayState.type === "feedback") {
+  } @else if (overlayState.type === "feedback") {
   <div id="feedback-overlay">
     <h1 class="emp page-header">Feedback geben</h1>
 
@@ -105,7 +103,11 @@
 
     <textarea placeholder="Hier Feedback eintippen... (erforderlich)" [value]="feedbackContent"
       (input)="onFeedbackContentInput($event)"></textarea>
+      @if (remainingFeedbackChars > 0) {
       <h1 id="remaining">{{ remainingFeedbackChars }} Zeichen verbleibend</h1>
+      } @else {
+        <h1 id="remaining">Keine Zeichen verbleibend <span class="emp">(SWAMP IZZO)</span></h1>
+      }
     <a class="button-primary" [class.disabled]="!canSendFeedback" [attr.aria-disabled]="!canSendFeedback"
       (click)="sendFeedback()">
       {{ 'Feedback schicken' }}

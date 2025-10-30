@@ -1,20 +1,21 @@
 Must-Do:
 Edit plan component (edit status + edit employee holidays)
-Software documentation
-Revamp admin component
-Implement feedback logic
 Holiday API
-Reset mod and user password
+Overlay for failed login attempt
 
 !!! Chrome doesnt get data properly
 
 
 QOL:
-Replace browser default "confirm" overlay with custom overlay
+Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Loading animation
 Shortcuts with "k" for sickness, "u" for vacation etc in plan component
 Lock plans at end of january
+Revamp admin component
 
+
+Future Updates (V1.0.0):
+Software documentation
 
 Future Updates (V1.2.0):
 QuickAction logic (currently disabled in app.ts)

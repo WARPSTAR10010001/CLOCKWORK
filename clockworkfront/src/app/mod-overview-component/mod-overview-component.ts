@@ -4,6 +4,8 @@ import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
 import { DepartmentsService, Department } from '../departments-service';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../user-service';          // 👈 neu
+import { OverlayService } from '../overlay-service';      // 👈 für Feedback
 
 @Component({
   selector: 'app-mod-overview-component',
@@ -15,15 +17,17 @@ import { FormsModule } from '@angular/forms';
 export class ModOverviewComponent implements OnInit {
   departments: Department[] = [];
   selectedDeptId: number | null = null;
+  busy = false;
 
   constructor(
     public authService: AuthService,
     private imp: ImpersonationService,
-    private deps: DepartmentsService
+    private deps: DepartmentsService,
+    private user: UserService,                 // 👈 neu
+    private overlay: OverlayService              // 👈 neu
   ) {}
 
   ngOnInit(): void {
-    // Admin: Liste laden + Auswahl aus Session übernehmen
     if (this.authService.isAdmin()) {
       this.deps.getAllDepartments().subscribe({
         next: (d) => this.departments = d || [],
@@ -31,7 +35,6 @@ export class ModOverviewComponent implements OnInit {
       });
       this.selectedDeptId = this.imp.getEffectiveDepartmentId();
     } else {
-      // Nicht-Admin: effektives Dept = eigenes Dept
       this.selectedDeptId = this.imp.getEffectiveDepartmentId();
     }
   }
@@ -42,7 +45,56 @@ export class ModOverviewComponent implements OnInit {
   }
 
   get canNavigate(): boolean {
-    // Admin: nur mit gesetztem Department; Nicht-Admin: immer
     return this.authService.isAdmin() ? this.selectedDeptId != null : true;
+  }
+
+  // ===== Reset-Actions =====
+  private requireDept(): number | null {
+    // Admin braucht eine Auswahl; MOD nutzt sein effektives Dept
+    if (this.authService.isAdmin()) return this.selectedDeptId ?? null;
+    return this.selectedDeptId ?? null;
+  }
+
+  resetUserPassword() {
+    const deptId = this.requireDept();
+    if (!deptId) {
+      this.overlay.showOverlay('error', 'Bitte zuerst einen Fachbereich auswählen.');
+      return;
+    }
+    if (this.busy) return;
+    this.busy = true;
+
+    this.user.resetDeptUserPassword(deptId).subscribe({
+      next: () => {
+        this.busy = false;
+        this.overlay.showOverlay('success', 'Nutzerpasswort wurde auf "reset" gesetzt.');
+      },
+      error: (err) => {
+        this.busy = false;
+        this.overlay.showOverlay('error', err?.error?.error || 'Zurücksetzen fehlgeschlagen.');
+      }
+    });
+  }
+
+  resetModPassword() {
+    if (!this.authService.isAdmin()) return; // Safety
+    const deptId = this.requireDept();
+    if (!deptId) {
+      this.overlay.showOverlay('error', 'Bitte zuerst einen Fachbereich auswählen.');
+      return;
+    }
+    if (this.busy) return;
+    this.busy = true;
+
+    this.user.resetDeptModPassword(deptId).subscribe({
+      next: () => {
+        this.busy = false;
+        this.overlay.showOverlay('success', 'Moderatorpasswort wurde auf "reset" gesetzt.');
+      },
+      error: (err) => {
+        this.busy = false;
+        this.overlay.showOverlay('error', err?.error?.error || 'Zurücksetzen fehlgeschlagen.');
+      }
+    });
   }
 }
