@@ -43,6 +43,20 @@
       </div>
     </div>
     <hr>
+    <div id="glass-selection">
+      <h1>Glass:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="glass" [checked]="selectedGlass === 'solid'" (change)="changeGlass('solid')">
+          Solide
+        </label>
+        <label>
+          <input type="radio" name="glass" [checked]="selectedGlass === 'glass'" (change)="changeGlass('glass')">
+          Glass
+        </label>
+      </div>
+    </div>
+    <hr>
     <div id="outline-selection">
       <h1>Kontur:</h1>
       <div class="options">
@@ -103,11 +117,11 @@
 
     <textarea placeholder="Hier Feedback eintippen... (erforderlich)" [value]="feedbackContent"
       (input)="onFeedbackContentInput($event)"></textarea>
-      @if (remainingFeedbackChars > 0) {
-      <h1 id="remaining">{{ remainingFeedbackChars }} Zeichen verbleibend</h1>
-      } @else {
-        <h1 id="remaining">Keine Zeichen verbleibend <span class="emp">(SWAMP IZZO)</span></h1>
-      }
+    @if (remainingFeedbackChars > 0) {
+    <h1 id="remaining">{{ remainingFeedbackChars }} Zeichen verbleibend</h1>
+    } @else {
+    <h1 id="remaining">Keine Zeichen verbleibend <span class="emp">(SWAMP IZZO)</span></h1>
+    }
     <a class="button-primary" [class.disabled]="!canSendFeedback" [attr.aria-disabled]="!canSendFeedback"
       (click)="sendFeedback()">
       {{ 'Feedback schicken' }}

@@ -104,6 +104,12 @@ td {
     cursor: cell;
 }
 
+.holiday {
+    background: var(--tc);
+    color: var(--bgc);
+    outline: 3px solid var(--olc);
+}
+
 .u {
     background-color: #88ff00 !important;
     border: 4px solid #88ff00 !important;

@@ -4,20 +4,24 @@ import { BehaviorSubject } from 'rxjs';
 export type Theme = 'light' | 'neon' | 'dim';
 export type Outline = "outlines" | "no-outlines";
 export type Color = "standard" | "soft" | "color-wip";
+export type Glass = "solid" | "glass";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  themeKey = 'theme';
+  themeKey = "theme";
   outlineKey = "outline";
   colorKey = "color";
+  glassKey = "glass";
   currentThemeSubject = new BehaviorSubject<Theme>('light');
   currentOutlineSubject = new BehaviorSubject<Outline>("no-outlines");
   currentColorSubject = new BehaviorSubject<Color>("standard");
+  currentGlassSubject = new BehaviorSubject<Glass>("solid");
   currentTheme$ = this.currentThemeSubject.asObservable();
   currentOutline$ = this.currentOutlineSubject.asObservable();
   currentColor$ = this.currentColorSubject.asObservable();
+  currentGlass$ = this.currentGlassSubject.asObservable();
 
   constructor() {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
@@ -37,6 +41,12 @@ export class ThemeService {
       this.setColor(savedColor, false);
     } else {
       this.setColor("standard", false);
+    }
+    const savedGlass = localStorage.getItem(this.glassKey) as Glass;
+    if(savedGlass) {
+      this.setGlass(savedGlass, false);
+    } else {
+      this.setGlass("solid", false);
     }
   }
 
@@ -83,5 +93,20 @@ export class ThemeService {
 
   getColor(): Color {
     return this.currentColorSubject.value;
+  }
+
+  setGlass(glass: Glass, save = true) {
+    document.body.classList.remove("solid", "glass");
+    document.body.classList.add(glass);
+
+    this.currentGlassSubject.next(glass);
+
+    if(save) {
+      localStorage.setItem(this.glassKey, glass);
+    }
+  }
+
+  getGlass(): Glass {
+    return this.currentGlassSubject.value;
   }
 }

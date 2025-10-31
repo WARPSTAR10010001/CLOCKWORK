@@ -1,7 +1,5 @@
 Must-Do:
-Edit plan component (edit status + edit employee holidays)
 Holiday API
-Overlay for failed login attempt
 
 !!! Chrome doesnt get data properly
 
@@ -15,9 +13,14 @@ Revamp admin component
 
 
 Future Updates (V1.0.0):
+Edit plan component (edit status + edit employee holidays)
 Software documentation
+
 
 Future Updates (V1.2.0):
 QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed
+
+
+Future Updates (V...):
 Custom status for plan entry

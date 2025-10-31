@@ -9,6 +9,7 @@ import { withLatestFrom, switchMap, tap, map, catchError, take } from 'rxjs/oper
 import { forkJoin, of } from 'rxjs';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
+import { HolidayService } from '../holiday-service';
 
 interface SelectedCell {
   employeeId: number;
@@ -23,6 +24,7 @@ interface SelectedCell {
   styleUrl: './plan-component.css'
 })
 export class PlanComponent implements OnInit {
+  private holidaySet = new Set<string>();
   year!: number;
   month!: number;
 
@@ -47,7 +49,8 @@ export class PlanComponent implements OnInit {
     private imp: ImpersonationService,
     private activatedRoute: ActivatedRoute,
     private overlay: OverlayService,
-    private router: Router
+    private router: Router,
+    private holidays: HolidayService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +60,11 @@ export class PlanComponent implements OnInit {
         this.month = Number(params.get('month'));
         this.daysForMonth = this.generateWeekdaysForMonth(this.year, this.month);
         this.deselect();
+
+        this.holidays.getNW(this.year).subscribe({
+          next: set => this.holidaySet = set,
+          error: () => this.holidaySet = new Set()
+        });
       }),
 
       // Dept aus Impersonation (falls Admin) oder JWT (Mods/Users)
@@ -316,9 +324,11 @@ export class PlanComponent implements OnInit {
 
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
+    const iso = this.toIso(day);
     const classes: { [key: string]: boolean } = {
       'cell': true,
-      'selected': this.isSelected(employeeId, day)
+      'selected': this.isSelected(employeeId, day),
+      'holiday': this.holidaySet.has(iso)
     };
     if (type) classes[`${type.toLowerCase()}-cell`] = true;
     return classes;

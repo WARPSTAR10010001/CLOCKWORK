@@ -27,7 +27,6 @@ input[type="password"] {
   padding: 40px 50px;
   border-radius: 10px;
   width: min(800px, 92vw);
-  /* 👈 statt 40% */
   max-height: 92vh;
   z-index: 10000;
   box-shadow: 0 0 30px var(--bsc);
@@ -35,7 +34,29 @@ input[type="password"] {
   color: var(--tc);
   overflow: auto;
   box-sizing: border-box;
-  /* 👈 wichtig */
+}
+
+:host-context(body.glass) #style-overlay,
+:host-context(body.glass) #error-overlay,
+:host-context(body.glass) #success-overlay,
+:host-context(body.glass) #info-overlay,
+:host-context(body.glass) #passwordReset-overlay,
+:host-context(body.glass) #quickAction-overlay,
+:host-context(body.glass) #feedback-overlay,
+:host-context(body.glass) #confirm-overlay {
+  background: var(--gbgc);
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px var(--bsc);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid var(--gbgb);
+  padding: 40px 50px;
+  border-radius: 10px;
+  width: min(800px, 92vw);
+  max-height: 92vh;
+  z-index: 1000;
+  overflow: auto;
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -43,7 +64,8 @@ input[type="password"] {
 }
 
 hr {
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 h1 {
@@ -63,7 +85,8 @@ h1 {
 
 #theme-selection,
 #outline-selection,
-#color-selection {
+#color-selection,
+#glass-selection {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
@@ -71,14 +94,16 @@ h1 {
 
 #theme-selection h1,
 #outline-selection h1,
-#color-selection h1 {
+#color-selection h1,
+#glass-selection h1 {
   font-size: 1.8em;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 #theme-selection .options,
 #outline-selection .options,
-#color-selection .options {
+#color-selection .options,
+#glass-selection .options {
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -140,10 +165,8 @@ textarea {
 #feedback-overlay select,
 #feedback-overlay textarea {
   width: 100%;
-  /* 👈 volle Breite im Overlay */
   display: block;
   box-sizing: border-box;
-  /* 👈 inkl. Padding/Borders */
 }
 
 /* Spacing & Optik */
@@ -151,7 +174,6 @@ textarea {
   margin-top: 30px;
   height: 60px;
   text-align-last: center;
-  /* 👈 Option: Auswahl zentrieren */
 }
 
 #feedback-overlay textarea {

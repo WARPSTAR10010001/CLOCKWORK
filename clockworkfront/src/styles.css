@@ -13,6 +13,8 @@ body.light {
     --olc: #000;
     --bsc: #0000003f;
     --bc: #fff;
+    --gbgc: #ffffff4b;
+    --gbgb: #ffffffb4;
 }
 
 body.dim {
@@ -21,6 +23,8 @@ body.dim {
     --olc: #fff;
     --bsc: #00000080;
     --bc: #1e1e1e;
+    --gbgc: #1e1e1e4b;
+    --gbgb: #3d3d3d46;
 }
 
 body.neon {
@@ -29,6 +33,8 @@ body.neon {
     --olc: #fff;
     --bsc: #3dc2ff30;
     --bc: #0a002b;
+    --gbgc: #0800224b;
+    --gbgb: #007bb473;
 }
 
 body.soft .emp{
@@ -202,6 +208,7 @@ input[type="radio"] {
     align-items: center;
     justify-content: center;
     transition: border-width 0.2s ease-in-out;
+    background-color: transparent;
 }
 
 input[type="radio"]:hover {
