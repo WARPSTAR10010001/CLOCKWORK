@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 export type Theme = 'light' | 'neon' | 'dim';
 export type Outline = "outlines" | "no-outlines";
 export type Color = "standard" | "soft" | "color-wip";
-export type Glass = "solid" | "glass";
+export type Material = "solid" | "glass";
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +13,15 @@ export class ThemeService {
   themeKey = "theme";
   outlineKey = "outline";
   colorKey = "color";
-  glassKey = "glass";
+  materialKey = "material";
   currentThemeSubject = new BehaviorSubject<Theme>('light');
   currentOutlineSubject = new BehaviorSubject<Outline>("no-outlines");
   currentColorSubject = new BehaviorSubject<Color>("standard");
-  currentGlassSubject = new BehaviorSubject<Glass>("solid");
+  currentMaterialSubject = new BehaviorSubject<Material>("solid");
   currentTheme$ = this.currentThemeSubject.asObservable();
   currentOutline$ = this.currentOutlineSubject.asObservable();
   currentColor$ = this.currentColorSubject.asObservable();
-  currentGlass$ = this.currentGlassSubject.asObservable();
+  currentMaterial$ = this.currentMaterialSubject.asObservable();
 
   constructor() {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
@@ -42,11 +42,11 @@ export class ThemeService {
     } else {
       this.setColor("standard", false);
     }
-    const savedGlass = localStorage.getItem(this.glassKey) as Glass;
-    if(savedGlass) {
-      this.setGlass(savedGlass, false);
+    const savedMaterial = localStorage.getItem(this.materialKey) as Material;
+    if(savedMaterial) {
+      this.setMaterial(savedMaterial, false);
     } else {
-      this.setGlass("solid", false);
+      this.setMaterial("solid", false);
     }
   }
 
@@ -95,18 +95,18 @@ export class ThemeService {
     return this.currentColorSubject.value;
   }
 
-  setGlass(glass: Glass, save = true) {
+  setMaterial(material: Material, save = true) {
     document.body.classList.remove("solid", "glass");
-    document.body.classList.add(glass);
+    document.body.classList.add(material);
 
-    this.currentGlassSubject.next(glass);
+    this.currentMaterialSubject.next(material);
 
     if(save) {
-      localStorage.setItem(this.glassKey, glass);
+      localStorage.setItem(this.materialKey, material);
     }
   }
 
-  getGlass(): Glass {
-    return this.currentGlassSubject.value;
+  getMaterial(): Material {
+    return this.currentMaterialSubject.value;
   }
 }

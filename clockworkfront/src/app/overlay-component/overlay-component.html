@@ -44,14 +44,14 @@
     </div>
     <hr>
     <div id="glass-selection">
-      <h1>Glass:</h1>
+      <h1>Material:</h1>
       <div class="options">
         <label>
-          <input type="radio" name="glass" [checked]="selectedGlass === 'solid'" (change)="changeGlass('solid')">
+          <input type="radio" name="glass" [checked]="selectedMaterial === 'solid'" (change)="changeMaterial('solid')">
           Solide
         </label>
         <label>
-          <input type="radio" name="glass" [checked]="selectedGlass === 'glass'" (change)="changeGlass('glass')">
+          <input type="radio" name="glass" [checked]="selectedMaterial === 'glass'" (change)="changeMaterial('glass')">
           Glass
         </label>
       </div>

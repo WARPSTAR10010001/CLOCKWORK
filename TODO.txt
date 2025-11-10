@@ -1,5 +1,5 @@
 Must-Do:
-Holiday API
+Cant create plan (department id 10 ?)
 
 !!! Chrome doesnt get data properly
 
@@ -9,12 +9,13 @@ Replace browser default "confirm" overlay with custom overlay (delete feedback, 
 Loading animation
 Shortcuts with "k" for sickness, "u" for vacation etc in plan component
 Lock plans at end of january
-Revamp admin component
+Automatic redirect to current year plan
 
 
 Future Updates (V1.0.0):
-Edit plan component (edit status + edit employee holidays)
+Edit plan component (edit status + edit employee holidays) (currently only visible to admins)
 Software documentation
+Revamped admin component
 
 
 Future Updates (V1.2.0):

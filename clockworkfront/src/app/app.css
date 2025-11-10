@@ -45,7 +45,7 @@
 
 #edition {
     font-size: 0.5em;
-    color: #b5b5b5;
+    color: var(--tc);
     margin-top: 17px;
 }
 

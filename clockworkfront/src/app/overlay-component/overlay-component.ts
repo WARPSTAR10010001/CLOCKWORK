@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, HostListener, inject } from '@angular/core';
 import { OverlayService, OverlayState } from '../overlay-service';
-import { ThemeService, Theme, Outline, Color, Glass } from '../theme-service';
+import { ThemeService, Theme, Outline, Color, Material } from '../theme-service';
 import { AuthService } from '../auth-service';
 import { take } from 'rxjs/operators';
 import { FeedbackService, FeedbackCategory } from '../feedback-service';
@@ -21,7 +21,7 @@ export class OverlayComponent implements OnInit {
   selectedTheme: Theme = 'light';
   selectedOutline: Outline = 'no-outlines';
   selectedColor: Color = 'standard';
-  selectedGlass: Glass = 'solid';
+  selectedMaterial: Material = 'solid';
 
   // ---- Password reset UI
   pw1 = '';
@@ -34,7 +34,7 @@ export class OverlayComponent implements OnInit {
   feedbackContent = '';
   sendingFeedback = false;           // 👈 Button-Disable & "Sende..."
   readonly FEEDBACK_MAX = 750;      // 👈 weiches Limit (Client)
-  appVersion = 'V0.2.4';                   // optional: App-Version (z. B. aus env)
+  appVersion = '0.2.4';                   // optional: App-Version (z. B. aus env)
 
   private banned = new Set([
     '12345', '01234', 'passwort', 'kennwort', 'organist', 'badehose', 'november11', 'reset', 'organist01', 'autohaus', 'abcde', '47495', 'rheinberg', 'rheinberg47495'
@@ -45,11 +45,11 @@ export class OverlayComponent implements OnInit {
     this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
     this.selectedColor = this.themeService.getColor();
-    this.selectedGlass = this.themeService.getGlass();
+    this.selectedMaterial = this.themeService.getMaterial();
     this.themeService.currentTheme$.subscribe(v => this.selectedTheme = v);
     this.themeService.currentOutline$.subscribe(v => this.selectedOutline = v);
     this.themeService.currentColor$.subscribe(v => this.selectedColor = v);
-    this.themeService.currentGlass$.subscribe(v => this.selectedGlass = v);
+    this.themeService.currentMaterial$.subscribe(v => this.selectedMaterial = v);
 
     // Auth -> Reset hat Vorrang
     this.auth.authStatus$.subscribe(status => {
@@ -140,7 +140,7 @@ export class OverlayComponent implements OnInit {
   changeTheme(theme: Theme) { this.themeService.setTheme(theme); }
   changeOutline(outline: Outline) { this.themeService.setOutline(outline); }
   changeColor(color: Color) { this.themeService.setColor(color); }
-  changeGlass(glass: Glass) { this.themeService.setGlass(glass); }
+  changeMaterial(material: Material) { this.themeService.setMaterial(material); }
 
   // ===== Feedback =====
   get remainingFeedbackChars(): number {

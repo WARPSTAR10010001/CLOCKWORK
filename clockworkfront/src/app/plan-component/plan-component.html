@@ -1,7 +1,10 @@
+<!-- src/app/plan-component/plan-component.html -->
 <div class="comp-wrap">
-  <!-- Header mit Monatsanzeige -->
   @if (planId !== null) {
-  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back" [routerLink]="['/plan', year]">{{ year }}</a></h1>
+  <h1 class="emp page-header">
+    Dienstplan {{ month.toString().padStart(2, '0') }}/
+    <a id="back" [routerLink]="['/plan', year]">{{ year }}</a>
+  </h1>
 
   <div id="entry-buttons">
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
@@ -13,17 +16,16 @@
     <a class="button-primary o" (click)="setEntry('O')">Anderes (O)</a>
     <a class="button-action" (click)="setEntry('')">Löschen</a>
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
-
   </div>
 
-  <!-- Die Tabelle -->
   <div id="table-container">
     <table class="plan-table">
       <thead>
         <tr>
           <th class="sticky">Name</th>
           @for (day of daysForMonth; track day) {
-          <th>
+          <!-- FEIERTAG NUR HIER MARKIEREN -->
+          <th [class.holiday]="isHoliday(day)">
             {{ day.getDate() }}<br>
             {{ weekdays[day.getDay()] }}
           </th>
@@ -33,12 +35,14 @@
       <tbody>
         @for (employee of employees; track employee.id) {
         <tr>
-          <!-- Passe hier "employee.name" an, falls dein Employee-Objekt z.B. "display_name" hat -->
           <td class="sticky">{{ employee.name }}</td>
 
           @for (day of daysForMonth; track day) {
-          <td (click)="selectCell(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
-            [attr.data-status]="getStatus(employee.id, day)">
+          <td
+            (click)="selectCell(employee.id, day, $event)"
+            [ngClass]="getCellClasses(employee.id, day)"
+            [attr.data-status]="getStatus(employee.id, day)"
+          >
             {{ statusLabel(getStatus(employee.id, day)) }}
           </td>
           }
@@ -50,7 +54,6 @@
   }
 </div>
 
-<!-- Fallback-Anzeige, wenn der Plan noch lädt oder nicht existiert -->
 <div class="comp-wrap">
   @if (planId === null) {
   <h1>Lade Dienstplan...</h1>

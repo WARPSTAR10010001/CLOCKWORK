@@ -1,3 +1,4 @@
+// src/app/plan-component/plan-component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -5,7 +6,7 @@ import { OverlayService } from '../overlay-service';
 import { BackendAccess } from '../backend-access';
 import { PlanEntry, PlanEntryStatus } from '../types';
 import { Employee, EmployeeService } from '../employee-service';
-import { withLatestFrom, switchMap, tap, map, catchError, take } from 'rxjs/operators';
+import { switchMap, tap, map, catchError, take } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
@@ -24,7 +25,8 @@ interface SelectedCell {
   styleUrl: './plan-component.css'
 })
 export class PlanComponent implements OnInit {
-  private holidaySet = new Set<string>();
+  private holidaySet = new Set<number>();
+
   year!: number;
   month!: number;
 
@@ -51,39 +53,57 @@ export class PlanComponent implements OnInit {
     private overlay: OverlayService,
     private router: Router,
     private holidays: HolidayService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap.pipe(
-      tap(params => {
-        this.year = Number(params.get('year'));
-        this.month = Number(params.get('month'));
-        this.daysForMonth = this.generateWeekdaysForMonth(this.year, this.month);
-        this.deselect();
+    // Route-Parameter beobachten (year, month)
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.year = Number(params.get('year'));
+      this.month = Number(params.get('month'));
 
-        this.holidays.getNW(this.year).subscribe({
-          next: set => this.holidaySet = set,
-          error: () => this.holidaySet = new Set()
-        });
-      }),
+      this.daysForMonth = this.generateWeekdaysForMonth(this.year, this.month);
+      this.deselect();
 
-      // Dept aus Impersonation (falls Admin) oder JWT (Mods/Users)
-      withLatestFrom(this.auth.authStatus$.pipe(take(1))),
-      map(([_, status]) => {
+      // 1) Feiertage laden (eigene HTTP-Request)
+      this.loadHolidays(this.year);
+
+      // 2) Plandaten laden
+      this.loadPlan();
+    });
+  }
+
+  // ----- Feiertage -----
+  private loadHolidays(year: number): void {
+    this.holidays.getForYear(year).pipe(take(1)).subscribe({
+      next: set => {
+        this.holidaySet = set;
+      },
+      error: err => {
+        console.error('Feiertage laden fehlgeschlagen:', err);
+        this.holidaySet = new Set();
+      }
+    });
+  }
+
+  isHoliday(day: Date): boolean {
+    return this.holidaySet.has(this.dayKeyFromDate(day));
+  }
+
+  // ----- Plandaten -----
+  private loadPlan(): void {
+    this.auth.authStatus$.pipe(
+      take(1),
+      map(status => {
         const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
-
-        // Admin ohne Impersonation-Auswahl → kein depId
         const depId = this.auth.isAdmin() ? (impDep ?? null) : fromJwt ?? null;
         this.departmentId = depId;
         return depId;
       }),
-
       switchMap(depId => {
         if (!depId) {
           if (this.auth.isAdmin()) {
             this.overlay.showOverlay('info', 'Bitte zuerst einen Fachbereich im Modpanel auswählen.');
-            // optional: zur Mod-Übersicht
             this.router.navigate(['/mod']);
             return of(null);
           }
@@ -91,49 +111,48 @@ export class PlanComponent implements OnInit {
           this.router.navigate(['/auth']);
           return of(null);
         }
-        // Pläne des Fachbereichs laden
+
         return this.backend.getPlansForDepartment(depId).pipe(
           map(res => ({ depId, plans: res.plans }))
         );
       }),
-
       switchMap(data => {
         if (!data) return of(null);
         const { depId, plans } = data;
-
-        // passenden Jahresplan suchen
         const plan = plans.find(p => p.year === this.year) || null;
         if (!plan) {
           this.overlay.showOverlay('error', `Für ${this.year} existiert noch kein Plan.`);
           this.router.navigate(['/mod']);
           return of(null);
         }
-
         this.planId = plan.id;
         const monthStr = this.monthKey(this.year, this.month);
 
-        // Mitarbeitende (scoped), Monats-Entries und Plandetails parallel
         return forkJoin({
           employees: this.employeeService.getEmployeesForDepartment(depId),
           entries: this.backend.getPlanEntriesForMonth(plan.id, monthStr),
-          planDetails: this.backend.getPlanDetails(plan.id)
+          planDetails: this.backend.getPlanDetails(plan.id),
+          holidays: this.holidays.getForYear(this.year)
         }).pipe(
-          map(({ employees, entries, planDetails }) => ({
+          map(({ employees, entries, planDetails, holidays }) => ({
             employees,
             entries,
-            planDetails
+            planDetails,
+            holidays
           }))
         );
       }),
 
-      catchError(() => {
+      catchError(err => {
+        console.error('Fehler beim Laden der Plandaten:', err);
         this.overlay.showOverlay('error', 'Fehler beim Laden der Plan-Daten.');
         return of(null);
       })
     ).subscribe(bundle => {
       if (!bundle) return;
 
-      // 1) Entries normalisieren + Map bauen
+      this.holidaySet = bundle.holidays || new Set<number>();
+
       this.monthEntries = (bundle.entries.entries || []).map((e: any) => {
         const entry_date = String(e.entry_date).slice(0, 10);
         const status = e.status ?? e.entry_type ?? null;
@@ -141,7 +160,6 @@ export class PlanComponent implements OnInit {
       });
       this.buildEntryMap();
 
-      // 2) Nur aktive Mitarbeitende (Monatsfenster)
       const monthKey = this.monthKey(this.year, this.month); // 'YYYY-MM'
       const activeIds = new Set<number>(
         bundle.planDetails.employees
@@ -158,7 +176,6 @@ export class PlanComponent implements OnInit {
   }
 
   // === Helpers ===
-
   private pad2(n: number): string { return String(n).padStart(2, '0'); }
   private monthKey(year: number, month: number): string { return `${year}-${this.pad2(month)}`; }
 
@@ -202,7 +219,6 @@ export class PlanComponent implements OnInit {
   }
 
   // === Auswahl ===
-
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
     event.preventDefault();
     if (this.isWeekend(day)) return;
@@ -245,7 +261,6 @@ export class PlanComponent implements OnInit {
   }
 
   // === Aktionen ===
-
   private mapUiTypeToStatus(type: string): PlanEntryStatus | null {
     switch ((type || '').trim().toUpperCase()) {
       case 'U': return 'VACATION';
@@ -322,13 +337,13 @@ export class PlanComponent implements OnInit {
     });
   }
 
+  // HIER angepasst: holiday nicht mehr auf den Zellen selbst
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
-    const iso = this.toIso(day);
     const classes: { [key: string]: boolean } = {
       'cell': true,
-      'selected': this.isSelected(employeeId, day),
-      'holiday': this.holidaySet.has(iso)
+      'selected': this.isSelected(employeeId, day)
+      // keine 'holiday' mehr hier
     };
     if (type) classes[`${type.toLowerCase()}-cell`] = true;
     return classes;
@@ -353,5 +368,11 @@ export class PlanComponent implements OnInit {
       PRESENCE: 'P'
     };
     return map[status] ?? '';
+  }
+
+  private dayKeyFromDate(d: Date): number {
+    // Normiert auf lokale Mitternacht des sichtbaren Datums
+    const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return Math.floor(local.getTime() / 86400000);
   }
 }
