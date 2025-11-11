@@ -6,6 +6,21 @@ import {
   PlanListItem, PlanDetails, PlanEntry, CreatePlanBody, CreateEntryBody, PlanEntryStatus
 } from './types';
 
+export interface PlanLogDTO {
+  id: number;
+  plan_id: number;
+  department_id: number;
+  employee_id: number;
+  employee_name: string | null;
+  action_type: string;       // 'SET' | 'DELETE'
+  status_code: string | null;
+  date_from: string;         // 'YYYY-MM-DD'
+  date_to: string;           // 'YYYY-MM-DD'
+  day_count: number;
+  dates: string[];           // alle einzelnen Tage
+  created_at: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BackendAccess {
   private base = 'http://localhost:4000/api';
@@ -130,5 +145,38 @@ export class BackendAccess {
 
   getHolidays(year: number, stateCode: 'NW' = 'NW'): Observable<{ holidays: Array<{ id: number; date: string; name: string }> }> {
     return this.http.get<{ holidays: any[] }>(`${this.base}/holidays`, { params: { year, stateCode } as any });
+  }
+
+  createPlanLog(payload: {
+    planId: number;
+    departmentId: number;
+    employeeId: number;
+    actionType: 'SET' | 'DELETE';
+    statusCode: string | null;
+    dateFrom: string;
+    dateTo: string;
+    dayCount: number;
+    dates: string[];
+  }) {
+    return this.http.post<{ log: PlanLogDTO }>(
+      `${this.base}/plans/${payload.planId}/logs`,
+      {
+        departmentId: payload.departmentId,
+        employeeId: payload.employeeId,
+        actionType: payload.actionType,
+        statusCode: payload.statusCode,
+        dateFrom: payload.dateFrom,
+        dateTo: payload.dateTo,
+        dayCount: payload.dayCount,
+        dates: payload.dates
+      }
+    );
+  }
+
+  getPlanLogs(planId: number, year: number, month: number) {
+    const m = String(month).padStart(2, '0');
+    return this.http.get<{ logs: PlanLogDTO[] }>(
+      `${this.base}/plans/${planId}/logs?year=${year}&month=${m}`
+    );
   }
 }

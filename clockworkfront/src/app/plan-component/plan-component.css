@@ -85,14 +85,25 @@ td {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     justify-content: center;
 }
 
 #entry-buttons a {
-    text-align: center;
     font-size: 1.5em;
     padding: 10px 15px;
+}
+
+#secondary-buttons {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+#secondary-buttons a {
+    font-size: 1.5em;
 }
 
 .deselect {

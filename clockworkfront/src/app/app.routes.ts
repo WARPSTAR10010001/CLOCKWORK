@@ -14,6 +14,7 @@ import { AuthGuard, ModGuard, AdminGuard, LoginGuard } from './auth-guard';
 import { ModEditPlanComponent } from './mod-edit-plan-component/mod-edit-plan-component';
 import { AdminDeptGuard } from './admin-dept-guard';
 import { FeedbackComponent } from './feedback-component/feedback-component';
+import { LogComponent } from './log-component/log-component';
 
 export const routes: Routes = [
     {
@@ -96,7 +97,12 @@ export const routes: Routes = [
         title: 'Dienstplan - CLOCKWORK',
         canActivate: [AuthGuard]
     },
-    // Fängt alle unbekannten URLs ab und leitet sie sicher weiter
+    {
+        path: 'plan/:year/:month/logs',
+        component: LogComponent,
+        title: 'Logs - CLOCKWORK',
+        canActivate: [AuthGuard]
+    },
     {
         path: '**',
         redirectTo: 'years'

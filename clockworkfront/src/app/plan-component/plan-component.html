@@ -1,10 +1,8 @@
 <!-- src/app/plan-component/plan-component.html -->
 <div class="comp-wrap">
   @if (planId !== null) {
-  <h1 class="emp page-header">
-    Dienstplan {{ month.toString().padStart(2, '0') }}/
-    <a id="back" [routerLink]="['/plan', year]">{{ year }}</a>
-  </h1>
+  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back"
+      [routerLink]="['/plan', year]">{{ year }}</a></h1>
 
   <div id="entry-buttons">
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
@@ -38,11 +36,8 @@
           <td class="sticky">{{ employee.name }}</td>
 
           @for (day of daysForMonth; track day) {
-          <td
-            (click)="selectCell(employee.id, day, $event)"
-            [ngClass]="getCellClasses(employee.id, day)"
-            [attr.data-status]="getStatus(employee.id, day)"
-          >
+          <td (click)="selectCell(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
+            [attr.data-status]="getStatus(employee.id, day)">
             {{ statusLabel(getStatus(employee.id, day)) }}
           </td>
           }
@@ -52,6 +47,9 @@
     </table>
   </div>
   }
+  <div id="secondary-buttons">
+    <a class="button-primary" [routerLink]="['logs']">Logs ansehen</a>
+  </div>
 </div>
 
 <div class="comp-wrap">

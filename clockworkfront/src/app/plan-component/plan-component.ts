@@ -6,7 +6,7 @@ import { OverlayService } from '../overlay-service';
 import { BackendAccess } from '../backend-access';
 import { PlanEntry, PlanEntryStatus } from '../types';
 import { Employee, EmployeeService } from '../employee-service';
-import { switchMap, tap, map, catchError, take } from 'rxjs/operators';
+import { switchMap, map, catchError, take } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
@@ -70,6 +70,33 @@ export class PlanComponent implements OnInit {
       // 2) Plandaten laden
       this.loadPlan();
     });
+  }
+
+  private getSelectionSummary(): {
+    employeeId: number;
+    dateFrom: string;
+    dateTo: string;
+    dayCount: number;
+    dates: string[];
+  } | null {
+    if (this.selectedCells.length === 0) return null;
+
+    // durch selectCell-Logik garantiert: nur ein Mitarbeiter
+    const employeeId = this.selectedCells[0].employeeId;
+
+    const uniqueIso = Array.from(
+      new Set(this.selectedCells.map(c => this.toIso(c.day)))
+    ).sort();
+
+    if (uniqueIso.length === 0) return null;
+
+    return {
+      employeeId,
+      dateFrom: uniqueIso[0],
+      dateTo: uniqueIso[uniqueIso.length - 1],
+      dayCount: uniqueIso.length,
+      dates: uniqueIso
+    };
   }
 
   // ----- Feiertage -----
@@ -145,7 +172,7 @@ export class PlanComponent implements OnInit {
 
       catchError(err => {
         console.error('Fehler beim Laden der Plandaten:', err);
-        this.overlay.showOverlay('error', 'Fehler beim Laden der Plan-Daten.');
+        this.overlay.showOverlay('error', 'Fehler beim Laden der Plandaten.');
         return of(null);
       })
     ).subscribe(bundle => {
@@ -223,11 +250,24 @@ export class PlanComponent implements OnInit {
     event.preventDefault();
     if (this.isWeekend(day)) return;
 
-    const newSelection = { employeeId, day };
+    const newSelection: SelectedCell = { employeeId, day };
+
+    // Wenn bereits Auswahl existiert und anderer Mitarbeiter angeklickt wird:
+    if (this.selectedCells.length > 0 && this.selectedCells[0].employeeId !== employeeId) {
+      this.anchorCell = newSelection;
+      this.selectedCells = [newSelection];
+      return;
+    }
+
+    // Ab hier: entweder keine Auswahl oder gleicher Mitarbeiter
     if (event.ctrlKey || event.metaKey) {
       this.anchorCell = newSelection;
       const index = this.selectedCells.findIndex(c => this.isSameCell(c, newSelection));
-      if (index > -1) { this.selectedCells.splice(index, 1); } else { this.selectedCells.push(newSelection); }
+      if (index > -1) {
+        this.selectedCells.splice(index, 1);
+      } else {
+        this.selectedCells.push(newSelection);
+      }
     } else if (event.shiftKey && this.anchorCell) {
       this.selectedCells = this.getCellsInRange(this.anchorCell, newSelection);
     } else {
@@ -280,6 +320,13 @@ export class PlanComponent implements OnInit {
 
     const status = this.mapUiTypeToStatus(type);
 
+    // Auswahl zusammenfassen (inkl. employeeId & alle Tage)
+    const summary = this.getSelectionSummary();
+    if (!summary) {
+      this.deselect();
+      return;
+    }
+
     const groupedByEmployee = new Map<number, string[]>();
     this.selectedCells.forEach(cell => {
       if (!this.isWeekend(cell.day)) {
@@ -309,20 +356,46 @@ export class PlanComponent implements OnInit {
       }
     });
 
-    if (calls.length === 0) { this.deselect(); return; }
+    if (calls.length === 0) {
+      this.deselect();
+      return;
+    }
+
+    const affectedDays = summary.dayCount;
 
     forkJoin(calls).pipe(
-      switchMap((results: any[]) => {
-        const updated = results.reduce((sum, r) => sum + (r?.updated || 0), 0);
-        const weekendSkipped = results.reduce((sum, r) => sum + (r?.skipped?.weekend || 0), 0);
-        if (updated > 0 || weekendSkipped > 0) {
-          const msg = [
-            updated ? `${updated} Tag(e) gesetzt` : null,
-            weekendSkipped ? `${weekendSkipped} Wochenendtag(e) übersprungen` : null
-          ].filter(Boolean).join(' • ');
-          this.overlay.showOverlay('success', msg);
+      switchMap(() => {
+        if (affectedDays > 0) {
+          const actionText = status
+            ? `Aktion "${this.statusLabel(status)}" auf ${affectedDays} Tag(e) gesetzt`
+            : `${affectedDays} Tag(e) gelöscht`;
         }
-        return this.backend.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month));
+
+        // Logging: immer wenn mindestens ein Tag betroffen ist
+        const log$ = (this.planId && this.departmentId && affectedDays > 0)
+          ? this.backend.createPlanLog({
+            planId: this.planId!,
+            departmentId: this.departmentId!,
+            employeeId: summary.employeeId,
+            actionType: status ? 'SET' : 'DELETE',
+            statusCode: status ?? null,
+            dateFrom: summary.dateFrom,
+            dateTo: summary.dateTo,
+            dayCount: summary.dayCount,
+            dates: summary.dates
+          }).pipe(
+            catchError(err => {
+              console.error('Plan-Log konnte nicht geschrieben werden:', err);
+              return of(null);
+            })
+          )
+          : of(null);
+
+        return log$.pipe(
+          switchMap(() =>
+            this.backend.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month))
+          )
+        );
       })
     ).subscribe({
       next: (res) => {

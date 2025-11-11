@@ -1,11 +1,12 @@
+// src/app/mod-overview-component/mod-overview-component.ts
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
 import { DepartmentsService, Department } from '../departments-service';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../user-service';          // 👈 neu
-import { OverlayService } from '../overlay-service';      // 👈 für Feedback
+import { UserService } from '../user-service';
+import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-mod-overview-component',
@@ -23,14 +24,14 @@ export class ModOverviewComponent implements OnInit {
     public authService: AuthService,
     private imp: ImpersonationService,
     private deps: DepartmentsService,
-    private user: UserService,                 // 👈 neu
-    private overlay: OverlayService              // 👈 neu
+    private user: UserService,
+    private overlay: OverlayService
   ) {}
 
   ngOnInit(): void {
     if (this.authService.isAdmin()) {
       this.deps.getAllDepartments().subscribe({
-        next: (d) => this.departments = d || [],
+        next: (d) => (this.departments = d || []),
         error: () => {}
       });
       this.selectedDeptId = this.imp.getEffectiveDepartmentId();
@@ -48,26 +49,33 @@ export class ModOverviewComponent implements OnInit {
     return this.authService.isAdmin() ? this.selectedDeptId != null : true;
   }
 
-  // ===== Reset-Actions =====
+  // ===== Helper =====
   private requireDept(): number | null {
-    // Admin braucht eine Auswahl; MOD nutzt sein effektives Dept
     if (this.authService.isAdmin()) return this.selectedDeptId ?? null;
     return this.selectedDeptId ?? null;
   }
 
+  // ===== Reset-Actions =====
   resetUserPassword() {
     const deptId = this.requireDept();
     if (!deptId) {
       this.overlay.showOverlay('error', 'Bitte zuerst einen Fachbereich auswählen.');
       return;
     }
+
+    // 🔒 Bestätigung
+    const confirmReset = confirm(
+      'Möchten Sie wirklich alle Nutzerpasswörter in diesem Fachbereich zurücksetzen?'
+    );
+    if (!confirmReset) return;
+
     if (this.busy) return;
     this.busy = true;
 
     this.user.resetDeptUserPassword(deptId).subscribe({
       next: () => {
         this.busy = false;
-        this.overlay.showOverlay('success', 'Nutzerpasswort wurde auf "reset" gesetzt.');
+        this.overlay.showOverlay('success', 'Nutzerpasswörter wurden auf "reset" gesetzt.');
       },
       error: (err) => {
         this.busy = false;
@@ -77,12 +85,19 @@ export class ModOverviewComponent implements OnInit {
   }
 
   resetModPassword() {
-    if (!this.authService.isAdmin()) return; // Safety
+    if (!this.authService.isAdmin()) return;
     const deptId = this.requireDept();
     if (!deptId) {
       this.overlay.showOverlay('error', 'Bitte zuerst einen Fachbereich auswählen.');
       return;
     }
+
+    // 🔒 Bestätigung
+    const confirmReset = confirm(
+      'Möchten Sie wirklich das Moderatorpasswort dieses Fachbereichs zurücksetzen?'
+    );
+    if (!confirmReset) return;
+
     if (this.busy) return;
     this.busy = true;
 

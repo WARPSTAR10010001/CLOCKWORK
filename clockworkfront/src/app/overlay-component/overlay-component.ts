@@ -34,10 +34,14 @@ export class OverlayComponent implements OnInit {
   feedbackContent = '';
   sendingFeedback = false;           // 👈 Button-Disable & "Sende..."
   readonly FEEDBACK_MAX = 750;      // 👈 weiches Limit (Client)
-  appVersion = '0.2.4';                   // optional: App-Version (z. B. aus env)
+  appVersion = '0.2.5';                   // optional: App-Version (z. B. aus env)
 
   private banned = new Set([
-    '12345', '01234', 'passwort', 'kennwort', 'organist', 'badehose', 'november11', 'reset', 'organist01', 'autohaus', 'abcde', '47495', 'rheinberg', 'rheinberg47495'
+    '12345', '01234', 'passwort', 'kennwort', 'organist',
+    'badehose', 'november11', 'reset', 'organist01', 'autohaus',
+    'abcde', '47495', 'rheinberg', 'rheinberg47495', 'rheinberg',
+    'admin', '123456', '11111', 'borth', 'wallach',
+    'ossenberg', 'qwertz', '1qay2wsx', 'autohaus01', 'kirchplatz'
   ]);
 
   ngOnInit() {

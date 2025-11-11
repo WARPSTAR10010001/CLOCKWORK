@@ -1,0 +1,63 @@
+<!-- src/app/log-component/log-component.html -->
+<div class="comp-wrap">
+  <h1 class="emp page-header">
+    Dienstplan-Logs
+    <a [routerLink]="['/plan', year, month]">
+      {{ month.toString().padStart(2, '0') }}/{{ year }}
+    </a>
+  </h1>
+
+  <!-- Filter-Toolbar -->
+  <div class="log-toolbar">
+    <label>Aktion:</label>
+    <select id="fltr-act" [(ngModel)]="actionFilter" (change)="onActionFilterChange()">
+      <option [ngValue]="''">Alle</option>
+      <option ngValue="VACATION">Urlaub</option>
+      <option ngValue="HOME">Homeoffice</option>
+      <option ngValue="SICK">Krank</option>
+      <option ngValue="TRAINING">Lehrgang</option>
+      <option ngValue="FLEXTIME">Gleitzeit</option>
+      <option ngValue="APPOINTMENT">Termin</option>
+      <option ngValue="OTHER">Anderes</option>
+    </select>
+
+    <label>Mitarbeiter:</label>
+    <select id="fltr-emp" [(ngModel)]="employeeFilter" (change)="onEmployeeFilterChange()">
+      <option [ngValue]="''">Alle</option>
+      @for (e of employeeOptions; track e.id) {
+        <option [ngValue]="e.id">{{ e.name }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading) {
+    <p>Lade Logs...</p>
+  } @else if (logs.length === 0) {
+    <h1>Für diesen Monat sind keine Logs vorhanden.</h1>
+  } @else {
+    <div class="logs">
+      @for (log of logs; track log.id) {
+        <div class="log">
+          <div class="meta">
+            <span class="log-id">#{{ log.id }}</span>
+            <span>
+              {{ log.created_at | date:'short' }}
+              - {{ describeLog(log) }}
+              - {{ log.employee_name || ('Mitarbeiter #' + log.employee_id) }}
+            </span>
+          </div>
+          <hr>
+          <div class="range">
+            Zeitraum:
+            {{ formatDateShort(log.date_from) }}
+            -
+            {{ formatDateShort(log.date_to) }}
+          </div>
+          <div class="dates">
+            Tage: {{ formatDates(log.dates) }}
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

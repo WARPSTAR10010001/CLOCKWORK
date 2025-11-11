@@ -78,8 +78,8 @@
   } @else if (overlayState.type === "passwordReset") {
   <div id="passwordReset-overlay">
     <h1 class="emp page-header">Passwort ändern</h1>
-    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich (außer dem Moderator), bitte sprechen Sie sich
-      mit Ihren Kollegen ab um ein sicheres Passwort festzulegen.</h1>
+    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich mit Ihrer aktuellen Berechtigungsstufe. Bitte sprechen Sie sich
+      mit Ihren Kollegen ab um gemeinsam ein sicheres Passwort festzulegen.</h1>
     <input type="text" placeholder="Neues Passwort eingeben" [value]="pw1" (input)="onPwInput(1, $event)" />
 
     <input type="text" placeholder="Neues Passwort wiederholen" [value]="pw2" (input)="onPwInput(2, $event)" />
