@@ -62,11 +62,7 @@ export class AdminComponent implements OnInit {
         next: (res) => {
           this.overlay.showOverlay(
             'success',
-            `Fachbereich "${res.department.name}" angelegt. Nutzer: ${res.users
-              .map((u) => u.username)
-              .join(', ')} (PW: init)`
-          );
-          this.form.reset({ name: '', userUsername: '', modUsername: '' });
+            `Fachbereich "${res.department.name}" wurde angelegt.`);
           this.submitting = false;
           this.reload();
         },

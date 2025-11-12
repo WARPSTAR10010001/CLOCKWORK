@@ -41,8 +41,10 @@ select {
     width: 500px;
 }
 
-.systemuser-management a {
-    margin-right: 20px;
+.systemuser-management-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .disabled {

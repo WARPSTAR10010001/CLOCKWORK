@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { OverlayService } from './overlay-service';
 import { catchError, map, take, tap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 type Role = 'admin' | 'mod' | 'user';
 interface User {
@@ -21,7 +22,7 @@ export class AuthService {
   private authStatusSubject = new BehaviorSubject<AuthStatus>({ loggedIn: false, user: null, exp: null });
   public authStatus$ = this.authStatusSubject.asObservable();
 
-  private baseUrl = 'http://localhost:4000/api';
+  private baseUrl = environment.apiBase;
   private tokenKey = 'clockwork_token';
 
   constructor(

@@ -10,11 +10,21 @@ const employeesRoutes = require('./routes/employees.routes');
 const departmentsRoutes = require('./routes/departments.routes');
 const adminRoutes = require('./routes/admin.routes');
 const feedbackRoutes = require('./routes/feedback.routes');
-const planLogsRoutes = require('./routes/planLogs.routes')
+const planLogsRoutes = require('./routes/planLogs.routes');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:4200';
+
+const corsOptions = {
+  origin: allowedOrigin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -29,6 +39,8 @@ app.use('/api', feedbackRoutes);
 app.use('/api', planLogsRoutes);
 
 app.get('/', (_req, res) => res.send('CLOCKWORK Server läuft!'));
-app.get('/api/health', (_req, res) => res.json({ message: "CLOCKWORK Server läuft!", running: true, timestamp: Date.now() }));
+app.get('/api/health', (_req, res) =>
+  res.json({ message: 'CLOCKWORK Server läuft!', running: true, timestamp: Date.now() })
+);
 
 module.exports = app;

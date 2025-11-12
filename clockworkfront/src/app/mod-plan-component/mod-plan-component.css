@@ -85,17 +85,12 @@ select {
     white-space: nowrap;
 }
 
-/* Zebra-Streifen */
-.employees-container>.employee-entry-row:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.04);
-}
-
 :host-context(body.light) .employees-container>.employee-entry-row:nth-child(even) {
-    background-color: #efefef;
+    background-color: #f0f0f5;
 }
 
 :host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even) {
-    background-color: #2a2a2a;
+    background-color: #252525;
 }
 
 :host-context(body.neon) .employees-container>.employee-entry-row:nth-child(even) {

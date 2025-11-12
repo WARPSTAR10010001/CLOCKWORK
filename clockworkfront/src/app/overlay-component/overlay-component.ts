@@ -32,9 +32,9 @@ export class OverlayComponent implements OnInit {
   // ---- Feedback UI
   feedbackCategory: FeedbackCategory | '' = '';
   feedbackContent = '';
-  sendingFeedback = false;           // 👈 Button-Disable & "Sende..."
-  readonly FEEDBACK_MAX = 750;      // 👈 weiches Limit (Client)
-  appVersion = '0.2.5';                   // optional: App-Version (z. B. aus env)
+  sendingFeedback = false;
+  readonly FEEDBACK_MAX = 750;
+  appVersion = '0.2.5';
 
   private banned = new Set([
     '12345', '01234', 'passwort', 'kennwort', 'organist',

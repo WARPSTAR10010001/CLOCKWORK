@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of, map, switchMap } from 'rxjs';
+import { environment } from '../environments/environment';
 
 import {
   PlanListItem, PlanDetails, PlanEntry, CreatePlanBody, CreateEntryBody, PlanEntryStatus
@@ -23,7 +24,7 @@ export interface PlanLogDTO {
 
 @Injectable({ providedIn: 'root' })
 export class BackendAccess {
-  private base = 'http://localhost:4000/api';
+  private base = environment.apiBase;
 
   constructor(private http: HttpClient) { }
 

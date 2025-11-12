@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export type FeedbackStatus = 'neu'|'gelesen'|'bearbeitet';
 export type FeedbackCategory =
@@ -23,7 +24,7 @@ export interface FeedbackItem {
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
-  private baseUrl = 'http://localhost:4000/api';
+  private baseUrl = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 

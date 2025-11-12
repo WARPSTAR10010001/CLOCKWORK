@@ -18,6 +18,7 @@ function jwtCookieOptions() {
 }
 
 // POST /api/auth/login
+// POST /api/auth/login
 router.post('/auth/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -26,21 +27,33 @@ router.post('/auth/login', async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT id, username, password_hash, role, department_id, is_active, password_reset
+      `SELECT id, username, password_hash, role, department_id, is_active, password_reset, last_login_at
          FROM system_users
         WHERE username = $1 AND is_active = TRUE`,
       [username]
     );
-    if (rows.length === 0) return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
+    }
 
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
+    if (!match) {
+      return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
+    }
+
+    // === letzten Loginzeitpunkt setzen ===
+    const now = new Date();
+    await pool.query(
+      `UPDATE system_users
+          SET last_login_at = $1
+        WHERE id = $2`,
+      [now, user.id]
+    );
 
     const payload = { sub: user.id, role: user.role, departmentId: user.department_id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' });
 
-    // Optional cookie (you’re using a Bearer token via interceptor; cookie doesn’t hurt)
     res.cookie('token', token, jwtCookieOptions());
 
     return res.json({
@@ -52,8 +65,9 @@ router.post('/auth/login', async (req, res) => {
         role: user.role,
         departmentId: user.department_id,
         passwordReset: !!user.password_reset,
+        lastLoginAt: user.last_login_at || now.toISOString()
       },
-      expHours: 12,
+      expHours: 12
     });
   } catch (err) {
     console.error(err);

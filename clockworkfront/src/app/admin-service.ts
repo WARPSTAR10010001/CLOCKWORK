@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 interface CreateDeptPayload {
   name: string;
@@ -9,13 +10,19 @@ interface CreateDeptPayload {
 
 export interface CreatedDepartment {
   department: { id: number; name: string };
-  users: { id: number; username: string; role: 'USER'|'MOD'; department_id: number }[];
-  initialPassword: string; // "init"
+  users: {
+    id: number;
+    username: string;
+    role: 'USER' | 'MOD';
+    department_id: number;
+    last_login_at: string | null;
+  }[];
+  initialPassword: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private base = 'http://localhost:4000/api';
+  private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 

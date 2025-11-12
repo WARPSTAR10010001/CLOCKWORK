@@ -1,7 +1,7 @@
 <!-- src/app/plan-component/plan-component.html -->
 <div class="comp-wrap">
   @if (planId !== null) {
-  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back"
+  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back" class="hidden-link"
       [routerLink]="['/plan', year]">{{ year }}</a></h1>
 
   <div id="entry-buttons">
@@ -46,10 +46,10 @@
       </tbody>
     </table>
   </div>
-  }
   <div id="secondary-buttons">
     <a class="button-primary" [routerLink]="['logs']">Logs ansehen</a>
   </div>
+  }
 </div>
 
 <div class="comp-wrap">

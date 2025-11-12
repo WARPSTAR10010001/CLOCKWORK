@@ -17,7 +17,6 @@ function slugify(name) {
 }
 
 async function nextFreeUsername(client, base) {
-  // versuche base, base-1, base-2, ...
   let candidate = base;
   let i = 1;
   while (true) {
@@ -28,6 +27,7 @@ async function nextFreeUsername(client, base) {
   }
 }
 
+// POST /api/admin/departments
 router.post(
   '/admin/departments',
   requireAuth,
@@ -65,14 +65,13 @@ router.post(
       const userUsername = await nextFreeUsername(client, desiredUser);
       const modUsername  = await nextFreeUsername(client, desiredMod);
 
-      // Passwort-Hash ("init")
       const hash = await bcrypt.hash('init', SALT_ROUNDS);
 
       // USER anlegen
       const userIns = await client.query(
         `INSERT INTO system_users (username, password_hash, role, department_id, is_active)
          VALUES ($1, $2, 'USER', $3, true)
-         RETURNING id, username, role, department_id`,
+         RETURNING id, username, role, department_id, last_login_at`,
         [userUsername, hash, department.id]
       );
 
@@ -80,7 +79,7 @@ router.post(
       const modIns = await client.query(
         `INSERT INTO system_users (username, password_hash, role, department_id, is_active)
          VALUES ($1, $2, 'MOD', $3, true)
-         RETURNING id, username, role, department_id`,
+         RETURNING id, username, role, department_id, last_login_at`,
         [modUsername, hash, department.id]
       );
 
@@ -88,7 +87,7 @@ router.post(
       return res.status(201).json({
         department,
         users: [userIns.rows[0], modIns.rows[0]],
-        initialPassword: 'init' // reine Info; Passwort wird gehasht gespeichert
+        initialPassword: 'init'
       });
     } catch (err) {
       await client.query('ROLLBACK');
@@ -102,13 +101,13 @@ router.post(
 
 /**
  * GET /api/admin/departments
- * Admin: Liste aller Departments inkl. Rollen-Usernames (kurzer Überblick)
+ * Admin: Liste aller Departments inkl. Rollen-Usernames
  */
 router.get(
   '/admin/departments',
   requireAuth,
   requireRole('ADMIN'),
-  async (req, res) => {
+  async (_req, res) => {
     const client = await pool.connect();
     try {
       const deps = await client.query(
@@ -117,9 +116,8 @@ router.get(
            ORDER BY d.name ASC`
       );
 
-      // optional: die zugehörigen user zusammenfassen
       const users = await client.query(
-        `SELECT id, username, role, department_id
+        `SELECT id, username, role, department_id, last_login_at
            FROM system_users
            WHERE role IN ('USER','MOD')`
       );

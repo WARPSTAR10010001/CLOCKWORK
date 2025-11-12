@@ -28,7 +28,7 @@
             </button>
         </div>
     </form>
-    
+
     <hr>
 
     <h1 class="subtitle">Bestehende Fachbereiche</h1>
@@ -38,7 +38,11 @@
             <div class="dept-title">{{ d.name }}</div>
             <div class="dept-users">
                 @for (u of d.users; track u.id) {
-                <span class="tag">{{ u.role }}: {{ u.username }}</span>
+                <span class="tag">
+                    {{ u.role }}: {{ u.username }}
+                    ({{ u.last_login_at ? (u.last_login_at | date:'short') : 'noch nie eingeloggt' }})
+                </span>
+
                 }
             </div>
         </div>

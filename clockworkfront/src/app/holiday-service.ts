@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface HolidayDTO {
   id: number;
@@ -31,7 +32,7 @@ function dayKeyLocalFromDateString(s: string): number {
 
 @Injectable({ providedIn: 'root' })
 export class HolidayService {
-  private baseUrl = 'http://localhost:4000/api';
+  private baseUrl = environment.apiBase;
   constructor(private http: HttpClient) {}
 
   getForYear(year: number): Observable<Set<number>> {

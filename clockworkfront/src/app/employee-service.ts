@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth-service';
 import { ImpersonationService } from './impersonation-service';
+import { environment } from '../environments/environment';
 
 export interface Employee {
   id: number;
@@ -18,7 +19,7 @@ export interface Employee {
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
-  private base = 'http://localhost:4000/api';
+  private base = environment.apiBase;
 
   constructor(
     private http: HttpClient,

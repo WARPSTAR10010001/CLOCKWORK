@@ -1,15 +1,8 @@
-Must-Do:
-Cant create plan (department id 10 ?)
-Add user login logging
-
-!!! Chrome doesnt get data properly
-
-
 QOL:
 Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Loading animation
 Shortcuts with "k" for sickness, "u" for vacation etc in plan component
-Automatic redirect to current year plan
+Employee management css for halfscreen
 
 
 Future Updates (V1.0.0):
@@ -17,6 +10,7 @@ Edit plan component (edit status + edit employee holidays) (currently only visib
 Lock plans at end of january
 Software documentation
 Revamped admin component
+Fix feedback not showing correctly to admins
 
 
 Future Updates (V1.2.0):

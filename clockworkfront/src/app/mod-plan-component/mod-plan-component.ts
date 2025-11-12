@@ -1,3 +1,4 @@
+// src/app/mod-plan-component/mod-plan-component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -6,8 +7,8 @@ import { OverlayService } from '../overlay-service';
 import { BackendAccess } from '../backend-access';
 import { EmployeeService, Employee } from '../employee-service';
 import { AuthService } from '../auth-service';
-import { forkJoin, of, Observable } from 'rxjs';
-import { catchError, switchMap, take } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { ImpersonationService } from '../impersonation-service';
 
 interface RowForPlan {
@@ -30,6 +31,9 @@ export class ModPlanComponent implements OnInit {
   // aktive Mitarbeitende (vereinheitlicht)
   activeEmployees: Employee[] = [];
 
+  /** aktuell verwendete Fachbereichs-ID (für Laden + Erstellen) */
+  private currentDeptId: number | null = null;
+
   constructor(
     private overlay: OverlayService,
     private fb: FormBuilder,
@@ -40,25 +44,36 @@ export class ModPlanComponent implements OnInit {
     private router: Router
   ) {
     this.planForm = this.fb.group({
-      year: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2100)]],
+      year: [
+        new Date().getFullYear(),
+        [Validators.required, Validators.min(2000), Validators.max(2100)]
+      ],
       employees: this.fb.array([], Validators.required)
     });
   }
 
   ngOnInit(): void {
-    const depId = this.effectiveDepartmentId;
-    if (!depId) {
-      // Admin hat noch keinen FB gewählt
-      this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
-      this.router.navigate(['/mod']);
-      return;
-    }
-    this.loadActiveEmployees(depId);
+    // Department aus Login/Impersonation ermitteln
+    this.auth.authStatus$.pipe(take(1)).subscribe(status => {
+      const fromJwt = status?.user?.departmentId ?? null;
+      const fromImp = this.imp.getEffectiveDepartmentId();
+
+      // Admin → Impersonation, Mod → eigenes Dept
+      this.currentDeptId = this.auth.isAdmin() ? (fromImp ?? null) : fromJwt;
+
+      if (!this.currentDeptId) {
+        this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
+        this.router.navigate(['/mod']);
+        return;
+      }
+
+      this.loadActiveEmployees(this.currentDeptId);
+    });
   }
 
-  /** effektive Dept-ID: Impersonation > eigenes Dept */
+  /** Getter, damit vorhandener Code weiter `effectiveDepartmentId` nutzen kann */
   get effectiveDepartmentId(): number | null {
-    return this.imp.getEffectiveDepartmentId();
+    return this.currentDeptId;
   }
 
   /** FormArray Accessor */
@@ -68,32 +83,29 @@ export class ModPlanComponent implements OnInit {
 
   /** Mitarbeiter laden (nur aktive) + FormArray füllen */
   private loadActiveEmployees(departmentId: number): void {
-    this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1))
-      .subscribe({
-        next: (emps) => {
-          // nur aktive anzeigen
-          this.activeEmployees = (emps || []).filter(e => e.is_active !== false);
-          // Form neu aufbauen
-          this.employees.clear();
-          for (const e of this.activeEmployees) {
-            this.employees.push(this.rowFromEmployee(e));
-          }
-        },
-        error: () => this.overlay.showOverlay('error', 'Mitarbeiter konnten nicht geladen werden.')
-      });
+    this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1)).subscribe({
+      next: (emps) => {
+        this.activeEmployees = (emps || []).filter(e => e.is_active !== false);
+        this.employees.clear();
+        for (const e of this.activeEmployees) {
+          this.employees.push(this.rowFromEmployee(e));
+        }
+      },
+      error: () => this.overlay.showOverlay('error', 'Mitarbeiter konnten nicht geladen werden.')
+    });
   }
 
   /** Eine Formularzeile pro aktivem Employee */
   private rowFromEmployee(e: Employee): FormGroup {
     return this.fb.group({
       id: [e.id, Validators.required],
-      name: [{ value: e.name ?? '', disabled: true }],   // read-only Anzeige
+      name: [{ value: e.name ?? '', disabled: true }],
       vacation_days_carryover: [e.carryover_days ?? 0, [Validators.required, Validators.min(0)]],
       vacation_days_total: [e.annual_leave_days ?? 30, [Validators.required, Validators.min(0)]],
     });
   }
 
-  /** sichere YYYY-MM-01 für Start/Ende, damit Server happy ist */
+  /** sichere YYYY-MM-01 für Start/Ende */
   private yearMonthStart(year: number, month = 1): string {
     const mm = String(month).padStart(2, '0');
     return `${year}-${mm}-01`;
@@ -101,6 +113,7 @@ export class ModPlanComponent implements OnInit {
 
   submit(): void {
     const depId = this.effectiveDepartmentId;
+
     if (this.planForm.invalid || !depId) {
       this.overlay.showOverlay('error', 'Bitte alle Felder korrekt ausfüllen.');
       this.planForm.markAllAsTouched();
@@ -110,17 +123,15 @@ export class ModPlanComponent implements OnInit {
     this.submitting = true;
     const { year } = this.planForm.value as { year: number };
 
-    // 1) Payload-Zeilen aus FormArray ziehen
     const rows: RowForPlan[] = (this.employees.getRawValue() as any[]).map(g => ({
       employeeId: g.id,
       carryover: Number(g.vacation_days_carryover) || 0,
       annual: Number(g.vacation_days_total) || 0,
     }));
 
-    // 2) /api/plans Payload bauen
     const employeesPayload = rows.map(r => ({
       employeeId: r.employeeId,
-      startMonth: this.yearMonthStart(year, 1), // Monatsfenster standardisieren (Januar–Dezember)
+      startMonth: this.yearMonthStart(year, 1),
       endMonth: null,
       initialBalance: r.carryover
     }));

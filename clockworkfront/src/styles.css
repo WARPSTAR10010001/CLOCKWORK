@@ -259,3 +259,8 @@ textarea:focus {
     outline: none;
     box-shadow: 0px 0px 30px var(--bsc);
 }
+
+.hidden-link:hover {
+    text-decoration: underline !important;
+    text-decoration-color: var(--tc);
+}

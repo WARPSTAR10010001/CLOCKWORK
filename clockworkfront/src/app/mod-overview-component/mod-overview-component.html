@@ -25,20 +25,19 @@
   </div>
 
   <hr>
-
   <div class="systemuser-management">
     <h1 class="subtitle">Systemnutzer verwalten</h1>
+    <div class="systemuser-management-btns">
+      <a class="button-primary" (click)="resetUserPassword()">
+        Nutzerpasswort zurücksetzen
+      </a>
 
-    <a class="button-primary" (click)="resetUserPassword()">
-      Nutzerpasswort zurücksetzen
-    </a>
-
-    @if (authService.isAdmin()) {
-    <a class="button-primary" (click)="resetModPassword()">
-      Moderatorpasswort zurücksetzen
-    </a>
-    }
-
+      @if (authService.isAdmin()) {
+      <a class="button-primary" (click)="resetModPassword()">
+        Moderatorpasswort zurücksetzen
+      </a>
+      }
+    </div>
     <h1>Passwörter werden beim Zurücksetzen immer auf "reset" gesetzt und müssen beim ersten Login geändert werden.
       Bitte daran denken, dass alle Nutzer eines Fachbereiches mit der gleichen Berechtigungsstufe nun das gleiche
       Passwort haben.</h1>
