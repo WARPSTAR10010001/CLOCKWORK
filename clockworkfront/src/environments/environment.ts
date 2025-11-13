@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBase: 'https://clockwork.rheinberg.krzn.de/api'
+  apiBase: 'http://clockwork.rheinberg.krzn.de/api'
 };
