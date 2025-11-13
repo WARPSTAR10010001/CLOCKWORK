@@ -4,6 +4,7 @@ import { ThemeService, Theme, Outline, Color, Material } from '../theme-service'
 import { AuthService } from '../auth-service';
 import { take } from 'rxjs/operators';
 import { FeedbackService, FeedbackCategory } from '../feedback-service';
+import { VersionService } from '../version-service';
 
 @Component({
   selector: 'app-overlay-component',
@@ -16,6 +17,7 @@ export class OverlayComponent implements OnInit {
   private renderer = inject(Renderer2);
   public auth = inject(AuthService);
   private feedbackService = inject(FeedbackService);
+  private versionService = inject(VersionService);
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
@@ -34,7 +36,7 @@ export class OverlayComponent implements OnInit {
   feedbackContent = '';
   sendingFeedback = false;
   readonly FEEDBACK_MAX = 750;
-  appVersion = '0.2.5';
+  appVersion = this.versionService.getVersion();
 
   private banned = new Set([
     '12345', '01234', 'passwort', 'kennwort', 'organist',
