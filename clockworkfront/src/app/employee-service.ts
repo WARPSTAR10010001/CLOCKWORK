@@ -25,7 +25,7 @@ export class EmployeeService {
     private http: HttpClient,
     private auth: AuthService,
     private imp: ImpersonationService
-  ) {}
+  ) { }
 
   getEmployeesForDepartment(departmentId?: number): Observable<Employee[]> {
     const dep = departmentId ?? this.imp.getEffectiveDepartmentId();
@@ -39,7 +39,7 @@ export class EmployeeService {
   createEmployee(payload: {
     departmentId: number;
     displayName: string;
-    startMonth: string;         // immer string → kein TS-Error
+    startMonth: string;
     endMonth?: string | null;
     annualLeaveDays?: number;
     carryoverDays?: number;
@@ -52,6 +52,8 @@ export class EmployeeService {
     displayName?: string;
     startMonth?: string | null;
     endMonth?: string | null;
+    annualLeaveDays?: number;
+    carryoverDays?: number;
   }) {
     return this.http.patch<any>(`${this.base}/employees/${id}`, payload)
       .pipe(map(this.serverToEmployee));

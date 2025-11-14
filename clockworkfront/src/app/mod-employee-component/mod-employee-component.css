@@ -144,11 +144,11 @@ select {
 }
 
 :host-context(body.light) .employees-container>.employee-entry-row:nth-child(even) {
-    background: #efefef;
+    background: #f0f0f5;
 }
 
 :host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even) {
-    background: #2a2a2a;
+    background: #252525;
 }
 
 :host-context(body.neon) .employees-container>.employee-entry-row:nth-child(even) {

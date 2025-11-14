@@ -53,9 +53,10 @@ export class ModEmployeeComponent implements OnInit {
   // Neuer Mitarbeiter (oben)
   newEmployeeForm = this.fb.group<NewForm>({
     name: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.minLength(2)] }),
-    start_date: this.fb.control<string | null>(null),
+    start_date: this.fb.control<string | null>(null, { validators: [Validators.required] }),
     end_date: this.fb.control<string | null>(null),
   });
+
 
   ngOnInit(): void {
     // Dept ermitteln: Admin → Impersonation, sonst JWT
@@ -110,27 +111,36 @@ export class ModEmployeeComponent implements OnInit {
   }
 
   private splitEmployees(list: Employee[]) {
-    // Monatsanfang ohne TZ-Drift
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthStart = this.todayYmd();
     const actives: Employee[] = [];
     const inactives: Employee[] = [];
 
     for (const e of list) {
-      const end = e.end_month ? new Date(e.end_month) : null;
+      const end = e.end_month || null;
       const isActiveFlag = e.is_active !== false;
-      const notEnded = !end || end >= monthStart;
+      const notEnded = !end || end >= monthStart; // 'YYYY-MM-DD' Vergleich
+
       (isActiveFlag && notEnded ? actives : inactives).push(e);
     }
+
     actives.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     inactives.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
     return { actives, inactives };
   }
 
-  // ---------- String-only Date Utils ----------
   private monthToInputDate(s?: string | null): string | null {
     if (!s) return null;
-    return s.slice(0, 10);
+    return s.slice(0, 10); // kommt schon im Format 'YYYY-MM-DD'
+  }
+
+  // String-Vergleich für 'YYYY-MM-DD' ist chronologisch okay
+  private todayYmd(): string {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = '01'; // für Monatsanfang-Vergleich reicht das
+    return `${y}-${m}-${day}`;
   }
 
   /** Input 'YYYY-MM-DD' → 'YYYY-MM-01' (Monatsanfang), ohne Date() */
@@ -169,8 +179,8 @@ export class ModEmployeeComponent implements OnInit {
     const v = group.getRawValue();
     const payload = {
       displayName: v.name.trim(),
-      startMonth: this.inputToMonthStart(v.start_date),
-      endMonth: this.inputToMonthStart(v.end_date),
+      startMonth: v.start_date,   // exakt wie im Input
+      endMonth: v.end_date        // exakt wie im Input (oder null)
     };
 
     this.employeesApi.updateEmployee(v.id, payload).subscribe({
@@ -207,7 +217,7 @@ export class ModEmployeeComponent implements OnInit {
   createEmployee(): void {
     if (this.newEmployeeForm.invalid) {
       this.newEmployeeForm.markAllAsTouched();
-      this.overlay.showOverlay('error', 'Bitte Name angeben (mind. 2 Zeichen).');
+      this.overlay.showOverlay('error', 'Bitte Name und Startdatum angeben.');
       return;
     }
     if (!this.deptId) {
@@ -220,15 +230,16 @@ export class ModEmployeeComponent implements OnInit {
     this.employeesApi.createEmployee({
       departmentId: this.deptId,
       displayName: v.name.trim(),
-      startMonth: this.inputToMonthStart(v.start_date) ?? this.todayMonthStart(),
-      endMonth: this.inputToMonthStart(v.end_date) ?? null
+      startMonth: v.start_date!,          // exakt wie gewählt
+      endMonth: v.end_date || null
     }).subscribe({
       next: () => {
         this.overlay.showOverlay('success', 'Mitarbeiter angelegt.');
         this.newEmployeeForm.reset({ name: '', start_date: null, end_date: null });
         this.loadAll();
       },
-      error: (err) => this.overlay.showOverlay('error', err?.error?.error || 'Anlegen fehlgeschlagen.')
+      error: (err) =>
+        this.overlay.showOverlay('error', err?.error?.error || 'Anlegen fehlgeschlagen.')
     });
   }
 

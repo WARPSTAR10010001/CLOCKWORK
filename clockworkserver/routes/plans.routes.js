@@ -10,6 +10,153 @@ function isIsoDate(s) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
 }
 
+router.get('/plans/:id/plan-employees', requireAuth, async (req, res) => {
+  const planId = Number(req.params.id);
+  if (!planId) return res.status(400).json({ error: 'planId fehlt' });
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT pe.employee_id, pe.start_month, pe.end_month
+         FROM plan_employees pe
+        WHERE pe.plan_id = $1
+        ORDER BY pe.employee_id`,
+      [planId]
+    );
+    return res.json({ items: rows });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'Interner Serverfehler' });
+  }
+});
+
+/**
+ * POST /api/plans/:id/plan-employees
+ * Body: { employeeId, startMonth, endMonth }
+ * Fügt einen Mitarbeiter in den Jahresplan ein (no-op wenn schon drin).
+ */
+// routes/plans.routes.js (Ausschnitt)
+router.post(
+  '/plans/:id/plan-employees',
+  requireAuth,
+  requireRole('MOD', 'ADMIN'),
+  async (req, res) => {
+    const planId = Number(req.params.id);
+    const { employeeId, startMonth, endMonth = null } = req.body || {};
+
+    if (!planId || !employeeId || !startMonth) {
+      return res.status(400).json({ error: 'planId, employeeId, startMonth erforderlich' });
+    }
+
+    const client = await pool.connect();
+    try {
+      // Urlaubskonto / Übertrag aus employees ziehen
+      const emp = await client.query(
+        `SELECT carryover_days
+           FROM employees
+          WHERE id = $1`,
+        [employeeId]
+      );
+      const initialBalance = emp.rows[0]?.carryover_days ?? 0;
+
+      const ins = await client.query(
+        `INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (plan_id, employee_id) DO NOTHING
+         RETURNING plan_id, employee_id`,
+        [planId, employeeId, startMonth, endMonth, initialBalance]
+      );
+
+      return res.status(201).json({ added: ins.rowCount > 0 });
+    } catch (e) {
+      console.error(e);
+      return res.status(500).json({ error: 'Interner Serverfehler' });
+    } finally {
+      client.release();
+    }
+  }
+);
+
+/**
+ * POST /api/plans/:id/sync-employees
+ * Fügt alle aktiven Dept-Mitarbeitenden, die noch nicht im Plan sind, hinzu.
+ */
+router.post(
+  '/plans/:id/sync-employees',
+  requireAuth,
+  requireRole('MOD', 'ADMIN'),
+  async (req, res) => {
+    const planId = Number(req.params.id);
+    if (!planId) return res.status(400).json({ error: 'planId fehlt' });
+
+    const client = await pool.connect();
+    try {
+      // Plan → Department + Jahr ermitteln
+      const p = await client.query(
+        `SELECT id, department_id, year
+           FROM plans
+          WHERE id = $1`,
+        [planId]
+      );
+      if (p.rowCount === 0) {
+        return res.status(404).json({ error: 'Plan nicht gefunden' });
+      }
+      const { department_id, year } = p.rows[0];
+
+      // alle aktiven Mitarbeitenden, die noch NICHT im Plan sind
+      const q = await client.query(
+        `SELECT e.id, COALESCE(e.carryover_days, 0) AS carryover
+           FROM employees e
+          WHERE e.department_id = $1
+            AND COALESCE(e.is_active, true) = true
+            AND NOT EXISTS (
+                  SELECT 1
+                    FROM plan_employees pe
+                   WHERE pe.plan_id = $2
+                     AND pe.employee_id = e.id
+                )`,
+        [department_id, planId]
+      );
+
+      if (q.rowCount === 0) {
+        return res.json({ added: 0 });
+      }
+
+      const start = `${year}-01-01`;
+
+      // parametrisierter Multi-Insert
+      const values = [];
+      const chunks = [];
+      let idx = 1;
+
+      for (const row of q.rows) {
+        chunks.push(
+          `($${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++})`
+        );
+        values.push(
+          planId,
+          row.id,
+          start,
+          null,
+          row.carryover ?? 0
+        );
+      }
+
+      const sql = `
+        INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
+        VALUES ${chunks.join(', ')}
+      `;
+
+      const ins = await client.query(sql, values);
+      return res.json({ added: ins.rowCount });
+    } catch (e) {
+      console.error(e);
+      return res.status(500).json({ error: 'Interner Serverfehler' });
+    } finally {
+      client.release();
+    }
+  }
+);
+
 router.get(
   '/plans/:id',
   requireAuth,

@@ -5,8 +5,7 @@
     @for (year of years; track year.value) {
     <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
       <span>{{ year.value }}</span>
-      <!-- @if (auth.isMod() || auth.isAdmin()) {                    UNCOMMENT WHEN FEATURE IS FULLY IMPLEMENTED-->
-       @if (auth.isAdmin()) {
+      @if (auth.isMod() || auth.isAdmin()) {
       <a class="button-primary incard" [routerLink]="['/plan', 'edit', year.value]">Bearbeiten (WIP)</a>
       }
     </a>

@@ -35,28 +35,17 @@ router.post(
   }
 );
 
-// GET /api/employees?departmentId=1
-router.get('/employees', requireAuth, async (req, res) => {
-  const { departmentId } = req.query || {};
-  if (!departmentId) return res.status(400).json({ error: 'departmentId benötigt' });
-  if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-    return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
-  }
-  try {
-    const { rows } = await pool.query(
-      `SELECT id, display_name, start_month, end_month, annual_leave_days, carryover_days, is_active
-         FROM employees
-        WHERE department_id = $1
-        ORDER BY display_name ASC`,
-      [departmentId]
-    );
-    return res.json({ employees: rows });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Interner Serverfehler' });
-  }
-});
+// Hilfsfunktion: Date -> 'YYYY-MM-DD' in lokaler Zeit
+function toYmdLocal(date) {
+  if (!date) return null;
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
+// GET /api/employees?departmentId=1
 router.get('/employees', requireAuth, async (req, res) => {
   let { departmentId } = req.query || {};
 
@@ -70,21 +59,29 @@ router.get('/employees', requireAuth, async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT id, department_id, display_name, start_month, end_month, is_active
+      `SELECT id,
+              department_id,
+              display_name,
+              start_month,
+              end_month,
+              annual_leave_days,
+              carryover_days,
+              is_active
          FROM employees
         WHERE department_id = $1
         ORDER BY LOWER(display_name) ASC`,
       [departmentId]
     );
 
-    // Client erwartet name statt display_name
     const mapped = rows.map(r => ({
       id: r.id,
       department_id: r.department_id,
       name: r.display_name,
-      start_month: r.start_month ? r.start_month.toISOString().slice(0,10) : null,
-      end_month: r.end_month ? r.end_month.toISOString().slice(0,10) : null,
-      is_active: r.is_active,
+      start_month: r.start_month ? toYmdLocal(r.start_month) : null,
+      end_month: r.end_month ? toYmdLocal(r.end_month) : null,
+      annual_leave_days: r.annual_leave_days,
+      carryover_days: r.carryover_days,
+      is_active: r.is_active
     }));
 
     return res.json({ employees: mapped });
@@ -94,57 +91,32 @@ router.get('/employees', requireAuth, async (req, res) => {
   }
 });
 
-router.patch('/employees/:id', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
-  const { id } = req.params;
-  const { displayName, startMonth, endMonth } = req.body || {};
+// routes/employees.routes.js (Auszug PATCH)
+router.patch('/employees/:id', requireAuth, requireRole('MOD','ADMIN'), async (req, res) => {
+  const id = Number(req.params.id);
+  const { displayName, startMonth, endMonth, annualLeaveDays, carryoverDays } = req.body || {};
 
-  const client = await pool.connect();
+  const fields = [];
+  const values = [];
+  let i = 1;
+
+  if (displayName != null) { fields.push(`display_name = $${i++}`); values.push(displayName); }
+  if (startMonth   != null) { fields.push(`start_month  = $${i++}`); values.push(startMonth); }
+  if (endMonth     !== undefined) { fields.push(`end_month = $${i++}`); values.push(endMonth); }
+  if (annualLeaveDays != null) { fields.push(`annual_leave_days = $${i++}`); values.push(annualLeaveDays); }
+  if (carryoverDays   != null) { fields.push(`carryover_days    = $${i++}`); values.push(carryoverDays); }
+
+  if (fields.length === 0) return res.status(400).json({ error: 'Keine Änderungen' });
+
+  values.push(id);
+  const sql = `UPDATE employees SET ${fields.join(', ')} WHERE id = $${i} RETURNING *`;
+
   try {
-    // Scope prüfen
-    const q = await client.query(
-      `SELECT id, department_id FROM employees WHERE id = $1`,
-      [id]
-    );
-    if (q.rowCount === 0) return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
-    const depId = q.rows[0].department_id;
-    if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(depId)) {
-      return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
-    }
-
-    // dynamisches Update
-    const fields = [];
-    const vals = [];
-    let i = 1;
-
-    if (typeof displayName === 'string') { fields.push(`display_name = $${i++}`); vals.push(displayName); }
-    if (typeof startMonth !== 'undefined') { fields.push(`start_month = $${i++}`); vals.push(startMonth || null); }
-    if (typeof endMonth !== 'undefined')   { fields.push(`end_month = $${i++}`);   vals.push(endMonth || null); }
-
-    if (fields.length === 0) {
-      return res.status(400).json({ error: 'Keine aktualisierten Daten vorhanden' });
-    }
-
-    vals.push(id);
-    const upd = await client.query(
-      `UPDATE employees SET ${fields.join(', ')} WHERE id = $${i}
-       RETURNING id, department_id, display_name, start_month, end_month, is_active`,
-      vals
-    );
-
-    const r = upd.rows[0];
-    return res.json({
-      id: r.id,
-      department_id: r.department_id,
-      name: r.display_name,
-      start_month: r.start_month ? r.start_month.toISOString().slice(0,10) : null,
-      end_month: r.end_month ? r.end_month.toISOString().slice(0,10) : null,
-      is_active: r.is_active,
-    });
-  } catch (err) {
-    console.error(err);
+    const up = await pool.query(sql, values);
+    return res.json(up.rows[0]);
+  } catch (e) {
+    console.error(e);
     return res.status(500).json({ error: 'Interner Serverfehler' });
-  } finally {
-    client.release();
   }
 });
 

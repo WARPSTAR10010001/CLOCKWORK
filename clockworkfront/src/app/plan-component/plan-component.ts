@@ -11,6 +11,7 @@ import { forkJoin, of } from 'rxjs';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
 import { HolidayService } from '../holiday-service';
+import { HostListener } from '@angular/core';
 
 interface SelectedCell {
   employeeId: number;
@@ -447,5 +448,40 @@ export class PlanComponent implements OnInit {
     // Normiert auf lokale Mitternacht des sichtbaren Datums
     const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     return Math.floor(local.getTime() / 86400000);
+  }
+
+  @HostListener('document:keydown.u', ['$event'])
+  onUHandler(event: Event) {
+    this.setEntry('U');
+  }
+
+  @HostListener('document:keydown.k', ['$event'])
+  onKHandler(event: Event) {
+    this.setEntry('K');
+  }
+
+  @HostListener('document:keydown.h', ['$event'])
+  onHHandler(event: Event) {
+    this.setEntry('H');
+  }
+
+  @HostListener('document:keydown.l', ['$event'])
+  onLHandler(event: Event) {
+    this.setEntry('L');
+  }
+
+  @HostListener('document:keydown.g', ['$event'])
+  onGHandler(event: Event) {
+    this.setEntry('G');
+  }
+
+  @HostListener('document:keydown.t', ['$event'])
+  onTHandler(event: Event) {
+    this.setEntry('T');
+  }
+
+  @HostListener('document:keydown.o', ['$event'])
+  onOHandler(event: Event) {
+    this.setEntry('O');
   }
 }

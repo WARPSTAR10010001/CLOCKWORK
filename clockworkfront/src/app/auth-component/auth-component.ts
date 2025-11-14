@@ -17,10 +17,10 @@ export class AuthComponent {
   isSubmitting = false;
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private overlayService: OverlayService,
     private router: Router
-    ) {}
+  ) { }
 
   login() {
     if (this.username.length === 0 || this.password.length === 0) {
@@ -58,7 +58,7 @@ export class AuthComponent {
   }
 
   @HostListener('document:keydown.enter', ['$event'])
-  onEscHandler(event: Event) {
+  onEnterHandler(event: Event) {
     this.login();
   }
 }

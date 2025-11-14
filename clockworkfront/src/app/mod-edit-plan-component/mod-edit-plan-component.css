@@ -1,0 +1,68 @@
+.edit-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.edit-card {
+    border-radius: 10px;
+    padding: 14px;
+}
+
+:host-context(body.light) .edit-card:nth-child(odd) {
+    background: #f0f0f5;
+}
+
+:host-context(body.dim) .edit-card:nth-child(odd) {
+    background: #252525;
+}
+
+:host-context(body.neon) .edit-card:nth-child(odd) {
+    background: #0b002e;
+}
+
+.row1 {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 1.4em;
+}
+.chip {
+    border: 3px solid var(--tc);
+    border-radius: 999px;
+    padding: 2px 10px;
+    background: var(--bgc);
+}
+
+.chip.in {
+    opacity: 1
+}
+
+.chip.out {
+    opacity: .8
+}
+
+.row2 {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.action-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.action-cell .button-primary,
+.action-cell .button-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+}

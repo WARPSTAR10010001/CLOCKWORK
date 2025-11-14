@@ -28,6 +28,23 @@ export class BackendAccess {
 
   constructor(private http: HttpClient) { }
 
+  getPlanEmployeeLinks(planId: number) {
+    return this.http.get<{ items: Array<{ employee_id: number; start_month: string; end_month: string | null }> }>(
+      `${this.base}/plans/${planId}/plan-employees`
+    );
+  }
+
+  addEmployeeToPlan(planId: number, employeeId: number, startMonth: string, endMonth: string | null = null) {
+    return this.http.post<{ added: boolean }>(
+      `${this.base}/plans/${planId}/plan-employees`,
+      { employeeId, startMonth, endMonth }
+    );
+  }
+
+  syncPlanEmployees(planId: number) {
+    return this.http.post<{ added: number }>(`${this.base}/plans/${planId}/sync-employees`, {});
+  }
+
   // === PLANS ===
 
   /** Liste aller Pläne eines Fachbereichs (für /years Seite) */

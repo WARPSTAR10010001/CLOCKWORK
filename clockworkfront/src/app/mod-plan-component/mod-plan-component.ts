@@ -19,7 +19,6 @@ interface RowForPlan {
 
 @Component({
   selector: 'app-moderator-component',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './mod-plan-component.html',
   styleUrls: ['./mod-plan-component.css']
@@ -28,11 +27,9 @@ export class ModPlanComponent implements OnInit {
   planForm: FormGroup;
   submitting = false;
 
-  // aktive Mitarbeitende (vereinheitlicht)
   activeEmployees: Employee[] = [];
 
-  /** aktuell verwendete Fachbereichs-ID (für Laden + Erstellen) */
-  private currentDeptId: number | null = null;
+  private currentDepartmentId: number | null = null;
 
   constructor(
     private overlay: OverlayService,
@@ -53,27 +50,27 @@ export class ModPlanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Department aus Login/Impersonation ermitteln
-    this.auth.authStatus$.pipe(take(1)).subscribe(status => {
-      const fromJwt = status?.user?.departmentId ?? null;
-      const fromImp = this.imp.getEffectiveDepartmentId();
+    const depId = this.effectiveDepartmentId;
+    if (!depId) {
+      // Admin hat noch keinen FB gewählt
+      this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
+      this.router.navigate(['/mod']);
+      return;
+    }
 
-      // Admin → Impersonation, Mod → eigenes Dept
-      this.currentDeptId = this.auth.isAdmin() ? (fromImp ?? null) : fromJwt;
+    this.currentDepartmentId = depId;
+    this.loadActiveEmployees(depId);
 
-      if (!this.currentDeptId) {
-        this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
-        this.router.navigate(['/mod']);
-        return;
-      }
-
-      this.loadActiveEmployees(this.currentDeptId);
+    // Wenn sich das Jahr ändert, Mitarbeiterliste neu filtern
+    this.planForm.get('year')!.valueChanges.subscribe((year: number) => {
+      if (!this.currentDepartmentId) return;
+      this.loadActiveEmployees(this.currentDepartmentId, year);
     });
   }
 
   /** Getter, damit vorhandener Code weiter `effectiveDepartmentId` nutzen kann */
   get effectiveDepartmentId(): number | null {
-    return this.currentDeptId;
+    return this.currentDepartmentId;
   }
 
   /** FormArray Accessor */
@@ -82,17 +79,36 @@ export class ModPlanComponent implements OnInit {
   }
 
   /** Mitarbeiter laden (nur aktive) + FormArray füllen */
-  private loadActiveEmployees(departmentId: number): void {
-    this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1)).subscribe({
-      next: (emps) => {
-        this.activeEmployees = (emps || []).filter(e => e.is_active !== false);
-        this.employees.clear();
-        for (const e of this.activeEmployees) {
-          this.employees.push(this.rowFromEmployee(e));
-        }
-      },
-      error: () => this.overlay.showOverlay('error', 'Mitarbeiter konnten nicht geladen werden.')
-    });
+  /** Mitarbeiter laden (nur aktive) + nach Planjahr filtern */
+  private loadActiveEmployees(departmentId: number, yearOverride?: number): void {
+    const formYear = this.planForm.get('year')!.value as number;
+    const year = yearOverride ?? formYear;
+
+    this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1))
+      .subscribe({
+        next: (emps) => {
+          const list = (emps || []);
+
+          const filtered = list.filter(e => {
+            if (e.is_active === false) return false;
+
+            // 'YYYY-MM-DD' → Jahreszahl
+            const startYear = e.start_month ? parseInt(e.start_month.slice(0, 4), 10) : year;
+            const endYear = e.end_month ? parseInt(e.end_month.slice(0, 4), 10) : year;
+
+            // Beschäftigungszeitraum überschneidet sich mit dem Planjahr?
+            return startYear <= year && endYear >= year;
+          });
+
+          this.activeEmployees = filtered;
+
+          this.employees.clear();
+          for (const e of this.activeEmployees) {
+            this.employees.push(this.rowFromEmployee(e));
+          }
+        },
+        error: () => this.overlay.showOverlay('error', 'Mitarbeiter konnten nicht geladen werden.')
+      });
   }
 
   /** Eine Formularzeile pro aktivem Employee */

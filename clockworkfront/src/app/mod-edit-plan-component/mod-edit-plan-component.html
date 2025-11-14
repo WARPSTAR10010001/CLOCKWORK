@@ -1,1 +1,37 @@
-<p>mod-edit-plan-component works!</p>
+<div class="comp-wrap">
+  <h1 class="emp page-header">Plan bearbeiten <a [routerLink]="['/years']" class="hidden-link">{{ year }}</a></h1>
+
+  <div class="button-row">
+    <button class="button-primary" (click)="syncMissing()">Fehlende Mitarbeitende in Plan aufnehmen</button>
+  </div>
+
+  @if (loading) {
+    <p>Lade…</p>
+  } @else {
+    <div class="edit-list">
+      @for (e of employees; track e.id) {
+        <div class="edit-card">
+          <div class="row1">
+            <span class="name">{{ e.name }}</span>
+            <span class="chip" [class.in]="isInPlan(e)" [class.out]="!isInPlan(e)">
+              {{ isInPlan(e) ? 'im Plan' : 'nicht im Plan' }}
+            </span>
+            @if (!isInPlan(e)) {
+              <button class="button-action" (click)="addToPlan(e)">Zum Plan hinzufügen</button>
+            }
+          </div>
+
+          <div class="row2">
+            <label>Jahresurlaub:
+              <input type="number" [(ngModel)]="edits[e.id].annual" min="0">
+            </label>
+            <label>Übertrag:
+              <input type="number" [(ngModel)]="edits[e.id].carry" min="0">
+            </label>
+            <button class="button-primary" (click)="saveEmployee(e)">Speichern</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

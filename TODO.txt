@@ -1,7 +1,6 @@
 QOL:
 Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Loading animation
-Shortcuts with "k" for sickness, "u" for vacation etc in plan component
 Employee management css for halfscreen
 
 

@@ -117,20 +117,13 @@ select {
     margin-bottom: -6px;
 }
 
-/* Optional: etwas Innenabstand für die Felder oben */
-.num-entry,
-.dep-entry {
-    padding: 6px 10px;
-    border-radius: 10px;
-}
-
 /* Fix: erste Mitarbeiterzeile bündig mit Header */
 .employees-container>.employee-entry-row:first-child {
     margin-left: 0;
     padding-left: 12px;
 }
 
-#employee {
+:host-context(body.outlines) #employee {
     border: 4px solid var(--tc);
     border-radius: 10px;
 }

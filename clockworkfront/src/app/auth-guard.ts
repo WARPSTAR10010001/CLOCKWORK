@@ -38,7 +38,6 @@ export const AuthGuard: CanActivateFn = (): Observable<boolean> => {
 export const LoginGuard: CanActivateFn = (): Observable<boolean> => {
     const authService = inject(AuthService);
     const router = inject(Router);
-    const currentYear = new Date().getFullYear();
 
     return authService.authStatus$.pipe(
         // Auch hier warten wir auf den ersten echten Status
@@ -53,7 +52,7 @@ export const LoginGuard: CanActivateFn = (): Observable<boolean> => {
                 if (authService.isAdmin()) {
                     router.navigate(['/admin']);
                 } else {
-                    router.navigate(['/plan', currentYear]);
+                    router.navigate(['/years']);
                 }
                 return false;
             } else {
