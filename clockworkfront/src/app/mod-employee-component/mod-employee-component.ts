@@ -29,7 +29,6 @@ type NewForm = {
 
 @Component({
   selector: 'app-mod-employee-component',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './mod-employee-component.html',
   styleUrl: './mod-employee-component.css',
@@ -52,10 +51,13 @@ export class ModEmployeeComponent implements OnInit {
 
   // Neuer Mitarbeiter (oben)
   newEmployeeForm = this.fb.group<NewForm>({
-    name: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.minLength(2)] }),
+    name: this.fb.nonNullable.control('', {
+      validators: [Validators.required, Validators.minLength(2)],
+    }),
     start_date: this.fb.control<string | null>(null, { validators: [Validators.required] }),
     end_date: this.fb.control<string | null>(null),
   });
+
 
 
   ngOnInit(): void {
@@ -129,9 +131,9 @@ export class ModEmployeeComponent implements OnInit {
     return { actives, inactives };
   }
 
-  private monthToInputDate(s?: string | null): string | null {
-    if (!s) return null;
-    return s.slice(0, 10); // kommt schon im Format 'YYYY-MM-DD'
+  // String-only Date Utils
+  private toInputDate(s?: string | null): string | null {
+    return s ?? null; // vom Server kommt bereits 'YYYY-MM-DD'
   }
 
   // String-Vergleich für 'YYYY-MM-DD' ist chronologisch okay
@@ -143,15 +145,6 @@ export class ModEmployeeComponent implements OnInit {
     return `${y}-${m}-${day}`;
   }
 
-  /** Input 'YYYY-MM-DD' → 'YYYY-MM-01' (Monatsanfang), ohne Date() */
-  private inputToMonthStart(s?: string | null): string | null {
-    if (!s) return null;
-    const y = s.slice(0, 4);
-    const m = s.slice(5, 7);
-    if (!/^\d{4}$/.test(y) || !/^\d{2}$/.test(m)) return null;
-    return `${y}-${m}-01`;
-  }
-
   // ---------- Form-Factories ----------
   private rowToForm(e: Employee): FormGroup<RowForm> {
     return this.fb.group<RowForm>({
@@ -159,8 +152,8 @@ export class ModEmployeeComponent implements OnInit {
       name: this.fb.nonNullable.control(e.name ?? '', {
         validators: [Validators.required, Validators.minLength(2)],
       }),
-      start_date: this.fb.control(this.monthToInputDate(e.start_month)),
-      end_date: this.fb.control(this.monthToInputDate(e.end_month)),
+      start_date: this.fb.control(this.toInputDate(e.start_month)),
+      end_date: this.fb.control(this.toInputDate(e.end_month)),
     });
   }
 
@@ -179,8 +172,8 @@ export class ModEmployeeComponent implements OnInit {
     const v = group.getRawValue();
     const payload = {
       displayName: v.name.trim(),
-      startMonth: v.start_date,   // exakt wie im Input
-      endMonth: v.end_date        // exakt wie im Input (oder null)
+      startMonth: v.start_date || null, // 👈 exakt wie eingegeben
+      endMonth: v.end_date || null,     // 👈 exakt wie eingegeben
     };
 
     this.employeesApi.updateEmployee(v.id, payload).subscribe({
@@ -189,7 +182,10 @@ export class ModEmployeeComponent implements OnInit {
         this.loadAll();
       },
       error: (err) => {
-        this.overlay.showOverlay('error', err?.error?.error || 'Speichern fehlgeschlagen.');
+        this.overlay.showOverlay(
+          'error',
+          err?.error?.error || 'Speichern fehlgeschlagen.'
+        );
       },
     });
   }
@@ -217,7 +213,10 @@ export class ModEmployeeComponent implements OnInit {
   createEmployee(): void {
     if (this.newEmployeeForm.invalid) {
       this.newEmployeeForm.markAllAsTouched();
-      this.overlay.showOverlay('error', 'Bitte Name und Startdatum angeben.');
+      this.overlay.showOverlay(
+        'error',
+        'Bitte Name und Startdatum angeben (mind. 2 Zeichen).'
+      );
       return;
     }
     if (!this.deptId) {
@@ -227,27 +226,25 @@ export class ModEmployeeComponent implements OnInit {
 
     const v = this.newEmployeeForm.getRawValue();
 
-    this.employeesApi.createEmployee({
-      departmentId: this.deptId,
-      displayName: v.name.trim(),
-      startMonth: v.start_date!,          // exakt wie gewählt
-      endMonth: v.end_date || null
-    }).subscribe({
-      next: () => {
-        this.overlay.showOverlay('success', 'Mitarbeiter angelegt.');
-        this.newEmployeeForm.reset({ name: '', start_date: null, end_date: null });
-        this.loadAll();
-      },
-      error: (err) =>
-        this.overlay.showOverlay('error', err?.error?.error || 'Anlegen fehlgeschlagen.')
-    });
-  }
-
-  private todayMonthStart(): string {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    return `${y}-${m}-01`;
+    this.employeesApi
+      .createEmployee({
+        departmentId: this.deptId,
+        displayName: v.name.trim(),
+        startMonth: v.start_date!, // required → non-null
+        endMonth: v.end_date || null,
+      })
+      .subscribe({
+        next: () => {
+          this.overlay.showOverlay('success', 'Mitarbeiter angelegt.');
+          this.newEmployeeForm.reset({ name: '', start_date: null, end_date: null });
+          this.loadAll();
+        },
+        error: (err) =>
+          this.overlay.showOverlay(
+            'error',
+            err?.error?.error || 'Anlegen fehlgeschlagen.'
+          ),
+      });
   }
 
   // Getter fürs Template

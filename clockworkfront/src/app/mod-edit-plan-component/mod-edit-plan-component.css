@@ -28,19 +28,12 @@
     flex-wrap: wrap;
     font-size: 1.4em;
 }
+
 .chip {
     border: 3px solid var(--tc);
     border-radius: 999px;
     padding: 2px 10px;
     background: var(--bgc);
-}
-
-.chip.in {
-    opacity: 1
-}
-
-.chip.out {
-    opacity: .8
 }
 
 .row2 {

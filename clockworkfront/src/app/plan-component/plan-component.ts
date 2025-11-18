@@ -117,6 +117,21 @@ export class PlanComponent implements OnInit {
     return this.holidaySet.has(this.dayKeyFromDate(day));
   }
 
+  private isEmployeeActiveInMonth(pe: any, monthStart: Date, monthEnd: Date): boolean {
+    const parseYmd = (s?: string | null) => {
+      if (!s) return null;
+      const y = parseInt(s.slice(0, 4), 10);
+      const m = parseInt(s.slice(5, 7), 10) - 1;
+      const d = parseInt(s.slice(8, 10), 10);
+      return new Date(y, m, d);
+    };
+
+    const start = parseYmd(pe.startMonth) || monthStart;
+    const end = parseYmd(pe.endMonth) || monthEnd;
+
+    return start <= monthEnd && end >= monthStart;
+  }
+
   // ----- Plandaten -----
   private loadPlan(): void {
     this.auth.authStatus$.pipe(
@@ -188,16 +203,15 @@ export class PlanComponent implements OnInit {
       });
       this.buildEntryMap();
 
-      const monthKey = this.monthKey(this.year, this.month); // 'YYYY-MM'
+      const monthStart = new Date(this.year, this.month - 1, 1);
+      const monthEnd = new Date(this.year, this.month, 0);
+
       const activeIds = new Set<number>(
         bundle.planDetails.employees
-          .filter((pe: any) => {
-            const start = (pe.startMonth ?? `${this.year}-01-01`).slice(0, 7);
-            const end = pe.endMonth ? pe.endMonth.slice(0, 7) : null;
-            return (monthKey >= start) && (end ? monthKey <= end : true);
-          })
+          .filter((pe: any) => this.isEmployeeActiveInMonth(pe, monthStart, monthEnd))
           .map((pe: any) => pe.employeeId)
       );
+
 
       this.employees = (bundle.employees || []).filter(e => activeIds.has(e.id));
     });

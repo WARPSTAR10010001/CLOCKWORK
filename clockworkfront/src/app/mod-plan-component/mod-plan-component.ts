@@ -78,8 +78,24 @@ export class ModPlanComponent implements OnInit {
     return this.planForm.get('employees') as FormArray;
   }
 
-  /** Mitarbeiter laden (nur aktive) + FormArray füllen */
-  /** Mitarbeiter laden (nur aktive) + nach Planjahr filtern */
+  private employeeOverlapsYear(e: Employee, year: number): boolean {
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year, 11, 31);
+
+    const parse = (s?: string | null) => {
+      if (!s) return null;
+      const y = parseInt(s.slice(0, 4), 10);
+      const m = parseInt(s.slice(5, 7), 10) - 1;
+      const d = parseInt(s.slice(8, 10), 10);
+      return new Date(y, m, d);
+    };
+
+    const start = parse(e.start_month) || yearStart;
+    const end = parse(e.end_month) || yearEnd;
+
+    return start <= yearEnd && end >= yearStart;
+  }
+
   private loadActiveEmployees(departmentId: number, yearOverride?: number): void {
     const formYear = this.planForm.get('year')!.value as number;
     const year = yearOverride ?? formYear;
@@ -87,18 +103,9 @@ export class ModPlanComponent implements OnInit {
     this.employeeService.getEmployeesForDepartment(departmentId).pipe(take(1))
       .subscribe({
         next: (emps) => {
-          const list = (emps || []);
+          const list = (emps || []).filter(e => e.is_active !== false);
 
-          const filtered = list.filter(e => {
-            if (e.is_active === false) return false;
-
-            // 'YYYY-MM-DD' → Jahreszahl
-            const startYear = e.start_month ? parseInt(e.start_month.slice(0, 4), 10) : year;
-            const endYear = e.end_month ? parseInt(e.end_month.slice(0, 4), 10) : year;
-
-            // Beschäftigungszeitraum überschneidet sich mit dem Planjahr?
-            return startYear <= year && endYear >= year;
-          });
+          const filtered = list.filter(e => this.employeeOverlapsYear(e, year));
 
           this.activeEmployees = filtered;
 
