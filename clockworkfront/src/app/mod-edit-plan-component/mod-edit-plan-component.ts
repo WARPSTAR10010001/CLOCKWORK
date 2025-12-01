@@ -41,6 +41,17 @@ export class ModEditPlanComponent implements OnInit {
     this.init();
   }
 
+  private clampDateToYear(dateStr: string | null | undefined, year: number): string | null {
+    if (!dateStr) return null;
+    const d = dateStr.slice(0, 10); // 'YYYY-MM-DD'
+    const yearStart = `${year}-01-01`;
+    const yearEnd = `${year}-12-31`;
+
+    if (d < yearStart) return yearStart;
+    if (d > yearEnd) return yearEnd;
+    return d;
+  }
+
   private init(): void {
     this.loading = true;
 
@@ -72,10 +83,16 @@ export class ModEditPlanComponent implements OnInit {
       this.loading = false;
       if (!bundle) return;
 
-      this.employees = (bundle.employees || []).filter(e => e.is_active !== false);
+      // 1) Nur aktive Mitarbeiter
+      const active = (bundle.employees || []).filter(e => e.is_active !== false);
+
+      // 2) Nur Mitarbeiter, deren Zeitraum das Planjahr schneidet
+      this.employees = active.filter(e => this.employeeOverlapsYear(e, this.year));
+
+      // 3) Set für "ist im Plan?"
       this.inPlanIds = new Set((bundle.links.items || []).map(x => x.employee_id));
 
-      // Edit-Puffer initialisieren
+      // 4) Edit-Puffer initialisieren
       this.employees.forEach(e => {
         this.edits[e.id] = {
           annual: e.annual_leave_days ?? 30,
@@ -85,13 +102,44 @@ export class ModEditPlanComponent implements OnInit {
     });
   }
 
+  private employeeOverlapsYear(e: Employee, year: number): boolean {
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year, 11, 31);
+
+    const parse = (s?: string | null) => {
+      if (!s) return null;
+      const y = parseInt(s.slice(0, 4), 10);
+      const m = parseInt(s.slice(5, 7), 10) - 1;
+      const d = parseInt(s.slice(8, 10), 10);
+      return new Date(y, m, d);
+    };
+
+    const start = parse(e.start_month) || yearStart;
+    const end = parse(e.end_month) || yearEnd;
+
+    return start <= yearEnd && end >= yearStart;
+  }
+
   isInPlan(e: Employee): boolean {
     return this.inPlanIds.has(e.id);
   }
 
   addToPlan(e: Employee): void {
-    const start = `${this.year}-01-01`;
-    this.backend.addEmployeeToPlan(this.planId, e.id, start, null).pipe(take(1)).subscribe({
+    const yearStart = `${this.year}-01-01`;
+
+    let start = yearStart;
+    if (e.start_month) {
+      const clamped = this.clampDateToYear(e.start_month, this.year);
+      start = clamped ?? yearStart;
+    }
+
+    let end: string | null = null;
+    if (e.end_month) {
+      const clampedEnd = this.clampDateToYear(e.end_month, this.year);
+      end = clampedEnd;
+    }
+
+    this.backend.addEmployeeToPlan(this.planId, e.id, start, end).pipe(take(1)).subscribe({
       next: () => {
         this.inPlanIds.add(e.id);
         this.overlay.showOverlay('success', `${e.name} in den Plan aufgenommen.`);
@@ -122,6 +170,20 @@ export class ModEditPlanComponent implements OnInit {
         this.init();
       },
       error: () => this.overlay.showOverlay('error', 'Sync fehlgeschlagen.')
+    });
+  }
+
+  /**
+   * Holt aktualisierte Start-/Enddaten aus den Stammdaten (employees)
+   * und schreibt sie in plan_employees für dieses Jahr.
+   */
+  syncDates(): void {
+    this.backend.syncPlanEmployeeDates(this.planId).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.overlay.showOverlay('success', `${res.updated} Mitarbeitende aktualisiert.`);
+        this.init();
+      },
+      error: () => this.overlay.showOverlay('error', 'Datum-Sync fehlgeschlagen.')
     });
   }
 }

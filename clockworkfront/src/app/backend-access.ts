@@ -41,8 +41,12 @@ export class BackendAccess {
     );
   }
 
-  syncPlanEmployees(planId: number) {
+    syncPlanEmployees(planId: number) {
     return this.http.post<{ added: number }>(`${this.base}/plans/${planId}/sync-employees`, {});
+  }
+
+  syncPlanEmployeeDates(planId: number) {
+    return this.http.post<{ updated: number }>(`${this.base}/plans/${planId}/sync-employee-dates`, {});
   }
 
   // === PLANS ===

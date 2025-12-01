@@ -332,3 +332,28 @@ td {
     background-color: var(--bgc) !important;
     border: 3px solid var(--olc) !important;
 }
+
+/* Button bleibt button-primary, Pfeil ist nur Inhalt */
+.plan-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;    /* wie normaler Button */
+  color: var(--bgc);    /* Pfeil = Textfarbe */
+}
+
+/* SVG erbt Textfarbe */
+.plan-nav-btn .arrow-icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+/* Linker Pfeil drehen */
+.plan-nav-btn.prev .arrow-icon {
+  transform: rotate(180deg);
+}
+
+.plan-nav-btn:hover {
+    color: var(--tc);
+}

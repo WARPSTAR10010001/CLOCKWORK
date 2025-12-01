@@ -2,20 +2,21 @@ QOL:
 Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Loading animation
 Employee management css for halfscreen
+Lock plans of last year at end of january
+
+
+Future Updates (V0.5.0):
+go back and forth in the plan
+complete changelog until version v0.5.0
 
 
 Future Updates (V1.0.0):
-Edit plan component (edit status + edit employee holidays) (currently only visible to admins)
-Lock plans at end of january
+Edit plan component (edit status)
+Edit year overview (show status)
 Software documentation
-Revamped admin component
 Fix feedback not showing correctly to admins
 
 
 Future Updates (V1.2.0):
-QuickAction logic (currently disabled in app.ts)
+Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed
-
-
-Future Updates (V...):
-Custom status for plan entry

@@ -80,76 +80,186 @@ router.post(
  * POST /api/plans/:id/sync-employees
  * Fügt alle aktiven Dept-Mitarbeitenden, die noch nicht im Plan sind, hinzu.
  */
+// POST /api/plans/:id/sync-employees
+// POST /api/plans/:id/sync-employees
 router.post(
   '/plans/:id/sync-employees',
   requireAuth,
   requireRole('MOD', 'ADMIN'),
   async (req, res) => {
     const planId = Number(req.params.id);
-    if (!planId) return res.status(400).json({ error: 'planId fehlt' });
+    if (!Number.isFinite(planId)) {
+      return res.status(400).json({ error: 'Ungültige Plan-ID' });
+    }
 
     const client = await pool.connect();
     try {
-      // Plan → Department + Jahr ermitteln
-      const p = await client.query(
-        `SELECT id, department_id, year
-           FROM plans
-          WHERE id = $1`,
+      await client.query('BEGIN');
+
+      // Plan holen (inkl. Jahr & Fachbereich)
+      const planRes = await client.query(
+        'SELECT id, department_id, year FROM plans WHERE id = $1',
         [planId]
       );
-      if (p.rowCount === 0) {
+      if (planRes.rowCount === 0) {
+        await client.query('ROLLBACK');
         return res.status(404).json({ error: 'Plan nicht gefunden' });
       }
-      const { department_id, year } = p.rows[0];
+      const plan = planRes.rows[0];
 
-      // alle aktiven Mitarbeitenden, die noch NICHT im Plan sind
-      const q = await client.query(
-        `SELECT e.id, COALESCE(e.carryover_days, 0) AS carryover
-           FROM employees e
-          WHERE e.department_id = $1
-            AND COALESCE(e.is_active, true) = true
-            AND NOT EXISTS (
-                  SELECT 1
-                    FROM plan_employees pe
-                   WHERE pe.plan_id = $2
-                     AND pe.employee_id = e.id
-                )`,
-        [department_id, planId]
+      // Fachbereichs-Scope prüfen (NICHT-Admin darf nur eigenen FB)
+      if (
+        req.user.role !== 'ADMIN' &&
+        String(req.user.departmentId) !== String(plan.department_id)
+      ) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+      }
+
+      const year = plan.year;
+
+      // Relevante Mitarbeiter, die das Planjahr schneiden
+      // und noch NICHT im Plan sind
+      const { rows: toInsert } = await client.query(
+        `
+        WITH year_bounds AS (
+          SELECT
+            $1::int AS year,
+            make_date($1::int, 1, 1) AS year_start,
+            make_date($1::int, 12, 31) AS year_end
+        )
+        SELECT
+          e.id AS employee_id,
+          e.carryover_days,
+          GREATEST(e.start_month, y.year_start) AS start_in_year,
+          CASE
+            WHEN e.end_month IS NULL OR e.end_month > y.year_end
+              THEN NULL
+            ELSE LEAST(e.end_month, y.year_end)
+          END AS end_in_year
+        FROM employees e
+        CROSS JOIN year_bounds y
+        WHERE
+          e.department_id = $2
+          AND e.is_active = TRUE
+          AND e.start_month IS NOT NULL
+          -- Overlap mit Planjahr
+          AND e.start_month <= y.year_end
+          AND (e.end_month IS NULL OR e.end_month >= y.year_start)
+          -- noch kein Eintrag in plan_employees für diesen Plan
+          AND NOT EXISTS (
+            SELECT 1
+            FROM plan_employees pe
+            WHERE pe.plan_id = $3 AND pe.employee_id = e.id
+          )
+        `,
+        [year, plan.department_id, planId]
       );
 
-      if (q.rowCount === 0) {
-        return res.json({ added: 0 });
+      let added = 0;
+      for (const row of toInsert) {
+        await client.query(
+          `
+          INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
+          VALUES ($1, $2, $3, $4, $5)
+          ON CONFLICT (plan_id, employee_id) DO NOTHING
+          `,
+          [
+            planId,
+            row.employee_id,
+            row.start_in_year,
+            row.end_in_year,
+            row.carryover_days ?? 0
+          ]
+        );
+        added++;
       }
 
-      const start = `${year}-01-01`;
+      await client.query('COMMIT');
+      return res.json({ added });
+    } catch (err) {
+      console.error(err);
+      await client.query('ROLLBACK');
+      return res.status(500).json({ error: 'Interner Serverfehler' });
+    } finally {
+      client.release();
+    }
+  }
+);
 
-      // parametrisierter Multi-Insert
-      const values = [];
-      const chunks = [];
-      let idx = 1;
+/**
+ * POST /api/plans/:id/sync-employee-dates
+ * Aktualisiert start_month / end_month in plan_employees
+ * auf Basis der Stammdaten (employees) für das jeweilige Planjahr.
+ */
+router.post(
+  '/plans/:id/sync-employee-dates',
+  requireAuth,
+  requireRole('MOD', 'ADMIN'),
+  async (req, res) => {
+    const planId = Number(req.params.id);
+    if (!Number.isFinite(planId)) {
+      return res.status(400).json({ error: 'Ungültige Plan-ID' });
+    }
 
-      for (const row of q.rows) {
-        chunks.push(
-          `($${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++})`
-        );
-        values.push(
-          planId,
-          row.id,
-          start,
-          null,
-          row.carryover ?? 0
-        );
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const planRes = await client.query(
+        'SELECT id, department_id, year FROM plans WHERE id = $1',
+        [planId]
+      );
+      if (planRes.rowCount === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'Plan nicht gefunden' });
+      }
+      const plan = planRes.rows[0];
+
+      // Fachbereichs-Scope prüfen
+      if (
+        req.user.role !== 'ADMIN' &&
+        String(req.user.departmentId) !== String(plan.department_id)
+      ) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
       }
 
-      const sql = `
-        INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
-        VALUES ${chunks.join(', ')}
-      `;
+      const year = plan.year;
 
-      const ins = await client.query(sql, values);
-      return res.json({ added: ins.rowCount });
-    } catch (e) {
-      console.error(e);
+      const updateRes = await client.query(
+        `
+        WITH year_bounds AS (
+          SELECT
+            $1::int AS year,
+            make_date($1::int, 1, 1) AS year_start,
+            make_date($1::int, 12, 31) AS year_end
+        )
+        UPDATE plan_employees pe
+        SET
+          start_month = GREATEST(e.start_month, y.year_start),
+          end_month = CASE
+            WHEN e.end_month IS NULL OR e.end_month > y.year_end
+              THEN NULL
+            ELSE LEAST(e.end_month, y.year_end)
+          END
+        FROM employees e
+        CROSS JOIN year_bounds y
+        WHERE
+          pe.plan_id = $2
+          AND e.id = pe.employee_id
+          AND e.department_id = $3
+          AND e.is_active = TRUE
+          AND e.start_month IS NOT NULL
+        `,
+        [year, planId, plan.department_id]
+      );
+
+      await client.query('COMMIT');
+      return res.json({ updated: updateRes.rowCount });
+    } catch (err) {
+      console.error(err);
+      await client.query('ROLLBACK');
       return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {
       client.release();

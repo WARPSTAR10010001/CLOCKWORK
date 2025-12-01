@@ -1,37 +1,84 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Plan bearbeiten <a [routerLink]="['/years']" class="hidden-link">{{ year }}</a></h1>
+  <h1 class="emp page-header">
+    Plan bearbeiten
+    <a [routerLink]="['/years']" class="hidden-link">{{ year }}</a>
+  </h1>
 
-  <div class="button-row">
-    <button class="button-primary" (click)="syncMissing()">Fehlende Mitarbeitende in Plan aufnehmen</button>
+  <!-- Sync-Bereich im Adminpanel-Stil -->
+  <h1 id="sync" class="subtitle">Sync-Funktionen</h1>
+  <div class="details sync-details">
+    <div class="form-row">
+      <a type="button" class="button-primary" (click)="syncMissing()">
+        Mitarbeiter-Sync
+      </a>
+      <a type="button" class="button-primary" (click)="syncDates()">
+        Datum-Sync
+      </a>
+    </div>
+    <h1>
+      Mitarbeiter-Sync ergänzt fehlende Mitarbeitende im Jahresplan.<br>
+      Datum-Sync übernimmt Start- und Enddaten aus den <a [routerLink]="['/mod/employees']">Stammdaten</a>.
+    </h1>
   </div>
 
-  @if (loading) {
-    <p>Lade…</p>
-  } @else {
-    <div class="edit-list">
-      @for (e of employees; track e.id) {
-        <div class="edit-card">
-          <div class="row1">
-            <span class="name">{{ e.name }}</span>
-            <span class="chip" [class.in]="isInPlan(e)" [class.out]="!isInPlan(e)">
-              {{ isInPlan(e) ? 'im Plan' : 'nicht im Plan' }}
-            </span>
-            @if (!isInPlan(e)) {
-              <button class="button-action" (click)="addToPlan(e)">Zum Plan hinzufügen</button>
-            }
-          </div>
+  <hr>
 
-          <div class="row2">
-            <label>Jahresurlaub:
-              <input type="number" [(ngModel)]="edits[e.id].annual" min="0">
-            </label>
-            <label>Übertrag:
-              <input type="number" [(ngModel)]="edits[e.id].carry" min="0">
-            </label>
-            <button class="button-primary" (click)="saveEmployee(e)">Speichern</button>
-          </div>
+  <h1 class="subtitle">Mitarbeitende im Planjahr {{ year }}</h1>
+
+  @if (loading) {
+  <p>Lade…</p>
+  } @else {
+  <div class="plan-employees">
+    <div class="employee-header-row">
+      <div>Name</div>
+      <div>Status</div>
+      <div>Jahresurlaub</div>
+      <div>Übertrag</div>
+      <div>Aktion</div>
+    </div>
+
+    <div class="employees-container">
+      @for (e of employees; track e.id) {
+      <div class="employee-entry-row">
+        <!-- Name -->
+        <div class="cell name-cell">
+          <span class="emp-name">{{ e.name }}</span>
         </div>
+
+        <!-- Status-Chip -->
+        <div class="cell status-cell">
+          <span class="chip" [class.in]="isInPlan(e)" [class.out]="!isInPlan(e)">
+            {{ isInPlan(e) ? 'im Plan' : 'nicht im Plan' }}
+          </span>
+        </div>
+
+        <!-- Jahresurlaub -->
+        <div class="cell">
+          <input type="number" class="days-input" [(ngModel)]="edits[e.id].annual" min="0">
+        </div>
+
+        <!-- Übertrag -->
+        <div class="cell">
+          <input type="number" class="days-input" [(ngModel)]="edits[e.id].carry" min="0">
+        </div>
+
+        <!-- Aktionen -->
+        <div class="cell action-cell">
+          <button type="button" class="button-primary save-btn" (click)="saveEmployee(e)">
+            Speichern
+          </button>
+          <button type="button" class="button-action add-btn" [class.already-in]="isInPlan(e)" [disabled]="isInPlan(e)"
+            (click)="!isInPlan(e) && addToPlan(e)">
+            Zum Plan hinzufügen
+          </button>
+        </div>
+      </div>
+      }
+
+      @if (employees.length === 0) {
+      <p class="hint">Keine Mitarbeitenden für dieses Planjahr gefunden.</p>
       }
     </div>
+  </div>
   }
 </div>

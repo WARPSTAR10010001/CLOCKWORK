@@ -45,6 +45,10 @@ export class PlanComponent implements OnInit {
 
   weekdays: string[] = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
+  canGoPrev = false;
+  canGoNext = false;
+  availablePlanYears: any;
+
   constructor(
     private backend: BackendAccess,
     private employeeService: EmployeeService,
@@ -117,7 +121,12 @@ export class PlanComponent implements OnInit {
     return this.holidaySet.has(this.dayKeyFromDate(day));
   }
 
-  private isEmployeeActiveInMonth(pe: any, monthStart: Date, monthEnd: Date): boolean {
+  /**
+ * Prüft, ob ein Mitarbeiter im gewählten Monat beschäftigt ist.
+ * Nutzt bewusst die Stammdaten (employees.start_month / end_month),
+ * nicht die plan_employees-Daten.
+ */
+  private isEmployeeActiveInMonth(emp: Employee, monthStart: Date, monthEnd: Date): boolean {
     const parseYmd = (s?: string | null) => {
       if (!s) return null;
       const y = parseInt(s.slice(0, 4), 10);
@@ -126,8 +135,8 @@ export class PlanComponent implements OnInit {
       return new Date(y, m, d);
     };
 
-    const start = parseYmd(pe.startMonth) || monthStart;
-    const end = parseYmd(pe.endMonth) || monthEnd;
+    const start = parseYmd(emp.start_month) || monthStart;
+    const end = parseYmd(emp.end_month) || monthEnd;
 
     return start <= monthEnd && end >= monthStart;
   }
@@ -162,6 +171,10 @@ export class PlanComponent implements OnInit {
       switchMap(data => {
         if (!data) return of(null);
         const { depId, plans } = data;
+
+        // 🔽 alle vorhandenen Plan-Jahre merken
+        this.availablePlanYears = (plans || []).map(p => p.year);
+
         const plan = plans.find(p => p.year === this.year) || null;
         if (!plan) {
           this.overlay.showOverlay('error', `Für ${this.year} existiert noch kein Plan.`);
@@ -206,16 +219,51 @@ export class PlanComponent implements OnInit {
       const monthStart = new Date(this.year, this.month - 1, 1);
       const monthEnd = new Date(this.year, this.month, 0);
 
-      const activeIds = new Set<number>(
-        bundle.planDetails.employees
-          .filter((pe: any) => this.isEmployeeActiveInMonth(pe, monthStart, monthEnd))
-          .map((pe: any) => pe.employeeId)
+      // Map: employeeId -> Employee-Stammdatensatz
+      const employeeById = new Map<number, Employee>(
+        (bundle.employees || []).map(e => [e.id, e])
       );
 
+      const activeIds = new Set<number>();
 
+      // Nur Mitarbeitende berücksichtigen, die im Plan hängen
+      for (const pe of bundle.planDetails.employees || []) {
+        const emp = employeeById.get(pe.employeeId);
+        if (!emp) continue;
+
+        if (this.isEmployeeActiveInMonth(emp, monthStart, monthEnd)) {
+          activeIds.add(emp.id);
+        }
+      }
+
+      // finale Liste: nur Department-Mitarbeitende, die im Plan sind UND im Monat aktiv sind
       this.employees = (bundle.employees || []).filter(e => activeIds.has(e.id));
+      this.updateNavAvailability();
     });
   }
+
+  private updateNavAvailability(): void {
+    if (!this.availablePlanYears || this.availablePlanYears.length === 0) {
+      this.canGoPrev = false;
+      this.canGoNext = false;
+      return;
+    }
+
+    const years = this.availablePlanYears;
+    const prevYearExists = years.includes(this.year - 1);
+    const nextYearExists = years.includes(this.year + 1);
+
+    // Prev:
+    // - innerhalb des Jahres (Monat > 1) immer erlaubt
+    // - bei Januar nur, wenn es einen Plan im Vorjahr gibt
+    this.canGoPrev = this.month > 1 || (this.month === 1 && prevYearExists);
+
+    // Next:
+    // - innerhalb des Jahres (Monat < 12) immer erlaubt
+    // - bei Dezember nur, wenn es einen Plan im Folgejahr gibt
+    this.canGoNext = this.month < 12 || (this.month === 12 && nextYearExists);
+  }
+
 
   // === Helpers ===
   private pad2(n: number): string { return String(n).padStart(2, '0'); }
@@ -497,5 +545,37 @@ export class PlanComponent implements OnInit {
   @HostListener('document:keydown.o', ['$event'])
   onOHandler(event: Event) {
     this.setEntry('O');
+  }
+
+  loadNextPlan(): void {
+    let currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
+    let currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    let nextYear = currentYear;
+    let nextMonth = currentMonth;
+
+    if (currentMonth === 12) {
+      nextMonth = 1;
+      nextYear++;
+    } else {
+      nextMonth++;
+    }
+
+    this.router.navigate(['/plan', nextYear, nextMonth]);
+  }
+
+  loadPrevPlan(): void {
+    let currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
+    let currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    let nextYear = currentYear;
+    let nextMonth = currentMonth;
+
+    if (currentMonth === 1) {
+      nextMonth = 12;
+      nextYear--;
+    } else {
+      nextMonth--;
+    }
+
+    this.router.navigate(['/plan', nextYear, nextMonth]);
   }
 }

@@ -1,10 +1,11 @@
 :root {
     --red: #ff1342;
     --green: #77ff00;
+    --blue: #00D5F4;
 }
 
 *::selection {
-    background: #00D5F4;
+    background: var(--blue);
 }
 
 body.light {

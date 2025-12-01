@@ -1,4 +1,3 @@
-// src/routes/holidays.routes.js
 const express = require('express');
 const pool = require('../db');
 const { requireAuth } = require('../middleware/auth');
@@ -21,7 +20,7 @@ function easterDate(year) {
   const k = c % 4;
   const l = (32 + 2 * e + 2 * i - h - k) % 7;
   const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31); // 3=March, 4=April
+  const month = Math.floor((h + l - 7 * m + 114) / 31); // 3 = March, 4 = April
   const day = ((h + l - 7 * m + 114) % 31) + 1;
   return new Date(Date.UTC(year, month - 1, day)); // Ostersonntag
 }
@@ -45,19 +44,20 @@ function fmt(d) {
  */
 function buildHolidaysForYear(year) {
   const y = Number(year);
-  const easter = easterDate(y);     // Ostersonntag
+  const easter = easterDate(y);      // Ostersonntag
   const kf = addDaysUTC(easter, -2); // Karfreitag
   const om = addDaysUTC(easter, 1);  // Ostermontag
   const hm = addDaysUTC(easter, 39); // Christi Himmelfahrt
   const pm = addDaysUTC(easter, 50); // Pfingstmontag
   const fr = addDaysUTC(easter, 60); // Fronleichnam (NRW)
 
-  // Feste Feiertage (bundesweit + NRW Only)
+  // Feste Feiertage (bundesweit + NRW Only + Sondertag Heiligabend)
   const fixed = [
     { date: `${y}-01-01`, name: 'Neujahr' },
     { date: `${y}-05-01`, name: 'Tag der Arbeit' },
     { date: `${y}-10-03`, name: 'Tag der Deutschen Einheit' },
     { date: `${y}-11-01`, name: 'Allerheiligen' },
+    { date: `${y}-12-24`, name: 'Heiligabend' },    // 👈 neu
     { date: `${y}-12-25`, name: '1. Weihnachtstag' },
     { date: `${y}-12-26`, name: '2. Weihnachtstag' }
   ];
@@ -74,36 +74,32 @@ function buildHolidaysForYear(year) {
 }
 
 /**
- * Sorgt dafür, dass für ein Jahr Feiertage existieren.
- * Wenn noch keine Zeilen vorhanden sind, werden sie einmalig eingefügt.
+ * Sorgt dafür, dass für ein Jahr die definierten Feiertage
+ * (inkl. neu hinzugekommener wie Heiligabend) in der DB vorhanden sind.
+ * Bereits existierende Datumszeilen werden per ON CONFLICT ignoriert.
  */
 async function ensureHolidaysSeeded(year) {
   const y = Number(year);
   const client = await pool.connect();
-  try {
-    const existing = await client.query(
-      'SELECT 1 FROM holidays WHERE year = $1 LIMIT 1',
-      [y]
-    );
-    if (existing.rowCount > 0) {
-      // bereits vorhanden → nichts tun
-      return;
-    }
 
+  try {
     const holidays = buildHolidaysForYear(y);
 
     await client.query('BEGIN');
+
     const insertSql = `
       INSERT INTO holidays (date, name, year)
       VALUES ($1::date, $2, $3)
       ON CONFLICT (date) DO NOTHING
     `;
+
     for (const h of holidays) {
       await client.query(insertSql, [h.date, h.name, h.year]);
     }
+
     await client.query('COMMIT');
   } catch (err) {
-    try { await client.query('ROLLBACK'); } catch { }
+    try { await client.query('ROLLBACK'); } catch {}
     console.error('ensureHolidaysSeeded failed:', err);
     throw err;
   } finally {
@@ -114,6 +110,7 @@ async function ensureHolidaysSeeded(year) {
 /**
  * GET /api/holidays/:year
  *  → sorgt automatisch dafür, dass Feiertage für das Jahr existieren
+ *    (inkl. nachträglich hinzugefügter wie Heiligabend)
  *    und gibt sie dann zurück.
  */
 router.get('/holidays/:year', requireAuth, async (req, res) => {
@@ -125,7 +122,7 @@ router.get('/holidays/:year', requireAuth, async (req, res) => {
   }
 
   try {
-    // ggf. einmalig anlegen
+    // sicherstellen, dass alle Feiertage (inkl. 24.12) existieren
     await ensureHolidaysSeeded(y);
 
     const { rows } = await pool.query(

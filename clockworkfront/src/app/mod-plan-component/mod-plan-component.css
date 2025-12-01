@@ -85,16 +85,21 @@ select {
     white-space: nowrap;
 }
 
-:host-context(body.light) .employees-container>.employee-entry-row:nth-child(even) {
-    background-color: #f0f0f5;
+/* Zebra-Streifen */
+.employees-container > .employee-entry-row:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.04) !important;
 }
 
-:host-context(body.dim) .employees-container>.employee-entry-row:nth-child(even) {
-    background-color: #252525;
+:host-context(body.light) .employees-container > .employee-entry-row:nth-child(even) {
+    background-color: #f0f0f5 !important;
 }
 
-:host-context(body.neon) .employees-container>.employee-entry-row:nth-child(even) {
-    background-color: #0b002e;
+:host-context(body.dim) .employees-container > .employee-entry-row:nth-child(even) {
+    background-color: #252525 !important;
+}
+
+:host-context(body.neon) .employees-container > .employee-entry-row:nth-child(even) {
+    background-color: #0b002e !important;
 }
 
 /* Eingabefelder pro Zeile */
@@ -118,7 +123,7 @@ select {
 }
 
 /* Fix: erste Mitarbeiterzeile bündig mit Header */
-.employees-container>.employee-entry-row:first-child {
+.employees-container > .employee-entry-row:first-child {
     margin-left: 0;
     padding-left: 12px;
 }
