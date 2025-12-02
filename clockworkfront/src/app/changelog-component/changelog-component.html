@@ -1,7 +1,105 @@
 <div class="comp-wrap">
     <h1 class="emp page-header">Changelog</h1>
     <div id="page-content" class="text">
+        <h1 class="emp" id="beta">Vollversionen</h1>
+        <div id="1-0-0">
+            <h2>[V1.0.0 // Zukunft]: Die erste Vollversion kommt bald...</h2>
+        </div>
         <h1 class="emp" id="beta">Beta Versionen</h1>
+        <div id="0-5-2">
+            <h2>[V0.5.2 // 02.12.2025]: Visueller Feinschliff & Start der zweiten Testphase</h2>
+            <ul>
+                <li>Im Planviewer kann nun optional das Wochenende eingeblendet werden; diese Tage werden ähnlich wie
+                    Feiertage visuell hervorgehoben. Die Einstellung für Wochenenden wird in einem Cookie gespeichert, damit die Auswahl auch
+                    beim nächsten Besuch erhalten bleibt.</li>
+                <li>Es wurden erneut Berechtigungsfehler im Impersonationsmodus behoben, um einen reibungslosen
+                    Admin-Zugriff zu gewährleisten.</li>
+                <li>Die neue Knopfleiste im Planviewer erhielt CSS-Optimierungen für eine sauberere Darstellung.</li>
+                <li>Mit diesem Update startet offiziell die zweite Phase des Nutzungstests.</li>
+            </ul>
+            <p>V0.5.2 markiert den Start der zweiten Testphase mit Fokus auf visuelles Feedback und Usability. Nun
+                beginnt die Arbeit an der ersten Vollversion V1.0.0, die weitere spannende Änderungen mit sich bringen
+                wird.</p>
+        </div>
+        <hr>
+        <div id="0-5-1">
+            <h2>[V0.5.1 // 20.11.2025]: Core-Logik Rewrite, Shortcuts & Erweiterte Navigation</h2>
+            <ul>
+                <li>Die Datums-Logik für Mitarbeiter wurde komplett neu geschrieben. Zeit-Scopes
+                    werden nun exakt anhand der Nutzereingabe verarbeitet (kein automatisches Runden mehr), was
+                    unerwartetes Verhalten eliminiert. Dies erforderte Anpassungen in der Planviewer- und
+                    Erstellungs-Logik.</li>
+                <li>Nachträgliche Mitarbeiterbearbeitung ist nun möglich. Urlaub kann nun korrigiert, neue Mitarbeiter
+                    in existierende
+                    Pläne eingefügt und ein Datums-Sync ausgeführt werden.</li>
+                <li>Das direkte Springen zum vorherigen/nächsten Monat ist nun möglich
+                    (unter Verwendung von eingebetteten SVGs statt Bilddateien für schnellere Ladezeiten).</li>
+                <li>Es wurden Tastenkürzel im Planviewer eingeführt (z.B. "K" für Krank, "G" für
+                    Gleitzeit) für effizientere Bedienung.</li>
+                <li>Die Implementierung der Feiertagslogik (API-Schnittstelle & Frontend-Handling) ist nun vollständig.
+                    Feiertage
+                    werden nun im Planviewer visuell hervorgehoben und der 24.12. wurde explizit als Feiertag ergänzt.
+                </li>
+                <li>Umfangreiche UI/CSS-Optimierungen: Verbesserte Responsivität, Behebung von Farbfehlern im
+                    Planerstellungs-Screen, globale Farbvariablen für Konsistenz und Anpassung der
+                    Planbearbeitungs-Komponente an das Design anderer Komponenten zur Verringerung der Lernkurve.</li>
+                <li>Kleinere Anpassungen: Aktualisierung der Credits und Optimierung von Button-Beschriftungen.</li>
+            </ul>
+            <p>V0.5.1 ist ein massives Update für Usability und Stabilität: Die Datumsverarbeitung wurde von Grund auf
+                erneuert, die Navigation beschleunigt und essenzielle Editier-Funktionen für bestehende Pläne
+                nachgerüstet.</p>
+        </div>
+        <hr>
+        <div id="0-5-0">
+            <h2>[V0.5.0 // 18.11.2025]: Start der Testphase, Clean-Up & Bugfixes</h2>
+            <ul>
+                <li>Offizieller Start der ersten Testphase: Die erste produktiv nutzbare Version steht der IT-Abteilung
+                    nun vollständig zum Testen zur Verfügung.</li>
+                <li>Alle Entwicklungshinweise wurden entfernt und Begrifflichkeiten finalisiert (z.B. Änderung von
+                    "Homeoffice" zu "alternierende Telearbeit").</li>
+                <li>Der Prozess zum Erstellen von Mitarbeitern eines Fachbereichs wurde überarbeitet, um die Eingabe
+                    einfacher und übersichtlicher zu gestalten.</li>
+                <li>Fehlerbehebungen im Impersonation-Modus wurden behoben, damit haben Administratoren nun wieder
+                    korrekten und
+                    vollständigen Zugriff auf alle Bereiche und Funktionen.</li>
+            </ul>
+            <p>Mit V0.5.0 beginnt der aktive Praxistest: Die Anwendung wurde für den produktiven Testbetrieb bereinigt,
+                die Benutzerverwaltung optimiert und kritische Admin-Rechte wiederhergestellt.</p>
+        </div>
+        <hr>
+        <div id="0-4-0">
+            <h2>[V0.4.0 // 13.11.2025]: Deployment-Automatisierung & Infrastruktur-Overhaul</h2>
+            <ul>
+                <li>Der Deployment-Vorgang ist nun vollständig abgeschlossen und automatisiert: Ein Update benötigt nur
+                    noch einen einzigen Command statt drei Stunden manueller Arbeit.</li>
+                <li>Alle URLs und variablen Parameter wurden in die environment.ts Dateien ausgelagert, was das
+                    vereinfachte Deployment erst ermöglicht.</li>
+                <li>Die angezeigte Version wird nun dynamisch über eine neue "version-service" Schnittstelle
+                    abgerufen.</li>
+                <li>Dieser große Versionssprung resultiert aus den massiven strukturellen Änderungen im Hintergrund, die
+                    das Fundament für alle kommenden Updates bilden.</li>
+            </ul>
+            <p>V0.4.0 ist ein Meilenstein "unter der Haube": Das Update legt die technische Grundlage, um neue Versionen
+                innerhalb von Sekunden für alle Nutzer bereitstellen zu können.</p>
+        </div>
+        <hr>
+        <div id="0-2-5">
+            <h2>[V0.2.5 // 12.11.2025]: Dienstplan-Logs, erweiterte Sicherheit & Cross-Browser Fixes</h2>
+            <ul>
+                <li>Implementierung eines Log-Systems für den Dienstplan: Alle Änderungen, die im Plan vorgenommen
+                    werden, werden nun protokolliert und nachvollziehbar gemacht.</li>
+                <li>Die Liste der verbotenen Passwörter wurde massiv erweitert (Verdreifachung der
+                    Einträge), um die Account-Sicherheit zu erhöhen.</li>
+                <li>Es wurde eine Bestätigungsabfrage vor dem Zurücksetzen (Reset) von
+                    Passwörtern hinzugefügt, um versehentliche Aktionen zu verhindern.</li>
+                <li>Es wurden grafische Inkonsistenzen zwischen verschiedenen
+                    Browser-Plattformen behoben für ein einheitliches Erscheinungsbild.</li>
+                <li>Außerdem wurde der Credit Bereich aktualisiert.</li>
+            </ul>
+            <p>V0.2.5 fokussiert sich auf Transparenz und Stabilität: Änderungen im Dienstplan werden nun geloggt, die
+                Passwortsicherheit wurde verschärft und die Darstellung wurde plattformübergreifend angeglichen.</p>
+        </div>
+        <hr>
         <div id="0-2-4">
             <h2>[V0.2.4 // 28.10.2025]: Neon Mode, Feedback-Logik & neue Admin-Komponente</h2>
             <ul>
