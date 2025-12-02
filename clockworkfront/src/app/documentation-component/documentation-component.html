@@ -1,6 +1,105 @@
 <div class="comp-wrap">
-    <h1 class="page-header emp">Dokumentation</h1>
-    <div class="pagecontainer">
-        <p>Folgt in Version V1.0.0</p>
+  <!-- Header + Suche nebeneinander -->
+  <div class="doc-header">
+    <h1 class="emp page-header">Dokumentation</h1>
+
+    <div class="doc-search">
+      <input
+        type="text"
+        [value]="searchTerm"
+        (input)="onSearchInput($event)"
+        placeholder="Suche nach Begriffen oder Stichwörtern..."
+      />
     </div>
+  </div>
+
+  <!-- Suchergebnisse (zeigen wir nur, wenn gesucht wird) -->
+  @if (isSearching && searchResults.length > 0) {
+    <div class="search-results">
+      <h2>Suchergebnisse ({{ searchResults.length }})</h2>
+      <ul>
+        @for (result of searchResults; track result.article.id) {
+          <li>
+            <a
+              [routerLink]="['/docs', result.section.id, result.page.id]"
+              [fragment]="result.article.id"
+            >
+              <span>{{ result.article.title }}</span>
+              <span> – {{ result.section.title }} / {{ result.page.title }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Optional: Info, wenn gesucht wird, aber keine Treffer -->
+  @if (isSearching && searchResults.length === 0) {
+    <p class="hint">Keine Treffer für „{{ searchTerm }}“ gefunden.</p>
+  }
+
+  <!-- Übersicht: alle Haupt-Themen (nur wenn NICHT gesucht wird) -->
+  @if (!isSearching && viewMode === 'overview') {
+    <div class="tile-grid">
+      @for (section of sections; track section.id) {
+        <a class="doc-tile" [routerLink]="['/docs', section.id]">
+          <h2>{{ section.title }}</h2>
+          @if (section.description) {
+            <p>{{ section.description }}</p>
+          }
+        </a>
+      }
+    </div>
+  }
+
+  <!-- Section-View: Unterkacheln (Pages) – nur ohne Suche -->
+  @if (!isSearching && viewMode === 'section' && currentSection) {
+    <div class="breadcrumbs">
+      <a [routerLink]="['/docs']">Dokumentation</a> /
+      <span>{{ currentSection.title }}</span>
+    </div>
+
+    <h2 class="subtitle">{{ currentSection.title }}</h2>
+
+    <div class="tile-grid subtiles">
+      @for (page of currentSection.pages; track page.id) {
+        <a class="doc-tile" [routerLink]="['/docs', currentSection.id, page.id]">
+          <h3>{{ page.title }}</h3>
+          @if (page.description) {
+            <p>{{ page.description }}</p>
+          }
+        </a>
+      }
+    </div>
+  }
+
+  <!-- Page-View: Wiki-Seite mit mehreren Artikeln – nur ohne Suche -->
+  @if (!isSearching && viewMode === 'page' && currentSection && currentPage) {
+    <div class="breadcrumbs">
+      <a [routerLink]="['/docs']">Dokumentation</a> /
+      <a [routerLink]="['/docs', currentSection.id]">
+        {{ currentSection.title }}
+      </a> /
+      <span>{{ currentPage.title }}</span>
+    </div>
+
+    <h2 class="subtitle">{{ currentPage.title }}</h2>
+
+    <div class="doc-page">
+      @for (article of currentPage.articles; track article.id) {
+        <section class="doc-article" [id]="article.id">
+          <h3>{{ article.title }}</h3>
+          <div class="doc-article-content" [innerHTML]="article.html"></div>
+
+          @if (article.tags.length) {
+            <div class="doc-tags">
+              @for (tag of article.tags; track tag) {
+                <span class="doc-tag">#{{ tag }}</span>
+              }
+            </div>
+          }
+        </section>
+      }
+    </div>
+  }
 </div>

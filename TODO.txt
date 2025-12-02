@@ -6,6 +6,7 @@ Lock plans of last year at end of january
 
 
 Future Updates (V1.0.0):
+Export & import of employee status
 Edit plan component (edit status)
 Edit year overview (show status)
 Software documentation

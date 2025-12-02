@@ -29,9 +29,17 @@ export const routes: Routes = [
         canActivate: [AuthGuard] // Muss eingeloggt sein
     },
     {
-        path: 'documentation',
+        path: 'docs',
         component: DocumentationComponent,
         title: 'Dokumentation - CLOCKWORK'
+    },
+    {
+        path: 'docs/:sectionId',
+        component: DocumentationComponent
+    },
+    {
+        path: 'docs/:sectionId/:pageId',
+        component: DocumentationComponent
     },
     {
         path: 'credit',
