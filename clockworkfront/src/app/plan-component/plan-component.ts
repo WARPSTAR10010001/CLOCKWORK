@@ -561,6 +561,16 @@ export class PlanComponent implements OnInit {
     this.setEntry('O');
   }
 
+  @HostListener('document:keydown.delete', ['$event'])
+  onEscHandler(event: Event) {
+    this.setEntry('');
+  }
+
+  @HostListener('document:keydown.shift.d', ['$event'])
+  onCtrlDHandler(event: Event) {
+    this.deselect();
+  }
+
   loadNextPlan(): void {
     const currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
     const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));

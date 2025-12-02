@@ -44,30 +44,33 @@ function fmt(d) {
  */
 function buildHolidaysForYear(year) {
   const y = Number(year);
-  const easter = easterDate(y);      // Ostersonntag
-  const kf = addDaysUTC(easter, -2); // Karfreitag
-  const om = addDaysUTC(easter, 1);  // Ostermontag
-  const hm = addDaysUTC(easter, 39); // Christi Himmelfahrt
-  const pm = addDaysUTC(easter, 50); // Pfingstmontag
-  const fr = addDaysUTC(easter, 60); // Fronleichnam (NRW)
+  const easter = easterDate(y);       // Ostersonntag
+  const rm = addDaysUTC(easter, -48); // Rosenmontag (48 Tage vor Ostersonntag)
+  const kf = addDaysUTC(easter, -2);  // Karfreitag
+  const om = addDaysUTC(easter, 1);   // Ostermontag
+  const hm = addDaysUTC(easter, 39);  // Christi Himmelfahrt
+  const pm = addDaysUTC(easter, 50);  // Pfingstmontag
+  const fr = addDaysUTC(easter, 60);  // Fronleichnam (NRW)
 
-  // Feste Feiertage (bundesweit + NRW Only + Sondertag Heiligabend)
+  // Feste Feiertage (bundesweit + NRW Only + Zusatz: Heiligabend & Silvester)
   const fixed = [
     { date: `${y}-01-01`, name: 'Neujahr' },
     { date: `${y}-05-01`, name: 'Tag der Arbeit' },
     { date: `${y}-10-03`, name: 'Tag der Deutschen Einheit' },
     { date: `${y}-11-01`, name: 'Allerheiligen' },
-    { date: `${y}-12-24`, name: 'Heiligabend' },    // 👈 neu
+    { date: `${y}-12-24`, name: 'Heiligabend' },
     { date: `${y}-12-25`, name: '1. Weihnachtstag' },
-    { date: `${y}-12-26`, name: '2. Weihnachtstag' }
+    { date: `${y}-12-26`, name: '2. Weihnachtstag' },
+    { date: `${y}-12-31`, name: 'Silvester' }
   ];
 
   const movable = [
+    { date: fmt(rm), name: 'Rosenmontag' },      // neu
     { date: fmt(kf), name: 'Karfreitag' },
     { date: fmt(om), name: 'Ostermontag' },
     { date: fmt(hm), name: 'Christi Himmelfahrt' },
     { date: fmt(pm), name: 'Pfingstmontag' },
-    { date: fmt(fr), name: 'Fronleichnam' } // NRW-spezifisch
+    { date: fmt(fr), name: 'Fronleichnam' }      // NRW-spezifisch
   ];
 
   return [...fixed, ...movable].map(h => ({ ...h, year: y }));
@@ -75,7 +78,7 @@ function buildHolidaysForYear(year) {
 
 /**
  * Sorgt dafür, dass für ein Jahr die definierten Feiertage
- * (inkl. neu hinzugekommener wie Heiligabend) in der DB vorhanden sind.
+ * (inkl. Heiligabend, Rosenmontag, Silvester) in der DB vorhanden sind.
  * Bereits existierende Datumszeilen werden per ON CONFLICT ignoriert.
  */
 async function ensureHolidaysSeeded(year) {
@@ -110,7 +113,7 @@ async function ensureHolidaysSeeded(year) {
 /**
  * GET /api/holidays/:year
  *  → sorgt automatisch dafür, dass Feiertage für das Jahr existieren
- *    (inkl. nachträglich hinzugefügter wie Heiligabend)
+ *    (inkl. nachträglich hinzugefügter wie Heiligabend, Rosenmontag, Silvester)
  *    und gibt sie dann zurück.
  */
 router.get('/holidays/:year', requireAuth, async (req, res) => {
@@ -122,7 +125,6 @@ router.get('/holidays/:year', requireAuth, async (req, res) => {
   }
 
   try {
-    // sicherstellen, dass alle Feiertage (inkl. 24.12) existieren
     await ensureHolidaysSeeded(y);
 
     const { rows } = await pool.query(

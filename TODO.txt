@@ -5,15 +5,12 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
-Future Updates (V0.5.0):
-complete changelog until version v0.5.0
-visual bug on plan (holiday + weekend makes text color weird)
-
 Future Updates (V1.0.0):
 Edit plan component (edit status)
 Edit year overview (show status)
 Software documentation
 Fix feedback not showing correctly to admins
+visual bug on plan (holiday + weekend makes text color weird)
 
 
 Future Updates (V1.2.0):
