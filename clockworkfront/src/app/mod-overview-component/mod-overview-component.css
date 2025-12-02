@@ -50,3 +50,7 @@ select {
 .disabled {
     background-color: var(--tc) !important;
 }
+
+#idx {
+    margin-top: 0px;
+}
