@@ -1,5 +1,4 @@
-// src/app/plan-component/plan-component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OverlayService } from '../overlay-service';
@@ -11,7 +10,6 @@ import { forkJoin, of } from 'rxjs';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
 import { HolidayService } from '../holiday-service';
-import { HostListener } from '@angular/core';
 
 interface SelectedCell {
   employeeId: number;
@@ -36,7 +34,7 @@ export class PlanComponent implements OnInit {
 
   employees: Employee[] = [];
   monthEntries: PlanEntry[] = [];
-  daysForMonth: Date[] = [];   // nur Mo–Fr
+  daysForMonth: Date[] = [];   // jetzt optional inkl. Wochenende
 
   private entryMap = new Map<string, PlanEntry>();
 
@@ -47,7 +45,12 @@ export class PlanComponent implements OnInit {
 
   canGoPrev = false;
   canGoNext = false;
-  availablePlanYears: any;
+  availablePlanYears: number[] = [];
+
+  showWeekends = false;
+
+  // Name des Cookies für das Wochenende-Setting
+  private readonly WEEKENDS_COOKIE = 'clockwork_show_weekends';
 
   constructor(
     private backend: BackendAccess,
@@ -61,12 +64,15 @@ export class PlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Preference aus Cookie laden
+    this.showWeekends = this.loadWeekendPreference();
+
     // Route-Parameter beobachten (year, month)
     this.activatedRoute.paramMap.subscribe(params => {
       this.year = Number(params.get('year'));
       this.month = Number(params.get('month'));
 
-      this.daysForMonth = this.generateWeekdaysForMonth(this.year, this.month);
+      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
       this.deselect();
 
       // 1) Feiertage laden (eigene HTTP-Request)
@@ -122,10 +128,10 @@ export class PlanComponent implements OnInit {
   }
 
   /**
- * Prüft, ob ein Mitarbeiter im gewählten Monat beschäftigt ist.
- * Nutzt bewusst die Stammdaten (employees.start_month / end_month),
- * nicht die plan_employees-Daten.
- */
+   * Prüft, ob ein Mitarbeiter im gewählten Monat beschäftigt ist.
+   * Nutzt bewusst die Stammdaten (employees.start_month / end_month),
+   * nicht die plan_employees-Daten.
+   */
   private isEmployeeActiveInMonth(emp: Employee, monthStart: Date, monthEnd: Date): boolean {
     const parseYmd = (s?: string | null) => {
       if (!s) return null;
@@ -172,7 +178,7 @@ export class PlanComponent implements OnInit {
         if (!data) return of(null);
         const { depId, plans } = data;
 
-        // 🔽 alle vorhandenen Plan-Jahre merken
+        // alle vorhandenen Plan-Jahre merken
         this.availablePlanYears = (plans || []).map(p => p.year);
 
         const plan = plans.find(p => p.year === this.year) || null;
@@ -238,6 +244,7 @@ export class PlanComponent implements OnInit {
 
       // finale Liste: nur Department-Mitarbeitende, die im Plan sind UND im Monat aktiv sind
       this.employees = (bundle.employees || []).filter(e => activeIds.has(e.id));
+
       this.updateNavAvailability();
     });
   }
@@ -264,7 +271,6 @@ export class PlanComponent implements OnInit {
     this.canGoNext = this.month < 12 || (this.month === 12 && nextYearExists);
   }
 
-
   // === Helpers ===
   private pad2(n: number): string { return String(n).padStart(2, '0'); }
   private monthKey(year: number, month: number): string { return `${year}-${this.pad2(month)}`; }
@@ -277,13 +283,16 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  /** erzeugt nur Montag–Freitag */
-  private generateWeekdaysForMonth(year: number, month: number): Date[] {
+  /**
+   * Erzeugt alle Tage eines Monats.
+   * Wenn includeWeekends = false → nur Mo–Fr.
+   */
+  private generateDaysForMonth(year: number, month: number, includeWeekends: boolean): Date[] {
     const days: Date[] = [];
     const d = new Date(year, month - 1, 1);
     while (d.getMonth() === month - 1) {
-      const day = d.getDay(); // 0 So, 6 Sa
-      if (day !== 0 && day !== 6) {
+      const dow = d.getDay(); // 0 So, 6 Sa
+      if (includeWeekends || (dow !== 0 && dow !== 6)) {
         days.push(new Date(d));
       }
       d.setDate(d.getDate() + 1);
@@ -298,7 +307,7 @@ export class PlanComponent implements OnInit {
     return `${y}-${m}-${day}`;
   }
 
-  private isWeekend(day: Date): boolean {
+  isWeekend(day: Date): boolean {
     const dow = day.getDay();
     return dow === 0 || dow === 6;
   }
@@ -311,6 +320,7 @@ export class PlanComponent implements OnInit {
   // === Auswahl ===
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
     event.preventDefault();
+    // Wochenenden bleiben nicht anklickbar
     if (this.isWeekend(day)) return;
 
     const newSelection: SelectedCell = { employeeId, day };
@@ -342,7 +352,7 @@ export class PlanComponent implements OnInit {
   private getCellsInRange(start: SelectedCell, end: SelectedCell): SelectedCell[] {
     if (start.employeeId !== end.employeeId) return [end];
     const employeeId = start.employeeId;
-    const allDaysInView = this.daysForMonth; // nur Mo–Fr
+    const allDaysInView = this.daysForMonth; // kann jetzt auch WE enthalten
     const startIndex = allDaysInView.findIndex(d => d.getTime() === start.day.getTime());
     const endIndex = allDaysInView.findIndex(d => d.getTime() === end.day.getTime());
     if (startIndex === -1 || endIndex === -1) return [];
@@ -473,13 +483,17 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  // HIER angepasst: holiday nicht mehr auf den Zellen selbst
+  // Zellen-Klassen inkl. Wochenende
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
+    const isWknd = this.isWeekend(day);
+    const isHol = this.isHoliday(day);
+
     const classes: { [key: string]: boolean } = {
       'cell': true,
-      'selected': this.isSelected(employeeId, day)
-      // keine 'holiday' mehr hier
+      'selected': this.isSelected(employeeId, day),
+      'weekend-col': isWknd,   // 👈 für Wochenendspalten
+      'holiday-col': isHol     // falls du Feiertage pro Zelle highlighten willst
     };
     if (type) classes[`${type.toLowerCase()}-cell`] = true;
     return classes;
@@ -548,8 +562,8 @@ export class PlanComponent implements OnInit {
   }
 
   loadNextPlan(): void {
-    let currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
-    let currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
+    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
     let nextYear = currentYear;
     let nextMonth = currentMonth;
 
@@ -564,8 +578,8 @@ export class PlanComponent implements OnInit {
   }
 
   loadPrevPlan(): void {
-    let currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
-    let currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
+    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
     let nextYear = currentYear;
     let nextMonth = currentMonth;
 
@@ -577,5 +591,38 @@ export class PlanComponent implements OnInit {
     }
 
     this.router.navigate(['/plan', nextYear, nextMonth]);
+  }
+
+  // --- Wochenenden anzeigen / verstecken + Cookie-Persistenz ---
+
+  toggleWeekends(): void {
+    const newValue = !this.showWeekends;
+    this.showWeekends = newValue;
+    this.saveWeekendPreference();
+
+    // Tage für aktuellen Monat neu generieren
+    this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
+    this.deselect();
+
+    if (newValue) {
+      this.overlay.showOverlay(
+        'info',
+        'Das Anzeigen der Wochenendtage dient nur zur erleichterten visuellen Orientierung, daher können keine Einträge an diesen Tagen vorgenommen werden.'
+      );
+    }
+  }
+
+  private loadWeekendPreference(): boolean {
+    if (typeof document === 'undefined') return false;
+    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_weekends=([^;]+)/);
+    if (!match) return false;
+    return match[1] === '1';
+  }
+
+  private saveWeekendPreference(): void {
+    if (typeof document === 'undefined') return;
+    const value = this.showWeekends ? '1' : '0';
+    const maxAge = 60 * 60 * 24 * 365; // 1 Jahr
+    document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 }

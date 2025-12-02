@@ -98,7 +98,7 @@ td {
     margin-top: 25px;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
     justify-content: center;
 }
 
@@ -321,12 +321,6 @@ td {
     border: 3px solid var(--olc) !important;
 }
 
-.holiday {
-    border: 3px solid var(--tc) !important;
-    background-color: var(--tc) !important;
-    color: var(--bgc);
-}
-
 :host-context(body.soft) .selected {
     color: var(--tc);
     background-color: var(--bgc) !important;
@@ -356,4 +350,28 @@ td {
 
 .plan-nav-btn:hover {
     color: var(--tc);
+}
+
+:host-context(body.light) .weekend-col {
+    cursor: default;
+    background-color: #dddddd !important;
+    border-color: #dddddd !important;
+}
+
+:host-context(body.dim) .weekend-col {
+    cursor: default;
+    background-color: #303030 !important;
+    border-color: #303030 !important;
+}
+
+:host-context(body.neon) .weekend-col {
+    cursor: default;
+    background-color: #12004e !important;
+    border-color: #12004e !important;
+}
+
+.holiday {
+    border: 3px solid var(--tc) !important;
+    background-color: var(--tc) !important;
+    color: var(--bgc) !important;
 }

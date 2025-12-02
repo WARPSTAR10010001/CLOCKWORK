@@ -1,3 +1,4 @@
+// src/app/mod-edit-plan-component/mod-edit-plan-component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +7,7 @@ import { BackendAccess } from '../backend-access';
 import { EmployeeService, Employee } from '../employee-service';
 import { ImpersonationService } from '../impersonation-service';
 import { OverlayService } from '../overlay-service';
+import { AuthService } from '../auth-service';
 import { take, map, switchMap, of, forkJoin } from 'rxjs';
 
 @Component({
@@ -33,7 +35,8 @@ export class ModEditPlanComponent implements OnInit {
     private backend: BackendAccess,
     private empService: EmployeeService,
     private imp: ImpersonationService,
-    private overlay: OverlayService
+    private overlay: OverlayService,
+    private auth: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -55,50 +58,79 @@ export class ModEditPlanComponent implements OnInit {
   private init(): void {
     this.loading = true;
 
-    // depId bestimmen
-    const dep = this.imp.getEffectiveDepartmentId();
-    if (!dep) {
-      this.overlay.showOverlay('error', 'Kein Fachbereich gewählt.');
-      this.router.navigate(['/mod']);
-      return;
-    }
-    this.depId = dep;
-
-    // PlanId für das Jahr auflösen
-    this.backend.getPlansForDepartment(dep).pipe(
+    this.auth.authStatus$.pipe(
       take(1),
-      map(res => res.plans.find(p => p.year === this.year) || null),
-      switchMap(plan => {
-        if (!plan) {
-          this.overlay.showOverlay('error', `Für ${this.year} existiert noch kein Plan.`);
-          return of(null);
+      map(status => {
+        const impDep = this.imp.getEffectiveDepartmentId();
+        const fromJwt = status?.user?.departmentId ?? null;
+
+        // Admin: nutzt Impersonation (wenn gesetzt), sonst nix
+        // MOD/USER: nutzt immer das Department aus dem JWT
+        const depId = this.auth.isAdmin()
+          ? (impDep ?? null)
+          : (fromJwt ?? null);
+
+        if (!depId) {
+          if (this.auth.isAdmin()) {
+            this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
+            this.router.navigate(['/mod']);
+          } else {
+            this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
+            this.router.navigate(['/auth']);
+          }
+          return null;
         }
-        this.planId = plan.id;
-        return forkJoin({
-          employees: this.empService.getEmployeesForDepartment(dep).pipe(take(1)),
-          links: this.backend.getPlanEmployeeLinks(this.planId).pipe(take(1))
-        });
+
+        this.depId = depId;
+        return depId;
+      }),
+      switchMap(depId => {
+        if (!depId) return of(null);
+
+        // PlanId für das Jahr auflösen
+        return this.backend.getPlansForDepartment(depId).pipe(
+          take(1),
+          map(res => res.plans.find(p => p.year === this.year) || null),
+          switchMap(plan => {
+            if (!plan) {
+              this.overlay.showOverlay('error', `Für ${this.year} existiert noch kein Plan.`);
+              return of(null);
+            }
+            this.planId = plan.id;
+
+            return forkJoin({
+              employees: this.empService.getEmployeesForDepartment(this.depId).pipe(take(1)),
+              links: this.backend.getPlanEmployeeLinks(this.planId).pipe(take(1))
+            });
+          })
+        );
       })
-    ).subscribe(bundle => {
-      this.loading = false;
-      if (!bundle) return;
+    ).subscribe({
+      next: bundle => {
+        this.loading = false;
+        if (!bundle) return;
 
-      // 1) Nur aktive Mitarbeiter
-      const active = (bundle.employees || []).filter(e => e.is_active !== false);
+        // 1) Nur aktive Mitarbeiter
+        const active = (bundle.employees || []).filter(e => e.is_active !== false);
 
-      // 2) Nur Mitarbeiter, deren Zeitraum das Planjahr schneidet
-      this.employees = active.filter(e => this.employeeOverlapsYear(e, this.year));
+        // 2) Nur Mitarbeiter, deren Zeitraum das Planjahr schneidet
+        this.employees = active.filter(e => this.employeeOverlapsYear(e, this.year));
 
-      // 3) Set für "ist im Plan?"
-      this.inPlanIds = new Set((bundle.links.items || []).map(x => x.employee_id));
+        // 3) Set für "ist im Plan?"
+        this.inPlanIds = new Set((bundle.links.items || []).map(x => x.employee_id));
 
-      // 4) Edit-Puffer initialisieren
-      this.employees.forEach(e => {
-        this.edits[e.id] = {
-          annual: e.annual_leave_days ?? 30,
-          carry: e.carryover_days ?? 0
-        };
-      });
+        // 4) Edit-Puffer initialisieren
+        this.employees.forEach(e => {
+          this.edits[e.id] = {
+            annual: e.annual_leave_days ?? 30,
+            carry: e.carryover_days ?? 0
+          };
+        });
+      },
+      error: () => {
+        this.loading = false;
+        this.overlay.showOverlay('error', 'Plan-Daten konnten nicht geladen werden.');
+      }
     });
   }
 
@@ -169,7 +201,7 @@ export class ModEditPlanComponent implements OnInit {
         this.overlay.showOverlay('success', `${res.added} Mitarbeitende ergänzt.`);
         this.init();
       },
-      error: () => this.overlay.showOverlay('error', 'Sync fehlgeschlagen.')
+      error: () => this.overlay.showOverlay('error', 'Mitarbeiter-Sync fehlgeschlagen.')
     });
   }
 
