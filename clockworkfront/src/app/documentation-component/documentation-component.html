@@ -23,6 +23,7 @@
             <a
               [routerLink]="['/docs', result.section.id, result.page.id]"
               [fragment]="result.article.id"
+              (click)="onResultClick()"
             >
               <span>{{ result.article.title }}</span>
               <span> – {{ result.section.title }} / {{ result.page.title }}</span>
@@ -86,18 +87,15 @@
     <h2 class="subtitle">{{ currentPage.title }}</h2>
 
     <div class="doc-page">
-      @for (article of currentPage.articles; track article.id) {
+      @for (article of currentPage.articles; track article.id; let isFirst = $first) {
+
+        @if (!isFirst) {
+          <hr>
+        }
+
         <section class="doc-article" [id]="article.id">
           <h3>{{ article.title }}</h3>
           <div class="doc-article-content" [innerHTML]="article.html"></div>
-
-          @if (article.tags.length) {
-            <div class="doc-tags">
-              @for (tag of article.tags; track tag) {
-                <span class="doc-tag">#{{ tag }}</span>
-              }
-            </div>
-          }
         </section>
       }
     </div>

@@ -6,7 +6,6 @@ Lock plans of last year at end of january
 
 
 Future Updates (V1.0.0):
-Export & import of employee status
 Edit plan component (edit status)
 Edit year overview (show status)
 Software documentation
@@ -15,5 +14,6 @@ visual bug on plan (holiday + weekend makes text color weird)
 
 
 Future Updates (V1.2.0):
+Export & import of employee status
 Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed

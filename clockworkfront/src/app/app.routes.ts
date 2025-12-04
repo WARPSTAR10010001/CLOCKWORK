@@ -35,11 +35,13 @@ export const routes: Routes = [
     },
     {
         path: 'docs/:sectionId',
-        component: DocumentationComponent
+        component: DocumentationComponent,
+        title: 'Dokumentation - CLOCKWORK'
     },
     {
         path: 'docs/:sectionId/:pageId',
-        component: DocumentationComponent
+        component: DocumentationComponent,
+        title: 'Dokumentation - CLOCKWORK'
     },
     {
         path: 'credit',

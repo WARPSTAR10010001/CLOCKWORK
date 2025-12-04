@@ -108,8 +108,7 @@ export class DocumentationComponent implements OnInit {
         ...(section.tags || []),
         page.title,
         ...(page.tags || []),
-        article.title,
-        ...(article.tags || [])
+        article.title   // 👈 nur noch Titel, keine article.tags mehr
       ].join(' ').toLowerCase();
 
       return haystack.includes(q);
@@ -119,6 +118,11 @@ export class DocumentationComponent implements OnInit {
   clearSearch(): void {
     this.searchTerm = '';
     this.searchResults = [];
+  }
+
+  // Wird aufgerufen, wenn ein Suchergebnis angeklickt wird
+  onResultClick(): void {
+    this.clearSearch();
   }
 
   // 👉 true, sobald wir „aktiv“ suchen (ab 2 Zeichen)
