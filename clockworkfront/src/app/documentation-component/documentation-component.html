@@ -1,7 +1,7 @@
 <div class="comp-wrap">
   <!-- Header + Suche nebeneinander -->
   <div class="doc-header">
-    <h1 class="emp page-header">Dokumentation</h1>
+    <h1 class="emp page-header" [routerLink]="['/docs']" style="cursor: pointer;">Dokumentation</h1>
 
     <div class="doc-search">
       <input
@@ -26,7 +26,7 @@
               (click)="onResultClick()"
             >
               <span>{{ result.article.title }}</span>
-              <span> – {{ result.section.title }} / {{ result.page.title }}</span>
+              <span> - {{ result.section.title }} / {{ result.page.title }}</span>
             </a>
           </li>
         }
@@ -36,7 +36,7 @@
 
   <!-- Optional: Info, wenn gesucht wird, aber keine Treffer -->
   @if (isSearching && searchResults.length === 0) {
-    <p class="hint">Keine Treffer für „{{ searchTerm }}“ gefunden.</p>
+    <p class="hint">Keine Treffer für "{{ searchTerm }}" gefunden.</p>
   }
 
   <!-- Übersicht: alle Haupt-Themen (nur wenn NICHT gesucht wird) -->

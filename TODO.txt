@@ -5,15 +5,18 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
-Future Updates (V1.0.0):
-Edit plan component (edit status)
-Edit year overview (show status)
-Software documentation
+V1.1.0:
 Fix feedback not showing correctly to admins
 visual bug on plan (holiday + weekend makes text color weird)
+Fix table CSS in documentation
 
 
-Future Updates (V1.2.0):
+V1.2.0:
+Edit plan component (edit status)
+Edit year overview (show status)
+
+
+V1.4.0:
 Export & import of employee status
 Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed

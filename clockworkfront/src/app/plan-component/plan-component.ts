@@ -562,12 +562,12 @@ export class PlanComponent implements OnInit {
   }
 
   @HostListener('document:keydown.delete', ['$event'])
-  onEscHandler(event: Event) {
+  onDelHandler(event: Event) {
     this.setEntry('');
   }
 
-  @HostListener('document:keydown.shift.d', ['$event'])
-  onCtrlDHandler(event: Event) {
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscHandler(event: Event) {
     this.deselect();
   }
 
