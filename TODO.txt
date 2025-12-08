@@ -12,8 +12,8 @@ Fix table CSS in documentation
 
 
 V1.2.0:
-Edit plan component (edit status)
-Edit year overview (show status)
+Show and edit status for plans
+Show comments for "others" on plan
 
 
 V1.4.0:
