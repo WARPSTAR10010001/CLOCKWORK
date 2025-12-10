@@ -1,5 +1,4 @@
 <div class="comp-wrap">
-  <!-- Header + Suche nebeneinander -->
   <div class="doc-header">
     <h1 class="emp page-header" [routerLink]="['/docs']" style="cursor: pointer;">Dokumentation</h1>
 
@@ -13,7 +12,6 @@
     </div>
   </div>
 
-  <!-- Suchergebnisse (zeigen wir nur, wenn gesucht wird) -->
   @if (isSearching && searchResults.length > 0) {
     <div class="search-results">
       <h2>Suchergebnisse ({{ searchResults.length }})</h2>
@@ -25,8 +23,13 @@
               [fragment]="result.article.id"
               (click)="onResultClick()"
             >
-              <span>{{ result.article.title }}</span>
-              <span> - {{ result.section.title }} / {{ result.page.title }}</span>
+            @if (result.section.title.length + result.page.title.length + result.article.title.length >= 100) {
+              <span>... - {{ result.article.title }}</span>
+            } @else if (result.section.title.length + result.page.title.length >= 50) {
+              <span>... / {{ result.page.title }} - {{ result.article.title }}</span>
+            } @else {
+              <span>{{ result.section.title }} / {{ result.page.title }} - {{ result.article.title }}</span>
+            }
             </a>
           </li>
         }
@@ -34,12 +37,10 @@
     </div>
   }
 
-  <!-- Optional: Info, wenn gesucht wird, aber keine Treffer -->
   @if (isSearching && searchResults.length === 0) {
     <p class="hint">Keine Treffer für "{{ searchTerm }}" gefunden.</p>
   }
 
-  <!-- Übersicht: alle Haupt-Themen (nur wenn NICHT gesucht wird) -->
   @if (!isSearching && viewMode === 'overview') {
     <div class="tile-grid">
       @for (section of sections; track section.id) {
@@ -53,7 +54,6 @@
     </div>
   }
 
-  <!-- Section-View: Unterkacheln (Pages) – nur ohne Suche -->
   @if (!isSearching && viewMode === 'section' && currentSection) {
     <div class="breadcrumbs">
       <a [routerLink]="['/docs']">Dokumentation</a> /
@@ -74,7 +74,6 @@
     </div>
   }
 
-  <!-- Page-View: Wiki-Seite mit mehreren Artikeln – nur ohne Suche -->
   @if (!isSearching && viewMode === 'page' && currentSection && currentPage) {
     <div class="breadcrumbs">
       <a [routerLink]="['/docs']">Dokumentation</a> /

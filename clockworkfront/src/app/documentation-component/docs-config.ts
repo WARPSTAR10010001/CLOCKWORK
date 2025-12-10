@@ -357,9 +357,10 @@ export const DOC_SECTIONS: DocSection[] = [
             id: "die-rollen-im-vergleich",
             title: "Die Rollen im Vergleich",
             html: `
-              <p>Hier ist eine Übersicht der verschiedenen Rollen und ihrer Berechtigungen in CLOCKWORK:</p>
-              <div style="overflow-x: auto; margin: auto;">
-              <table id="rct" style="width: 100%; border-collapse: collapse; border: 1px solid var(--tc); text-align: center;">
+            <p>Hier ist eine Übersicht der verschiedenen Rollen und ihrer Berechtigungen in CLOCKWORK:</p>
+
+            <div class="doc-table-wrapper">
+              <table class="doc-role-table">
                 <thead>
                   <tr>
                     <th>Funktion/Berechtigung</th>
@@ -397,7 +398,7 @@ export const DOC_SECTIONS: DocSection[] = [
                     <td>Passwörter zurücksetzen</td>
                     <td>Nein</td>
                     <td>Ja (für Nutzer)</td>
-                    <td>Ja (für Nutzer und Moderatoren)</td>
+                    <td>Ja (für Nutzer & Moderatoren)</td>
                   </tr>
                   <tr>
                     <td>Teams anlegen</td>
@@ -413,8 +414,8 @@ export const DOC_SECTIONS: DocSection[] = [
                   </tr>
                 </tbody>  
               </table>
-              </div>
-            `
+            </div>
+          `
           }
         ]
       },
@@ -733,7 +734,6 @@ export const DOC_SECTIONS: DocSection[] = [
             title: "Warum sind einige Tage im Plan invertiert dargestellt?",
             html: `
           <p>Invertiert dargestellte Tage sind in CLOCKWORK als Feiertage markiert. Sie dienen der visuellen Orientierung und machen auf arbeitsfreie Tage aufmerksam.</p>
-          <p>Je nach Regelung in Ihrem Team oder Fachbereich können an Feiertagen keine Einträge vorgenommen werden oder es gelten besondere Absprachen. Diese organisatorischen Details werden in den einzelnen Bereichen der Verwaltung festgelegt.</p>
           `
           },
           {

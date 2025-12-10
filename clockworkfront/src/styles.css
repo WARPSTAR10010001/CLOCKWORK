@@ -38,7 +38,7 @@ body.neon {
     --gbgb: #007bb473;
 }
 
-body.soft .emp{
+body.soft .emp {
     background: linear-gradient(110deg, #76edff, #72ffea, #76edff);
     background-size: 200% auto;
     -webkit-background-clip: text;
@@ -264,4 +264,55 @@ textarea:focus {
 .hidden-link:hover {
     text-decoration: underline !important;
     text-decoration-color: var(--tc);
+}
+
+body.outlines .doc-table-wrapper {
+    outline: 3px solid var(--olc);
+}
+
+.doc-table-wrapper {
+    border-radius: 10px;
+    width: 100%;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.doc-role-table {
+    width: 100%;
+    text-align: center;
+    border: 2px solid transparent;
+    border-radius: 10px;
+}
+
+/* Kopf & Zellen */
+.doc-role-table th,
+.doc-role-table td {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Kopfzeile etwas hervorheben */
+body.light .doc-role-table thead th {
+    background-color: #f0f0f5;
+}
+
+body.dim .doc-role-table thead th {
+    background-color: #252525;
+}
+
+body.neon .doc-role-table thead th {
+    background-color: #0b002e;
+}
+
+/* Zebra-Streifen im Body */
+body.light .doc-role-table tbody tr:nth-child(odd) td {
+    background-color: #f0f0f5;
+}
+
+body.dim .doc-role-table tbody tr:nth-child(odd) td {
+    background-color: #252525;
+}
+
+body.neon .doc-role-table tbody tr:nth-child(odd) td {
+    background-color: #0b002e;
 }

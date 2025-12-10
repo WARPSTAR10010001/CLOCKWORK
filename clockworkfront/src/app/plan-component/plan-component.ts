@@ -34,7 +34,7 @@ export class PlanComponent implements OnInit {
 
   employees: Employee[] = [];
   monthEntries: PlanEntry[] = [];
-  daysForMonth: Date[] = [];   // jetzt optional inkl. Wochenende
+  daysForMonth: Date[] = [];
 
   private entryMap = new Map<string, PlanEntry>();
 
@@ -49,7 +49,6 @@ export class PlanComponent implements OnInit {
 
   showWeekends = false;
 
-  // Name des Cookies für das Wochenende-Setting
   private readonly WEEKENDS_COOKIE = 'clockwork_show_weekends';
 
   constructor(
@@ -64,10 +63,8 @@ export class PlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Preference aus Cookie laden
     this.showWeekends = this.loadWeekendPreference();
 
-    // Route-Parameter beobachten (year, month)
     this.activatedRoute.paramMap.subscribe(params => {
       this.year = Number(params.get('year'));
       this.month = Number(params.get('month'));
@@ -75,10 +72,8 @@ export class PlanComponent implements OnInit {
       this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
       this.deselect();
 
-      // 1) Feiertage laden (eigene HTTP-Request)
       this.loadHolidays(this.year);
 
-      // 2) Plandaten laden
       this.loadPlan();
     });
   }
@@ -92,7 +87,6 @@ export class PlanComponent implements OnInit {
   } | null {
     if (this.selectedCells.length === 0) return null;
 
-    // durch selectCell-Logik garantiert: nur ein Mitarbeiter
     const employeeId = this.selectedCells[0].employeeId;
 
     const uniqueIso = Array.from(
@@ -110,7 +104,6 @@ export class PlanComponent implements OnInit {
     };
   }
 
-  // ----- Feiertage -----
   private loadHolidays(year: number): void {
     this.holidays.getForYear(year).pipe(take(1)).subscribe({
       next: set => {
@@ -127,11 +120,6 @@ export class PlanComponent implements OnInit {
     return this.holidaySet.has(this.dayKeyFromDate(day));
   }
 
-  /**
-   * Prüft, ob ein Mitarbeiter im gewählten Monat beschäftigt ist.
-   * Nutzt bewusst die Stammdaten (employees.start_month / end_month),
-   * nicht die plan_employees-Daten.
-   */
   private isEmployeeActiveInMonth(emp: Employee, monthStart: Date, monthEnd: Date): boolean {
     const parseYmd = (s?: string | null) => {
       if (!s) return null;
@@ -147,7 +135,6 @@ export class PlanComponent implements OnInit {
     return start <= monthEnd && end >= monthStart;
   }
 
-  // ----- Plandaten -----
   private loadPlan(): void {
     this.auth.authStatus$.pipe(
       take(1),
@@ -178,7 +165,6 @@ export class PlanComponent implements OnInit {
         if (!data) return of(null);
         const { depId, plans } = data;
 
-        // alle vorhandenen Plan-Jahre merken
         this.availablePlanYears = (plans || []).map(p => p.year);
 
         const plan = plans.find(p => p.year === this.year) || null;
@@ -225,14 +211,12 @@ export class PlanComponent implements OnInit {
       const monthStart = new Date(this.year, this.month - 1, 1);
       const monthEnd = new Date(this.year, this.month, 0);
 
-      // Map: employeeId -> Employee-Stammdatensatz
       const employeeById = new Map<number, Employee>(
         (bundle.employees || []).map(e => [e.id, e])
       );
 
       const activeIds = new Set<number>();
 
-      // Nur Mitarbeitende berücksichtigen, die im Plan hängen
       for (const pe of bundle.planDetails.employees || []) {
         const emp = employeeById.get(pe.employeeId);
         if (!emp) continue;
@@ -242,7 +226,6 @@ export class PlanComponent implements OnInit {
         }
       }
 
-      // finale Liste: nur Department-Mitarbeitende, die im Plan sind UND im Monat aktiv sind
       this.employees = (bundle.employees || []).filter(e => activeIds.has(e.id));
 
       this.updateNavAvailability();
@@ -260,18 +243,10 @@ export class PlanComponent implements OnInit {
     const prevYearExists = years.includes(this.year - 1);
     const nextYearExists = years.includes(this.year + 1);
 
-    // Prev:
-    // - innerhalb des Jahres (Monat > 1) immer erlaubt
-    // - bei Januar nur, wenn es einen Plan im Vorjahr gibt
     this.canGoPrev = this.month > 1 || (this.month === 1 && prevYearExists);
-
-    // Next:
-    // - innerhalb des Jahres (Monat < 12) immer erlaubt
-    // - bei Dezember nur, wenn es einen Plan im Folgejahr gibt
     this.canGoNext = this.month < 12 || (this.month === 12 && nextYearExists);
   }
 
-  // === Helpers ===
   private pad2(n: number): string { return String(n).padStart(2, '0'); }
   private monthKey(year: number, month: number): string { return `${year}-${this.pad2(month)}`; }
 
@@ -283,15 +258,11 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  /**
-   * Erzeugt alle Tage eines Monats.
-   * Wenn includeWeekends = false → nur Mo–Fr.
-   */
   private generateDaysForMonth(year: number, month: number, includeWeekends: boolean): Date[] {
     const days: Date[] = [];
     const d = new Date(year, month - 1, 1);
     while (d.getMonth() === month - 1) {
-      const dow = d.getDay(); // 0 So, 6 Sa
+      const dow = d.getDay();
       if (includeWeekends || (dow !== 0 && dow !== 6)) {
         days.push(new Date(d));
       }
@@ -312,27 +283,43 @@ export class PlanComponent implements OnInit {
     return dow === 0 || dow === 6;
   }
 
+  getHeaderClasses(day: Date): any {
+    return {
+      'holiday': this.isHoliday(day),
+      'weekend-header': this.isWeekend(day)
+    };
+  }
+
+  getCellClasses(employeeId: number, day: Date): any {
+    const type = this.getCellType(employeeId, day);
+    const classes: { [key: string]: boolean } = {
+      'cell': true,
+      'selected': this.isSelected(employeeId, day),
+      'weekend-col': this.isWeekend(day)
+    };
+    if (type) {
+      classes[`${type.toLowerCase()}-cell`] = true;
+    }
+    return classes;
+  }
+
   getCellType(employeeId: number, day: Date): string | null {
     const key = `${employeeId}-${this.toIso(day)}`;
     return this.entryMap.get(key)?.status || null;
   }
 
-  // === Auswahl ===
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
     event.preventDefault();
-    // Wochenenden bleiben nicht anklickbar
     if (this.isWeekend(day)) return;
 
     const newSelection: SelectedCell = { employeeId, day };
 
-    // Wenn bereits Auswahl existiert und anderer Mitarbeiter angeklickt wird:
     if (this.selectedCells.length > 0 && this.selectedCells[0].employeeId !== employeeId) {
       this.anchorCell = newSelection;
       this.selectedCells = [newSelection];
       return;
     }
 
-    // Ab hier: entweder keine Auswahl oder gleicher Mitarbeiter
     if (event.ctrlKey || event.metaKey) {
       this.anchorCell = newSelection;
       const index = this.selectedCells.findIndex(c => this.isSameCell(c, newSelection));
@@ -393,7 +380,6 @@ export class PlanComponent implements OnInit {
 
     const status = this.mapUiTypeToStatus(type);
 
-    // Auswahl zusammenfassen (inkl. employeeId & alle Tage)
     const summary = this.getSelectionSummary();
     if (!summary) {
       this.deselect();
@@ -444,7 +430,6 @@ export class PlanComponent implements OnInit {
             : `${affectedDays} Tag(e) gelöscht`;
         }
 
-        // Logging: immer wenn mindestens ein Tag betroffen ist
         const log$ = (this.planId && this.departmentId && affectedDays > 0)
           ? this.backend.createPlanLog({
             planId: this.planId!,
@@ -483,22 +468,6 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  // Zellen-Klassen inkl. Wochenende
-  getCellClasses(employeeId: number, day: Date): any {
-    const type = this.getCellType(employeeId, day);
-    const isWknd = this.isWeekend(day);
-    const isHol = this.isHoliday(day);
-
-    const classes: { [key: string]: boolean } = {
-      'cell': true,
-      'selected': this.isSelected(employeeId, day),
-      'weekend-col': isWknd,   // 👈 für Wochenendspalten
-      'holiday-col': isHol     // falls du Feiertage pro Zelle highlighten willst
-    };
-    if (type) classes[`${type.toLowerCase()}-cell`] = true;
-    return classes;
-  }
-
   getStatus(employeeId: number, day: Date): PlanEntryStatus | null {
     const key = `${employeeId}-${this.toIso(day)}`;
     const e: any = this.entryMap.get(key);
@@ -521,7 +490,6 @@ export class PlanComponent implements OnInit {
   }
 
   private dayKeyFromDate(d: Date): number {
-    // Normiert auf lokale Mitternacht des sichtbaren Datums
     const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     return Math.floor(local.getTime() / 86400000);
   }
@@ -603,14 +571,11 @@ export class PlanComponent implements OnInit {
     this.router.navigate(['/plan', nextYear, nextMonth]);
   }
 
-  // --- Wochenenden anzeigen / verstecken + Cookie-Persistenz ---
-
   toggleWeekends(): void {
     const newValue = !this.showWeekends;
     this.showWeekends = newValue;
     this.saveWeekendPreference();
 
-    // Tage für aktuellen Monat neu generieren
     this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
     this.deselect();
 

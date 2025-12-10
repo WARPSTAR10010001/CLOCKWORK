@@ -21,15 +21,10 @@
         <tr>
           <th class="sticky">Name</th>
           @for (day of daysForMonth; track day) {
-          <!-- FEIERTAG NUR HIER MARKIEREN -->
-          <th [ngClass]="{
-    holiday: isHoliday(day),
-    'weekend-col': isWeekend(day)
-  }">
+          <th [ngClass]="getHeaderClasses(day)">
             {{ day.getDate() }}<br>
             {{ weekdays[day.getDay()] }}
           </th>
-
           }
         </tr>
       </thead>

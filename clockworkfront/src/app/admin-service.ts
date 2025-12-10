@@ -1,3 +1,4 @@
+// src/app/admin-service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -20,6 +21,11 @@ export interface CreatedDepartment {
   initialPassword: string;
 }
 
+export interface DeleteDepartmentResponse {
+  success: boolean;
+  department: { id: number; name: string };
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private base = environment.apiBase;
@@ -27,10 +33,21 @@ export class AdminService {
   constructor(private http: HttpClient) {}
 
   createDepartment(payload: CreateDeptPayload): Observable<CreatedDepartment> {
-    return this.http.post<CreatedDepartment>(`${this.base}/admin/departments`, payload, { withCredentials: true });
+    return this.http.post<CreatedDepartment>(`${this.base}/admin/departments`, payload, {
+      withCredentials: true
+    });
   }
 
   listDepartments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/admin/departments`, { withCredentials: true });
+    return this.http.get<any[]>(`${this.base}/admin/departments`, {
+      withCredentials: true
+    });
+  }
+
+  deleteDepartment(id: number): Observable<DeleteDepartmentResponse> {
+    return this.http.delete<DeleteDepartmentResponse>(
+      `${this.base}/admin/departments/${id}`,
+      { withCredentials: true }
+    );
   }
 }

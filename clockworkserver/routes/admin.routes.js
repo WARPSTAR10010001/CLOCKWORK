@@ -1,3 +1,4 @@
+// src/routes/admin.routes.js (oder wo dein Admin-Router liegt)
 const express = require('express');
 const pool = require('../db');
 const bcrypt = require('bcrypt');
@@ -6,7 +7,6 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 const router = express.Router();
 const SALT_ROUNDS = 10;
 
-/** Hilfsfunktionen */
 function slugify(name) {
   return String(name)
     .normalize('NFKD')
@@ -27,7 +27,6 @@ async function nextFreeUsername(client, base) {
   }
 }
 
-// POST /api/admin/departments
 router.post(
   '/admin/departments',
   requireAuth,
@@ -44,7 +43,6 @@ router.post(
     try {
       await client.query('BEGIN');
 
-      // Department anlegen
       const depIns = await client.query(
         `INSERT INTO departments (name) VALUES ($1)
          ON CONFLICT (name) DO NOTHING
@@ -57,7 +55,6 @@ router.post(
       }
       const department = depIns.rows[0];
 
-      // Usernames vorbereiten
       const base = slugify(trimmed);
       const desiredUser = usernames?.user?.trim() || `user-${base}`;
       const desiredMod  = usernames?.mod?.trim()  || `mod-${base}`;
@@ -67,7 +64,6 @@ router.post(
 
       const hash = await bcrypt.hash('init', SALT_ROUNDS);
 
-      // USER anlegen
       const userIns = await client.query(
         `INSERT INTO system_users (username, password_hash, role, department_id, is_active)
          VALUES ($1, $2, 'USER', $3, true)
@@ -75,7 +71,6 @@ router.post(
         [userUsername, hash, department.id]
       );
 
-      // MOD anlegen
       const modIns = await client.query(
         `INSERT INTO system_users (username, password_hash, role, department_id, is_active)
          VALUES ($1, $2, 'MOD', $3, true)
@@ -99,10 +94,6 @@ router.post(
   }
 );
 
-/**
- * GET /api/admin/departments
- * Admin: Liste aller Departments inkl. Rollen-Usernames
- */
 router.get(
   '/admin/departments',
   requireAuth,
@@ -133,6 +124,81 @@ router.get(
 
       return res.json(Array.from(byDep.values()));
     } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Interner Serverfehler' });
+    } finally {
+      client.release();
+    }
+  }
+);
+
+router.delete(
+  '/admin/departments/:id',
+  requireAuth,
+  requireRole('ADMIN'),
+  async (req, res) => {
+    const depId = Number(req.params.id);
+    if (!Number.isInteger(depId) || depId <= 0) {
+      return res.status(400).json({ error: 'Ungültige Fachbereichs-ID' });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const dep = await client.query(
+        'SELECT id, name FROM departments WHERE id = $1',
+        [depId]
+      );
+      if (dep.rowCount === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'Fachbereich nicht gefunden' });
+      }
+      const department = dep.rows[0];
+
+      const empCheck = await client.query(
+        'SELECT 1 FROM employees WHERE department_id = $1 LIMIT 1',
+        [depId]
+      );
+      if (empCheck.rowCount > 0) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({
+          error:
+            'Der Fachbereich kann nicht gelöscht werden, da noch Mitarbeitende vorhanden sind.'
+        });
+      }
+
+      const planCheck = await client.query(
+        'SELECT 1 FROM plans WHERE department_id = $1 LIMIT 1',
+        [depId]
+      );
+      if (planCheck.rowCount > 0) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({
+          error:
+            'Der Fachbereich kann nicht gelöscht werden, da noch Dienstpläne vorhanden sind.'
+        });
+      }
+
+      await client.query(
+        `DELETE FROM system_users
+          WHERE department_id = $1`,
+        [depId]
+      );
+
+      const delDep = await client.query(
+        'DELETE FROM departments WHERE id = $1 RETURNING id, name',
+        [depId]
+      );
+
+      await client.query('COMMIT');
+
+      return res.json({
+        success: true,
+        department: delDep.rows[0]
+      });
+    } catch (err) {
+      try { await client.query('ROLLBACK'); } catch {}
       console.error(err);
       return res.status(500).json({ error: 'Interner Serverfehler' });
     } finally {

@@ -1,4 +1,3 @@
-// src/app/documentation/documentation.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -77,7 +76,6 @@ export class DocumentationComponent implements OnInit {
     });
   }
 
-  // 🔍 wird vom (input)-Event aufgerufen
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
     this.searchTerm = target?.value ?? '';
@@ -108,7 +106,7 @@ export class DocumentationComponent implements OnInit {
         ...(section.tags || []),
         page.title,
         ...(page.tags || []),
-        article.title   // 👈 nur noch Titel, keine article.tags mehr
+        article.title
       ].join(' ').toLowerCase();
 
       return haystack.includes(q);
@@ -120,12 +118,10 @@ export class DocumentationComponent implements OnInit {
     this.searchResults = [];
   }
 
-  // Wird aufgerufen, wenn ein Suchergebnis angeklickt wird
   onResultClick(): void {
     this.clearSearch();
   }
 
-  // 👉 true, sobald wir „aktiv“ suchen (ab 2 Zeichen)
   get isSearching(): boolean {
     return this.searchTerm.trim().length >= 2;
   }

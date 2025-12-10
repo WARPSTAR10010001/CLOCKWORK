@@ -1,4 +1,3 @@
-/* Header + Suche nebeneinander */
 .doc-header {
     display: flex;
     align-items: center;
@@ -8,7 +7,6 @@
     margin-bottom: 16px;
 }
 
-/* Suchbereich rechts vom Titel */
 .doc-search {
     flex: 1;
     display: flex;
@@ -16,18 +14,15 @@
     margin-top: -50px;
 }
 
-/* Suchfeld */
 .doc-search input {
     width: 100%;
     max-width: 650px;
     margin: 0;
 }
 
-/* Kacheln */
 .tile-grid {
     display: grid;
     gap: 20px;
-    /* ÄNDERUNG: Erzwingt exakt 2 Spalten (50/50) */
     grid-template-columns: repeat(2, 1fr);
 }
 
@@ -72,19 +67,17 @@
     font-size: 3em;
 }
 
-/* Breadcrumbs etwas kompakter */
 .breadcrumbs {
     margin-top: -20px;
     margin-bottom: 30px;
     font-size: 1.5em;
 }
 
-/* Page / Artikel */
 .doc-page {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 20px;
 }
 
 .doc-article h3 {
@@ -100,37 +93,48 @@ hr {
     margin: 0px 20px;
 }
 
-/* Suchergebnisse */
 .search-results {
+    border-radius: 10px;
     margin: 10px 0 20px;
+}
+
+:host-context(body.outlines) .search-results ul {
+    outline: 3px solid var(--olc);
 }
 
 .search-results ul {
     font-size: 2em;
+    border-radius: 10px;
 }
 
 .search-results li {
     list-style-position: inside;
+    width: 100%;
     font-size: 1.2em;
     padding: 10px;
     margin: 0 -30px;
     border-radius: 10px;
+}
+
+.search-results li a {
+    word-wrap: normal;
+    display: inline-block;
     transition: transform 0.2s ease-in-out;
 }
 
-.search-results li:hover {
+.search-results li:hover a {
     transform: translateX(10px);
 }
 
-:host-context(body.light) .search-results li:nth-last-child(even) {
+:host-context(body.light) .search-results li:nth-last-child(odd) {
     background-color: #f0f0f5;
 }
 
-:host-context(body.dim) .search-results li:nth-last-child(even) {
+:host-context(body.dim) .search-results li:nth-last-child(odd) {
     background-color: #252525;
 }
 
-:host-context(body.neon) .search-results li:nth-last-child(even) {
+:host-context(body.neon) .search-results li:nth-last-child(odd) {
     background-color: #0b002e;
 }
 

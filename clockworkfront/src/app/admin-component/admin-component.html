@@ -1,51 +1,82 @@
 <div class="comp-wrap">
-    <h1 class="emp page-header">Adminpanel</h1>
-    <h1 id="new" class="subtitle">Neuen Fachbereich erstellen</h1>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="form-row">
-            <label for="depName">Fachbereichsname:</label>
-            <input id="depName" type="text" formControlName="name" placeholder="z.B. IT, Finanzen">
-        </div>
+  <h1 class="emp page-header">Adminpanel</h1>
 
-        <details class="details">
-            <summary class="subtitle">Optionale Benutzernamen festlegen</summary>
-            <div id="optional">
-                <div class="form-row">
-                    <label for="userU">Username:</label>
-                    <input id="userU" type="text" formControlName="userUsername" placeholder="leer = auto (user-it)">
-                </div>
-                <div class="form-row">
-                    <label for="modU">Moderatorname:</label>
-                    <input id="modU" type="text" formControlName="modUsername" placeholder="leer = auto (mod-it)">
-                </div>
-                <p class="hint">Initiales Passwort für beide: init (muss bei Login geändert werden).</p>
-            </div>
-        </details>
-
-        <div class="button-row">
-            <button class="button-primary" type="submit" [disabled]="form.invalid || submitting">
-                Fachbereich & Nutzer anlegen
-            </button>
-        </div>
-    </form>
-
-    <hr>
-
-    <h1 class="subtitle">Bestehende Fachbereiche</h1>
-    <div class="dept-list">
-        @for (d of departments; track d.id) {
-        <div class="dept-card">
-            <div class="dept-title">{{ d.name }}</div>
-            <div class="dept-users">
-                @for (u of d.users; track u.id) {
-                <span class="tag">
-                    {{ u.role }}: {{ u.username }}
-                    ({{ u.last_login_at ? (u.last_login_at | date:'short') : 'noch nie eingeloggt' }})
-                </span>
-
-                }
-            </div>
-        </div>
-        }
+  <h1 id="new" class="subtitle">Neuen Fachbereich erstellen</h1>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-row">
+      <label for="depName">Fachbereichsname:</label>
+      <input
+        id="depName"
+        type="text"
+        formControlName="name"
+        placeholder="z.B. IT, Finanzen"
+      />
     </div>
+    <h1>Initiales Passwort für beide: init (muss bei Login geändert werden).</h1>
+
+    <details class="details">
+      <summary class="subtitle">Optionale Benutzernamen festlegen</summary>
+      <div id="optional">
+        <div class="form-row">
+          <label for="userU">Username:</label>
+          <input
+            id="userU"
+            type="text"
+            formControlName="userUsername"
+            placeholder="leer = auto (user-it)"
+          />
+        </div>
+        <div class="form-row">
+          <label for="modU">Moderatorname:</label>
+          <input
+            id="modU"
+            type="text"
+            formControlName="modUsername"
+            placeholder="leer = auto (mod-it)"
+          />
+        </div>
+      </div>
+    </details>
+
+    <div class="button-row">
+      <button
+        class="button-primary"
+        type="submit"
+        [disabled]="form.invalid || submitting"
+      >
+        Fachbereich &amp; Nutzer anlegen
+      </button>
+    </div>
+  </form>
+
+  <hr />
+
+  <h1 class="subtitle">Bestehende Fachbereiche</h1>
+  <div class="dept-list">
+    @for (d of departments; track d.id) {
+      <div class="dept-card">
+        <div class="dept-title">{{ d.name }}</div>
+
+        <div class="dept-users">
+          @for (u of d.users; track u.id) {
+            <span class="tag">
+              {{ u.role }}: {{ u.username }}
+              ({{ u.last_login_at ? (u.last_login_at | date : 'short') : 'noch nie eingeloggt' }})
+            </span>
+          }
+        </div>
+
+        <!-- Aktionen pro Fachbereich -->
+        <div class="dept-actions">
+          <button
+            type="button"
+            class="button-action"
+            (click)="deleteDepartment(d)"
+          >
+            Fachbereich löschen
+          </button>
+        </div>
+      </div>
+    }
+  </div>
 </div>
