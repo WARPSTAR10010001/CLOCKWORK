@@ -34,7 +34,7 @@
           <td class="sticky">{{ employee.name }}</td>
 
           @for (day of daysForMonth; track day) {
-          <td (click)="selectCell(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
+          <td (click)="selectCell(employee.id, day, $event)" (dblclick)="editNote(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
             [attr.data-status]="getStatus(employee.id, day)">
             {{ statusLabel(getStatus(employee.id, day)) }}
           </td>

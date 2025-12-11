@@ -309,6 +309,12 @@ export class PlanComponent implements OnInit {
     return this.entryMap.get(key)?.status || null;
   }
 
+  /** Hilfsfunktion: Entry zu einer Zelle holen */
+  private getEntry(employeeId: number, day: Date): PlanEntry | undefined {
+    const key = `${employeeId}-${this.toIso(day)}`;
+    return this.entryMap.get(key);
+  }
+
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
     event.preventDefault();
     if (this.isWeekend(day)) return;
@@ -340,7 +346,7 @@ export class PlanComponent implements OnInit {
   private getCellsInRange(start: SelectedCell, end: SelectedCell): SelectedCell[] {
     if (start.employeeId !== end.employeeId) return [end];
     const employeeId = start.employeeId;
-    const allDaysInView = this.daysForMonth; // kann jetzt auch WE enthalten
+    const allDaysInView = this.daysForMonth;
     const startIndex = allDaysInView.findIndex(d => d.getTime() === start.day.getTime());
     const endIndex = allDaysInView.findIndex(d => d.getTime() === end.day.getTime());
     if (startIndex === -1 || endIndex === -1) return [];
@@ -361,7 +367,6 @@ export class PlanComponent implements OnInit {
     this.anchorCell = null;
   }
 
-  // === Aktionen ===
   private mapUiTypeToStatus(type: string): PlanEntryStatus | null {
     switch ((type || '').trim().toUpperCase()) {
       case 'U': return 'VACATION';
@@ -425,12 +430,6 @@ export class PlanComponent implements OnInit {
 
     forkJoin(calls).pipe(
       switchMap(() => {
-        if (affectedDays > 0) {
-          const actionText = status
-            ? `Aktion "${this.statusLabel(status)}" auf ${affectedDays} Tag(e) gesetzt`
-            : `${affectedDays} Tag(e) gelöscht`;
-        }
-
         const log$ = (this.planId && this.departmentId && affectedDays > 0)
           ? this.log.createPlanLog({
             planId: this.planId!,
@@ -493,6 +492,23 @@ export class PlanComponent implements OnInit {
   private dayKeyFromDate(d: Date): number {
     const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     return Math.floor(local.getTime() / 86400000);
+  }
+
+  editNote(employeeId: number, day: Date, event: MouseEvent): void {
+    event.preventDefault();
+
+    if (this.isWeekend(day)) return;
+
+    const entry = this.getEntry(employeeId, day);
+    if (!entry) return;
+
+    const note = entry.notes ?? '';
+
+    this.overlay.openPlanNote(note, {
+      entryId: entry.id,
+      employeeId,
+      date: this.toIso(day)
+    });
   }
 
   @HostListener('document:keydown.u', ['$event'])
@@ -598,7 +614,7 @@ export class PlanComponent implements OnInit {
   private saveWeekendPreference(): void {
     if (typeof document === 'undefined') return;
     const value = this.showWeekends ? '1' : '0';
-    const maxAge = 60 * 60 * 24 * 365; // 1 Jahr
+    const maxAge = 60 * 60 * 24 * 365;
     document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 }

@@ -25,18 +25,18 @@ export class OverlayComponent implements OnInit {
   selectedColor: Color = 'standard';
   selectedMaterial: Material = 'solid';
 
-  // ---- Password reset UI
   pw1 = '';
   pw2 = '';
   submitting = false;
   passwordResetRequired = false;
 
-  // ---- Feedback UI
   feedbackCategory: FeedbackCategory | '' = '';
   feedbackContent = '';
   sendingFeedback = false;
   readonly FEEDBACK_MAX = 750;
   appVersion = this.versionService.getVersion();
+
+  noteText = "";
 
   private banned = new Set([
     '12345', '01234', 'passwort', 'kennwort', 'organist',
@@ -47,7 +47,6 @@ export class OverlayComponent implements OnInit {
   ]);
 
   ngOnInit() {
-    // Theme streams
     this.selectedTheme = this.themeService.getTheme();
     this.selectedOutline = this.themeService.getOutline();
     this.selectedColor = this.themeService.getColor();
@@ -57,7 +56,6 @@ export class OverlayComponent implements OnInit {
     this.themeService.currentColor$.subscribe(v => this.selectedColor = v);
     this.themeService.currentMaterial$.subscribe(v => this.selectedMaterial = v);
 
-    // Auth -> Reset hat Vorrang
     this.auth.authStatus$.subscribe(status => {
       const mustReset = !!status?.user?.passwordReset;
       this.passwordResetRequired = mustReset;
@@ -69,25 +67,39 @@ export class OverlayComponent implements OnInit {
       }
     });
 
-    // Normale Overlays nur, wenn kein Reset erzwungen wird
     this.overlayService.overlay$.subscribe(state => {
       if (this.passwordResetRequired) {
         this.overlayState = { show: true, type: 'passwordReset' };
       } else {
         this.overlayState = state;
         this.renderer.setStyle(document.body, 'overflow', state.show ? 'hidden' : '');
-        // Feedback-Felder leeren beim Öffnen/Schließen
+
+        if (state.type === 'planNote' || state.type === 'planNoteEdit') {
+          this.noteText = state.note ?? '';
+        }
+
         if (!state.show || state.type !== 'feedback') {
           this.resetFeedbackFields(false);
         }
       }
     });
 
-    // Server-Status beim Start ziehen (stellt passwordReset-Flag sicher)
     this.auth.refreshStatus().pipe(take(1)).subscribe();
   }
 
-  // ===== Password-Reset =====
+  onNoteInput(ev: Event) {
+    const val = (ev.target as HTMLInputElement)?.value ?? '';
+    this.noteText = val;
+  }
+
+  openNoteEdit() {
+    this.overlayService.openPlanNoteEdit(this.noteText);
+  }
+
+  backToNoteView() {
+    this.overlayService.openPlanNote(this.noteText);
+  }
+
   get pwMinLenOk(): boolean { return this.pw1.trim().length >= 5; }
   get pwNotBanned(): boolean { return !this.banned.has(this.pw1.trim().toLowerCase()); }
   get pwMatch(): boolean { return this.pw1 === this.pw2 && this.pw2.length > 0; }
@@ -116,7 +128,6 @@ export class OverlayComponent implements OnInit {
     });
   }
 
-  // ===== Generic Overlay Controls =====
   close() {
     if (this.passwordResetRequired || this.overlayState.type === 'passwordReset') return;
     this.overlayService.hideOverlay();
@@ -129,26 +140,11 @@ export class OverlayComponent implements OnInit {
     }
   }
 
-  // Ctrl+Enter sendet Feedback (wenn Feedback-Overlay offen)
-  @HostListener('document:keydown', ['$event'])
-  onGlobalKeydown(ev: KeyboardEvent) {
-    if (
-      this.overlayState.show &&
-      this.overlayState.type === 'feedback' &&
-      (ev.ctrlKey || ev.metaKey) &&
-      ev.key.toLowerCase() === 'enter'
-    ) {
-      ev.preventDefault();
-      this.sendFeedback();
-    }
-  }
-
   changeTheme(theme: Theme) { this.themeService.setTheme(theme); }
   changeOutline(outline: Outline) { this.themeService.setOutline(outline); }
   changeColor(color: Color) { this.themeService.setColor(color); }
   changeMaterial(material: Material) { this.themeService.setMaterial(material); }
 
-  // ===== Feedback =====
   get remainingFeedbackChars(): number {
     return this.FEEDBACK_MAX - this.feedbackContent.length;
   }
@@ -168,7 +164,6 @@ export class OverlayComponent implements OnInit {
 
   onFeedbackContentInput(ev: Event) {
     const val = (ev.target as HTMLTextAreaElement)?.value ?? '';
-    // weiches Limit clientseitig
     this.feedbackContent = val.length > this.FEEDBACK_MAX ? val.slice(0, this.FEEDBACK_MAX) : val;
   }
 

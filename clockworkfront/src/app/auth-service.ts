@@ -31,11 +31,9 @@ export class AuthService {
     private overlay: OverlayService
   ) {
     this.restoreSession();
-    // only pings server; if no token → 401 caught → no overlay lock
     this.ensurePasswordResetGate();
   }
 
-  // ---------- helpers ----------
   private decodeJwt(token: string): any | null {
     try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); }
     catch { return null; }
@@ -72,7 +70,6 @@ export class AuthService {
     this.authStatusSubject.next({ loggedIn: !!user, user, exp: dec.exp ?? null });
   }
 
-  // ---------- server status (uses Bearer via interceptor if token exists) ----------
   private fetchServerStatus(): Observable<{ loggedIn: boolean; user: any | null }> {
     return this.http.get<{ loggedIn: boolean; user: any | null }>(`${this.baseUrl}/auth/status`)
       .pipe(catchError(() => of({ loggedIn: false, user: null })));
@@ -98,6 +95,7 @@ export class AuthService {
       map(() => this.authStatusSubject.value)
     );
   }
+
   ensurePasswordResetGate(): void {
     this.fetchServerStatus().pipe(take(1)).subscribe((srv) => {
       if (srv.loggedIn && srv.user?.passwordReset) {
@@ -110,10 +108,8 @@ export class AuthService {
     });
   }
 
-  // ---------- public API ----------
   checkStatus(): Observable<AuthStatus> { return of(this.authStatusSubject.value); }
 
-  // EXACT endpoint: http://localhost:4000/api/auth/login
   login(username: string, password: string): Observable<AuthStatus> {
     return this.http.post<{ token: string; user?: { passwordReset?: boolean } }>(
       `${this.baseUrl}/auth/login`,
@@ -121,7 +117,6 @@ export class AuthService {
     ).pipe(
       tap((res) => {
         this.setSession(res.token, username);
-        // get passwordReset flag from server
         this.refreshStatus().pipe(take(1)).subscribe((st) => {
           const mustReset = !!st.user?.passwordReset;
           if (mustReset) {

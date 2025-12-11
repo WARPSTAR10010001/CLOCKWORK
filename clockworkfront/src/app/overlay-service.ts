@@ -9,12 +9,15 @@ export type OverlayType =
   | 'error'
   | 'success'
   | 'confirm'
-  | 'info';
+  | 'info'
+  | 'planNote'
+  | 'planNoteEdit';
 
 export interface OverlayState {
   show: boolean;
   type: OverlayType;
   message?: string;
+  note?: string | null;
   payload?: any;
 }
 
@@ -23,47 +26,78 @@ export class OverlayService {
   private stateSubject = new BehaviorSubject<OverlayState>({ show: false, type: 'info' });
   public overlay$ = this.stateSubject.asObservable();
 
-  /** Wenn gesetzt, blockiert dieser Lock alle anderen Overlays. */
   private hardLock: OverlayType | null = null;
 
-  /** Standard: Overlay anzeigen (respektiert Lock). */
-  showOverlay(type: OverlayType, message?: string, payload?: any) {
-    // Wenn Password-Reset aktiv ist, ALLES außer passwordReset ignorieren
+  /**
+   * Allgemeines Overlay anzeigen.
+   * - type: Art des Overlays
+   * - message: optionale Nachricht
+   * - payload: beliebige Zusatzdaten
+   * - extra: weitere optionale Felder aus OverlayState (z.B. note)
+   */
+  showOverlay(
+    type: OverlayType,
+    message?: string,
+    payload?: any,
+    extra?: Partial<OverlayState>
+  ) {
     if (this.hardLock === 'passwordReset' && type !== 'passwordReset') return;
 
-    this.stateSubject.next({ show: true, type, message, payload });
+    this.stateSubject.next({
+      show: true,
+      type,
+      message,
+      payload,
+      ...(extra || {})
+    });
   }
 
-  /** Standard: Overlay schließen (respektiert Lock). */
   hideOverlay() {
-    if (this.hardLock === 'passwordReset') return; // Hard-Lock: nicht schließbar
+    if (this.hardLock === 'passwordReset') return;
     const cur = this.stateSubject.value;
     this.stateSubject.next({ ...cur, show: false });
   }
 
-  /** Password-Reset hart aktivieren. */
   lockToPasswordReset(message?: string) {
     this.hardLock = 'passwordReset';
     this.stateSubject.next({ show: true, type: 'passwordReset', message });
   }
 
-  /** Password-Reset wieder freigeben (z. B. nach erfolgreichem Reset). */
   unlockPasswordReset() {
     if (this.hardLock === 'passwordReset') {
       this.hardLock = null;
-      // nach Freigabe keine forcierte Anzeige – Komponente kann selbst schließen:
       const cur = this.stateSubject.value;
       this.stateSubject.next({ ...cur, show: false });
     }
   }
 
-  /** Für Debug / externe Prüfer: */
   get current(): OverlayState {
     return this.stateSubject.value;
   }
 
-  /** Ob aktuell ein harter Lock aktiv ist. */
   get isLocked(): boolean {
     return this.hardLock !== null;
+  }
+
+  /** Spezieller Helper: Nur Anzeige der Plan-Notiz */
+  openPlanNote(note: string | null, payload?: any) {
+    if (this.hardLock === 'passwordReset') return;
+    this.stateSubject.next({
+      show: true,
+      type: 'planNote',
+      note: note ?? '',
+      payload
+    });
+  }
+
+  /** Spezieller Helper: Notiz im Edit-Mode */
+  openPlanNoteEdit(note: string | null, payload?: any) {
+    if (this.hardLock === 'passwordReset') return;
+    this.stateSubject.next({
+      show: true,
+      type: 'planNoteEdit',
+      note: note ?? '',
+      payload
+    });
   }
 }

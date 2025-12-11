@@ -11,7 +11,6 @@ export class ImpersonationService {
 
   constructor(private auth: AuthService) {}
 
-  /** Admin: setzt aktiven Fachbereich; Nicht-Admin: ignorieren */
   setDepartmentId(id: number | null) {
     if (id && Number.isFinite(id)) {
       sessionStorage.setItem(KEY, String(id));
@@ -22,14 +21,12 @@ export class ImpersonationService {
     }
   }
 
-  /** Effektive Department-ID: Impersonation (falls gesetzt) sonst aus JWT */
   getEffectiveDepartmentId(): number | null {
     const imp = this.deptIdSubject.value;
     if (imp != null) return imp;
     return this.auth.isLoggedIn() ? (this.auth['authStatusSubject'].value.user?.departmentId ?? null) : null;
   }
 
-  /** Wird z.B. nach Logout aufgerufen */
   clear() {
     sessionStorage.removeItem(KEY);
     this.deptIdSubject.next(null);

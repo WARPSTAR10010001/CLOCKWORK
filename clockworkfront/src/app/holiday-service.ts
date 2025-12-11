@@ -1,4 +1,3 @@
-// src/app/holiday-service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -7,25 +6,21 @@ import { environment } from '../environments/environment';
 
 export interface HolidayDTO {
   id: number;
-  date: string; // "YYYY-MM-DD" oder "YYYY-MM-DDTHH:mm:ss.sssZ"
+  date: string;
   name: string;
   year: number;
 }
 
-// WICHTIG: nicht mehr einfach slice(0,10),
-// sondern als Date parsen und lokale Y/M/D verwenden.
 function dayKeyLocalFromDateString(s: string): number {
   const d = new Date(s);
 
   if (isNaN(d.getTime())) {
-    // Fallback, falls doch mal "YYYY-MM-DD" ohne Zeitkram kommt
     const ymd = s.slice(0, 10);
     const [y, m, day] = ymd.split('-').map(n => parseInt(n, 10));
     const local = new Date(y, m - 1, day);
     return Math.floor(local.getTime() / 86400000);
   }
 
-  // lokale Darstellung des Datums verwenden
   const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   return Math.floor(local.getTime() / 86400000);
 }

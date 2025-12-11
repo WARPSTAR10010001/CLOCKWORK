@@ -73,7 +73,8 @@
   } @else if (overlayState.type === "passwordReset") {
   <div id="passwordReset-overlay">
     <h1 class="emp page-header">Passwort ändern</h1>
-    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich mit Ihrer aktuellen Berechtigungsstufe. Bitte sprechen Sie sich
+    <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich mit Ihrer aktuellen Berechtigungsstufe. Bitte
+      sprechen Sie sich
       mit Ihren Kollegen ab um gemeinsam ein sicheres Passwort festzulegen.</h1>
     <input type="text" placeholder="Neues Passwort eingeben" [value]="pw1" (input)="onPwInput(1, $event)" />
 
@@ -90,6 +91,42 @@
         Passwort speichern
       </a>
       <a class="button-action" (click)="this.auth.logout()">Abmelden</a>
+    </div>
+  </div>
+  } @else if (overlayState.type === "planNoteEdit") {
+  <div id="planNoteEdit-overlay">
+    <h1 class="emp page-header">Beschreibung bearbeiten</h1>
+
+    <input type="text" [value]="noteText" (input)="onNoteInput($event)" placeholder="Beschreibung (optional)" />
+
+    <div class="button-row">
+      <!-- Hier später: speichern ans Backend -->
+      <a class="button-primary" (click)="backToNoteView()">
+        Übernehmen & anzeigen
+      </a>
+      <a class="button-action" (click)="close()">
+        Schließen
+      </a>
+    </div>
+  </div>
+
+  } @else if (overlayState.type === "planNote") {
+  <div id="planNote">
+    <h1 class="emp page-header">Beschreibung</h1>
+
+    @if (noteText) {
+    <p>{{ noteText }}</p>
+    } @else {
+    <p class="hint">Für diesen Eintrag wurde noch keine Beschreibung hinterlegt.</p>
+    }
+
+    <div class="button-row">
+      <a class="button-primary" (click)="openNoteEdit()">
+        Beschreibung bearbeiten
+      </a>
+      <a class="button-action" (click)="close()">
+        Schließen
+      </a>
     </div>
   </div>
   } @else if (overlayState.type === "quickAction") {
