@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export type OverlayType =
   | 'style'
@@ -26,15 +26,11 @@ export class OverlayService {
   private stateSubject = new BehaviorSubject<OverlayState>({ show: false, type: 'info' });
   public overlay$ = this.stateSubject.asObservable();
 
+  private noteChangedSubject = new Subject<void>();
+  public noteChanged$ = this.noteChangedSubject.asObservable();
+
   private hardLock: OverlayType | null = null;
 
-  /**
-   * Allgemeines Overlay anzeigen.
-   * - type: Art des Overlays
-   * - message: optionale Nachricht
-   * - payload: beliebige Zusatzdaten
-   * - extra: weitere optionale Felder aus OverlayState (z.B. note)
-   */
   showOverlay(
     type: OverlayType,
     message?: string,
@@ -79,7 +75,6 @@ export class OverlayService {
     return this.hardLock !== null;
   }
 
-  /** Spezieller Helper: Nur Anzeige der Plan-Notiz */
   openPlanNote(note: string | null, payload?: any) {
     if (this.hardLock === 'passwordReset') return;
     this.stateSubject.next({
@@ -90,7 +85,6 @@ export class OverlayService {
     });
   }
 
-  /** Spezieller Helper: Notiz im Edit-Mode */
   openPlanNoteEdit(note: string | null, payload?: any) {
     if (this.hardLock === 'passwordReset') return;
     this.stateSubject.next({
@@ -99,5 +93,9 @@ export class OverlayService {
       note: note ?? '',
       payload
     });
+  }
+
+  emitNoteChanged() {
+    this.noteChangedSubject.next();
   }
 }

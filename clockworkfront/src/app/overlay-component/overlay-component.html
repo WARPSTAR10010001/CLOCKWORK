@@ -95,35 +95,37 @@
   </div>
   } @else if (overlayState.type === "planNoteEdit") {
   <div id="planNoteEdit-overlay">
-    <h1 class="emp page-header">Beschreibung bearbeiten</h1>
-
-    <input type="text" [value]="noteText" (input)="onNoteInput($event)" placeholder="Beschreibung (optional)" />
-
+    <h1 class="emp page-header">Notiz bearbeiten</h1>
+    <textarea [value]="noteText" (input)="onNoteInput($event)" placeholder="Notiz hinzufügen (optional)"></textarea>
     <div class="button-row">
-      <!-- Hier später: speichern ans Backend -->
-      <a class="button-primary" (click)="backToNoteView()">
-        Übernehmen & anzeigen
+      <a class="button-primary" (click)="saveNote()">
+        Speichern
       </a>
       <a class="button-action" (click)="close()">
         Schließen
       </a>
     </div>
   </div>
-
   } @else if (overlayState.type === "planNote") {
-  <div id="planNote">
-    <h1 class="emp page-header">Beschreibung</h1>
+  <div id="planNote-overlay">
+    <h1 class="emp page-header">Notiz</h1>
 
     @if (noteText) {
-    <p>{{ noteText }}</p>
+    <h1>{{ noteText }}</h1>
     } @else {
-    <p class="hint">Für diesen Eintrag wurde noch keine Beschreibung hinterlegt.</p>
+    <h1>Für diesen Eintrag wurde keine Notiz hinterlegt.</h1>
     }
 
     <div class="button-row">
+      @if (noteText) {
       <a class="button-primary" (click)="openNoteEdit()">
-        Beschreibung bearbeiten
+        Notiz bearbeiten
       </a>
+      } @else {
+      <a class="button-primary" (click)="openNoteEdit()">
+        Notiz hinzufügen
+      </a>
+      }
       <a class="button-action" (click)="close()">
         Schließen
       </a>

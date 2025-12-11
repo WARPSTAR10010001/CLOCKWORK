@@ -1,8 +1,7 @@
 <div class="comp-wrap">
-  @if (planId !== null) {
   <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back" class="hidden-link"
       [routerLink]="['/plan', year]">{{ year }}</a></h1>
-
+  @if (planId !== null) {
   <div id="entry-buttons">
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
     <a class="button-primary h" (click)="setEntry('H')">alt. Telearbeit (H)</a>
@@ -32,10 +31,12 @@
         @for (employee of employees; track employee.id) {
         <tr>
           <td class="sticky">{{ employee.name }}</td>
-
           @for (day of daysForMonth; track day) {
-          <td (click)="selectCell(employee.id, day, $event)" (dblclick)="editNote(employee.id, day, $event)" [ngClass]="getCellClasses(employee.id, day)"
-            [attr.data-status]="getStatus(employee.id, day)">
+          <td (click)="selectCell(employee.id, day, $event)" (dblclick)="editNote(employee.id, day, $event)"
+            [ngClass]="getCellClasses(employee.id, day)" [attr.data-status]="getStatus(employee.id, day)">
+            @if (hasNote(employee.id, day)) {
+            <span class="note-indicator"></span>
+            }
             {{ statusLabel(getStatus(employee.id, day)) }}
           </td>
           }
@@ -73,6 +74,6 @@
 
 <div class="comp-wrap">
   @if (planId === null) {
-  <h1>Lade Dienstplan...</h1>
+  <h1 class="page-header">Lade Dienstplan...</h1>
   }
 </div>

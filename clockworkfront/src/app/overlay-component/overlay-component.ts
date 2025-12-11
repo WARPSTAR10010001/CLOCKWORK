@@ -5,11 +5,12 @@ import { AuthService } from '../auth-service';
 import { take } from 'rxjs/operators';
 import { FeedbackService, FeedbackCategory } from '../feedback-service';
 import { VersionService } from '../version-service';
+import { PlanService } from '../plan-service';
 
 @Component({
   selector: 'app-overlay-component',
   templateUrl: './overlay-component.html',
-  styleUrls: ['./overlay-component.css'],
+  styleUrl: './overlay-component.css',
 })
 export class OverlayComponent implements OnInit {
   private overlayService = inject(OverlayService);
@@ -18,6 +19,7 @@ export class OverlayComponent implements OnInit {
   public auth = inject(AuthService);
   private feedbackService = inject(FeedbackService);
   private versionService = inject(VersionService);
+  private planService = inject(PlanService);
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
@@ -93,11 +95,34 @@ export class OverlayComponent implements OnInit {
   }
 
   openNoteEdit() {
-    this.overlayService.openPlanNoteEdit(this.noteText);
+    this.overlayService.openPlanNoteEdit(
+      this.noteText,
+      this.overlayState.payload
+    );
   }
 
-  backToNoteView() {
-    this.overlayService.openPlanNote(this.noteText);
+  saveNote() {
+    const payload = this.overlayState.payload;
+    const entryId = payload?.entryId;
+
+    if (!entryId) {
+      this.overlayService.openPlanNote(this.noteText, payload);
+      return;
+    }
+
+    this.planService.updateEntry(entryId, { notes: this.noteText || null })
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.overlayService.emitNoteChanged();
+
+          this.overlayService.openPlanNote(this.noteText, payload);
+        },
+        error: (err) => {
+          const msg = err?.error?.error || 'Die Beschreibung konnte nicht gespeichert werden.';
+          this.overlayService.showOverlay('error', msg);
+        }
+      });
   }
 
   get pwMinLenOk(): boolean { return this.pw1.trim().length >= 5; }

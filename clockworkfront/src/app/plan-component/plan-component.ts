@@ -66,6 +66,11 @@ export class PlanComponent implements OnInit {
   ngOnInit(): void {
     this.showWeekends = this.loadWeekendPreference();
 
+    this.overlay.noteChanged$
+      .subscribe(() => {
+        this.reloadCurrentMonth();
+      });
+
     this.activatedRoute.paramMap.subscribe(params => {
       this.year = Number(params.get('year'));
       this.month = Number(params.get('month'));
@@ -103,6 +108,19 @@ export class PlanComponent implements OnInit {
       dayCount: uniqueIso.length,
       dates: uniqueIso
     };
+  }
+
+  reloadCurrentMonth() {
+    if (!this.planId) return;
+
+    const monthKey = this.monthKey(this.year, this.month);
+
+    this.plan.getPlanEntriesForMonth(this.planId, monthKey)
+      .pipe(take(1))
+      .subscribe(res => {
+        this.monthEntries = res.entries;
+        this.buildEntryMap();
+      });
   }
 
   private loadHolidays(year: number): void {
@@ -309,10 +327,14 @@ export class PlanComponent implements OnInit {
     return this.entryMap.get(key)?.status || null;
   }
 
-  /** Hilfsfunktion: Entry zu einer Zelle holen */
   private getEntry(employeeId: number, day: Date): PlanEntry | undefined {
     const key = `${employeeId}-${this.toIso(day)}`;
     return this.entryMap.get(key);
+  }
+
+  hasNote(employeeId: number, day: Date): boolean {
+    const entry = this.getEntry(employeeId, day);
+    return !!entry && !!entry.notes && entry.notes.trim().length > 0;
   }
 
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
@@ -498,62 +520,100 @@ export class PlanComponent implements OnInit {
     event.preventDefault();
 
     if (this.isWeekend(day)) return;
+    if (!this.planId) return;
 
-    const entry = this.getEntry(employeeId, day);
-    if (!entry) return;
+    const isoDate = this.toIso(day);
+    const monthKey = this.monthKey(this.year, this.month);
 
-    const note = entry.notes ?? '';
+    this.plan.getPlanEntriesForMonth(this.planId, monthKey)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          const entry = (res.entries || []).find(e =>
+            e.employee_id === employeeId &&
+            String(e.entry_date).slice(0, 10) === isoDate
+          );
 
-    this.overlay.openPlanNote(note, {
-      entryId: entry.id,
-      employeeId,
-      date: this.toIso(day)
-    });
+          if (!entry) {
+            return;
+          }
+
+          const note = entry.notes ?? null;
+
+          this.overlay.openPlanNote(note, {
+            entryId: entry.id,
+            employeeId,
+            date: isoDate
+          });
+        },
+        error: (err) => {
+          console.error('Fehler beim Laden der Notiz:', err);
+          this.overlay.showOverlay('error', 'Die Beschreibung konnte nicht geladen werden.');
+        }
+      });
   }
 
   @HostListener('document:keydown.u', ['$event'])
   onUHandler(event: Event) {
-    this.setEntry('U');
+    if (!this.overlay.current.show) {
+      this.setEntry('U');
+    }
   }
 
   @HostListener('document:keydown.k', ['$event'])
   onKHandler(event: Event) {
-    this.setEntry('K');
+    if (!this.overlay.current.show) {
+      this.setEntry('K');
+    }
   }
 
   @HostListener('document:keydown.h', ['$event'])
   onHHandler(event: Event) {
-    this.setEntry('H');
+    if (!this.overlay.current.show) {
+      this.setEntry('H');
+    }
   }
 
   @HostListener('document:keydown.l', ['$event'])
   onLHandler(event: Event) {
-    this.setEntry('L');
+    if (!this.overlay.current.show) {
+      this.setEntry('L');
+    }
   }
 
   @HostListener('document:keydown.g', ['$event'])
   onGHandler(event: Event) {
-    this.setEntry('G');
+    if (!this.overlay.current.show) {
+      this.setEntry('G');
+    }
   }
 
   @HostListener('document:keydown.t', ['$event'])
   onTHandler(event: Event) {
-    this.setEntry('T');
+    if (!this.overlay.current.show) {
+      this.setEntry('T');
+    }
   }
 
   @HostListener('document:keydown.o', ['$event'])
   onOHandler(event: Event) {
-    this.setEntry('O');
+    if (!this.overlay.current.show) {
+      this.setEntry('O');
+    }
   }
 
   @HostListener('document:keydown.delete', ['$event'])
   onDelHandler(event: Event) {
-    this.setEntry('');
+    if (!this.overlay.current.show) {
+      this.setEntry('');
+    }
   }
 
   @HostListener('document:keydown.escape', ['$event'])
   onEscHandler(event: Event) {
-    this.deselect();
+    if (!this.overlay.current.show) {
+      this.deselect();
+    }
   }
 
   loadNextPlan(): void {

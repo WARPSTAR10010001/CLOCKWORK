@@ -102,7 +102,6 @@ router.get('/plans/:planId/logs', requireAuth, async (req, res) => {
 
   const mStr = String(month).padStart(2, '0');
   const monthStart = `${year}-${mStr}-01`;
-  // JS: new Date(year, month, 0) => letzter Tag des Monats "month"
   const lastDay = new Date(year, month, 0).getDate();
   const monthEnd = `${year}-${mStr}-${String(lastDay).padStart(2, '0')}`;
 

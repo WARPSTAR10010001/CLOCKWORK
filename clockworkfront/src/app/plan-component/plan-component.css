@@ -380,3 +380,18 @@ thead th.holiday {
     background-color: var(--tc) !important;
     color: var(--bgc) !important;
 }
+
+.plan-table td {
+  position: relative;
+}
+
+.note-indicator {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--tc);
+  pointer-events: none;
+}

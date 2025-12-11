@@ -1,11 +1,8 @@
-// routes/employees.routes.js
 const express = require('express');
 const pool = require('../db');
 const { requireAuth, requireRole, enforceDepartmentScope } = require('../middleware/auth');
 
 const router = express.Router();
-
-// --- Helpers -------------------------------------------------------------
 
 function isValidYmd(s) {
   return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -20,8 +17,6 @@ function toYmdLocal(d) {
   return `${y}-${m}-${day}`;
 }
 
-// --- POST /api/employees -------------------------------------------------
-// Body: { departmentId, displayName, startMonth (YYYY-MM-DD), endMonth?, annualLeaveDays?, carryoverDays? }
 router.post(
   '/employees',
   requireAuth,
@@ -82,8 +77,6 @@ router.post(
   }
 );
 
-// --- GET /api/employees --------------------------------------------------
-// ?departmentId=…  (Admin darf alle, MOD nur eigenen FB)
 router.get('/employees', requireAuth, async (req, res) => {
   let { departmentId } = req.query || {};
 
@@ -114,7 +107,7 @@ router.get('/employees', requireAuth, async (req, res) => {
       id: r.id,
       department_id: r.department_id,
       name: r.display_name,
-      start_month: toYmdLocal(r.start_month), // 👈 exakte YMD-Strings
+      start_month: toYmdLocal(r.start_month),
       end_month: toYmdLocal(r.end_month),
       annual_leave_days: r.annual_leave_days,
       carryover_days: r.carryover_days,
@@ -128,8 +121,6 @@ router.get('/employees', requireAuth, async (req, res) => {
   }
 });
 
-// --- PATCH /api/employees/:id -------------------------------------------
-// Body: { displayName?, startMonth?, endMonth?, annualLeaveDays?, carryoverDays? }
 router.patch(
   '/employees/:id',
   requireAuth,
@@ -216,7 +207,6 @@ router.patch(
   }
 );
 
-// --- DELETE /api/employees/:id ------------------------------------------
 router.delete(
   '/employees/:id',
   requireAuth,

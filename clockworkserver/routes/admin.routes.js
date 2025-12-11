@@ -1,4 +1,3 @@
-// src/routes/admin.routes.js (oder wo dein Admin-Router liegt)
 const express = require('express');
 const pool = require('../db');
 const bcrypt = require('bcrypt');

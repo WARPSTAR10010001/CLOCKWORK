@@ -12,13 +12,11 @@ function jwtCookieOptions() {
     httpOnly: true,
     sameSite: 'lax',
     secure: !!(process.env.COOKIE_SECURE === 'true'),
-    maxAge: 1000 * 60 * 60 * 12, // 12h
+    maxAge: 1000 * 60 * 60 * 12,
     path: '/',
   };
 }
 
-// POST /api/auth/login
-// POST /api/auth/login
 router.post('/auth/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -42,7 +40,6 @@ router.post('/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Falscher Nutzername oder Passwort' });
     }
 
-    // === letzten Loginzeitpunkt setzen ===
     const now = new Date();
     await pool.query(
       `UPDATE system_users
@@ -75,13 +72,11 @@ router.post('/auth/login', async (req, res) => {
   }
 });
 
-// POST /api/auth/logout
 router.post('/auth/logout', (_req, res) => {
   res.clearCookie('token', { path: '/' });
   return res.json({ loggedIn: false });
 });
 
-// GET /api/auth/status
 router.get('/auth/status', requireAuth, async (req, res) => {
   try {
     const { rows } = await pool.query(
@@ -140,7 +135,6 @@ router.post('/users', requireAuth, requireRole('ADMIN','MOD'), async (req, res) 
   }
 });
 
-// PATCH /api/users/password
 router.patch('/users/password', requireAuth, async (req, res) => {
   const { newPassword, targetUserId } = req.body || {};
   if (!newPassword) return res.status(400).json({ error: 'Neues Passwort erforderlich' });
@@ -157,7 +151,6 @@ router.patch('/users/password', requireAuth, async (req, res) => {
       return res.status(403).json({ error: 'Nutzer kann nicht das Passwort eines anderen Nutzers ändern' });
     }
 
-    // password_reset mit auslesen
     const u = await client.query(
       'SELECT id, password_hash, department_id, role, password_reset FROM system_users WHERE id=$1',
       [userId]
@@ -165,7 +158,6 @@ router.patch('/users/password', requireAuth, async (req, res) => {
     if (u.rowCount === 0) return res.status(404).json({ error: 'Nutzer wurde nicht gefunden' });
     const user = u.rows[0];
 
-    // MOD darf nur im eigenen Department
     if (!isSelf && req.user.role === 'MOD' &&
         String(req.user.departmentId) !== String(user.department_id)) {
       return res.status(403).json({ error: 'Moderator kann nur die Passwörter aus dem eigenen Fachbereich ändern' });
@@ -193,7 +185,6 @@ router.patch('/users/password', requireAuth, async (req, res) => {
   }
 });
 
-// POST /api/users/:id/reset-password
 router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const targetUserId = req.params.id;
   const { newPassword } = req.body || {};
@@ -237,25 +228,15 @@ router.post('/users/:id/reset-password', requireAuth, requireRole('ADMIN','MOD')
   }
 });
 
-// =========================
-// PASSWORT-RESETS NACH ROLLE & DEPARTMENT
-// =========================
-
-// POST /api/departments/:deptId/reset-user-password
-// Erlaubt: ADMIN und MOD
-// MOD darf nur im eigenen Department.
-// Setzt das Passwort des *USER*-Kontos dieses Fachbereichs auf 'reset' und aktiviert password_reset.
 router.post('/departments/:deptId/reset-user-password', requireAuth, requireRole('ADMIN','MOD'), async (req, res) => {
   const deptId = req.params.deptId;
 
   const client = await pool.connect();
   try {
-    // MOD darf nur im eigenen Dept
     if (req.user.role === 'MOD' && String(req.user.departmentId) !== String(deptId)) {
       return res.status(403).json({ error: 'Moderator darf nur im eigenen Fachbereich zurücksetzen.' });
     }
 
-    // Ziel-User (role USER) im Dept finden
     const q = await client.query(
       `SELECT id, username, role, department_id
          FROM system_users
@@ -286,16 +267,11 @@ router.post('/departments/:deptId/reset-user-password', requireAuth, requireRole
   }
 });
 
-
-// POST /api/departments/:deptId/reset-mod-password
-// Erlaubt: nur ADMIN
-// Setzt das Passwort des *MOD*-Kontos dieses Fachbereichs auf 'reset' und aktiviert password_reset.
 router.post('/departments/:deptId/reset-mod-password', requireAuth, requireRole('ADMIN'), async (req, res) => {
   const deptId = req.params.deptId;
 
   const client = await pool.connect();
   try {
-    // Ziel-User (role MOD) im Dept finden
     const q = await client.query(
       `SELECT id, username, role, department_id
          FROM system_users

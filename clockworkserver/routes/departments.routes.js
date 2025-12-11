@@ -1,14 +1,9 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-/**
- * GET /api/departments
- * - Admins: sehen alle Fachbereiche
- * - Mods/Users: sehen nur ihren eigenen (aus JWT)
- */
 router.get(
   '/departments',
   requireAuth,
@@ -16,7 +11,6 @@ router.get(
     const client = await pool.connect();
     try {
       if (req.user.role === 'ADMIN') {
-        // Admin → alle Fachbereiche
         const { rows } = await client.query(
           `SELECT id, name
              FROM departments
@@ -24,7 +18,6 @@ router.get(
         );
         return res.json(rows);
       } else {
-        // Mod/User → nur eigener Fachbereich
         const { rows } = await client.query(
           `SELECT id, name
              FROM departments

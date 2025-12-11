@@ -4,9 +4,6 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-/**
- * Osterdatum (anonymer gregorianischer Algorithmus)
- */
 function easterDate(year) {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -20,9 +17,9 @@ function easterDate(year) {
   const k = c % 4;
   const l = (32 + 2 * e + 2 * i - h - k) % 7;
   const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31); // 3 = March, 4 = April
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
   const day = ((h + l - 7 * m + 114) % 31) + 1;
-  return new Date(Date.UTC(year, month - 1, day)); // Ostersonntag
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 function addDaysUTC(date, days) {
@@ -38,21 +35,16 @@ function fmt(d) {
   return `${y}-${m}-${day}`;
 }
 
-/**
- * Liefert alle bundesweiten + NRW-spezifischen Feiertage
- * für ein Jahr als Array { date: 'YYYY-MM-DD', name }
- */
 function buildHolidaysForYear(year) {
   const y = Number(year);
-  const easter = easterDate(y);       // Ostersonntag
-  const rm = addDaysUTC(easter, -48); // Rosenmontag (48 Tage vor Ostersonntag)
-  const kf = addDaysUTC(easter, -2);  // Karfreitag
-  const om = addDaysUTC(easter, 1);   // Ostermontag
-  const hm = addDaysUTC(easter, 39);  // Christi Himmelfahrt
-  const pm = addDaysUTC(easter, 50);  // Pfingstmontag
-  const fr = addDaysUTC(easter, 60);  // Fronleichnam (NRW)
+  const easter = easterDate(y);
+  const rm = addDaysUTC(easter, -48);
+  const kf = addDaysUTC(easter, -2);
+  const om = addDaysUTC(easter, 1);
+  const hm = addDaysUTC(easter, 39);
+  const pm = addDaysUTC(easter, 50);
+  const fr = addDaysUTC(easter, 60);
 
-  // Feste Feiertage (bundesweit + NRW Only + Zusatz: Heiligabend & Silvester)
   const fixed = [
     { date: `${y}-01-01`, name: 'Neujahr' },
     { date: `${y}-05-01`, name: 'Tag der Arbeit' },
@@ -65,22 +57,17 @@ function buildHolidaysForYear(year) {
   ];
 
   const movable = [
-    { date: fmt(rm), name: 'Rosenmontag' },      // neu
+    { date: fmt(rm), name: 'Rosenmontag' },
     { date: fmt(kf), name: 'Karfreitag' },
     { date: fmt(om), name: 'Ostermontag' },
     { date: fmt(hm), name: 'Christi Himmelfahrt' },
     { date: fmt(pm), name: 'Pfingstmontag' },
-    { date: fmt(fr), name: 'Fronleichnam' }      // NRW-spezifisch
+    { date: fmt(fr), name: 'Fronleichnam' }
   ];
 
   return [...fixed, ...movable].map(h => ({ ...h, year: y }));
 }
 
-/**
- * Sorgt dafür, dass für ein Jahr die definierten Feiertage
- * (inkl. Heiligabend, Rosenmontag, Silvester) in der DB vorhanden sind.
- * Bereits existierende Datumszeilen werden per ON CONFLICT ignoriert.
- */
 async function ensureHolidaysSeeded(year) {
   const y = Number(year);
   const client = await pool.connect();
@@ -110,12 +97,6 @@ async function ensureHolidaysSeeded(year) {
   }
 }
 
-/**
- * GET /api/holidays/:year
- *  → sorgt automatisch dafür, dass Feiertage für das Jahr existieren
- *    (inkl. nachträglich hinzugefügter wie Heiligabend, Rosenmontag, Silvester)
- *    und gibt sie dann zurück.
- */
 router.get('/holidays/:year', requireAuth, async (req, res) => {
   const yearParam = req.params.year;
   const y = Number(yearParam);

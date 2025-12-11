@@ -1,11 +1,9 @@
-// src/routes/plans.routes.js
 const express = require('express');
 const pool = require('../db');
 const { requireAuth, requireRole, enforceDepartmentScope } = require('../middleware/auth');
 
 const router = express.Router();
 
-// simple validator helpers (kein zod nötig)
 function isIsoDate(s) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
 }
@@ -29,12 +27,6 @@ router.get('/plans/:id/plan-employees', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * POST /api/plans/:id/plan-employees
- * Body: { employeeId, startMonth, endMonth }
- * Fügt einen Mitarbeiter in den Jahresplan ein (no-op wenn schon drin).
- */
-// routes/plans.routes.js (Ausschnitt)
 router.post(
   '/plans/:id/plan-employees',
   requireAuth,
@@ -49,7 +41,6 @@ router.post(
 
     const client = await pool.connect();
     try {
-      // Urlaubskonto / Übertrag aus employees ziehen
       const emp = await client.query(
         `SELECT carryover_days
            FROM employees
@@ -76,12 +67,6 @@ router.post(
   }
 );
 
-/**
- * POST /api/plans/:id/sync-employees
- * Fügt alle aktiven Dept-Mitarbeitenden, die noch nicht im Plan sind, hinzu.
- */
-// POST /api/plans/:id/sync-employees
-// POST /api/plans/:id/sync-employees
 router.post(
   '/plans/:id/sync-employees',
   requireAuth,
@@ -96,7 +81,6 @@ router.post(
     try {
       await client.query('BEGIN');
 
-      // Plan holen (inkl. Jahr & Fachbereich)
       const planRes = await client.query(
         'SELECT id, department_id, year FROM plans WHERE id = $1',
         [planId]
@@ -107,7 +91,6 @@ router.post(
       }
       const plan = planRes.rows[0];
 
-      // Fachbereichs-Scope prüfen (NICHT-Admin darf nur eigenen FB)
       if (
         req.user.role !== 'ADMIN' &&
         String(req.user.departmentId) !== String(plan.department_id)
@@ -118,8 +101,6 @@ router.post(
 
       const year = plan.year;
 
-      // Relevante Mitarbeiter, die das Planjahr schneiden
-      // und noch NICHT im Plan sind
       const { rows: toInsert } = await client.query(
         `
         WITH year_bounds AS (
@@ -187,11 +168,6 @@ router.post(
   }
 );
 
-/**
- * POST /api/plans/:id/sync-employee-dates
- * Aktualisiert start_month / end_month in plan_employees
- * auf Basis der Stammdaten (employees) für das jeweilige Planjahr.
- */
 router.post(
   '/plans/:id/sync-employee-dates',
   requireAuth,
@@ -216,7 +192,6 @@ router.post(
       }
       const plan = planRes.rows[0];
 
-      // Fachbereichs-Scope prüfen
       if (
         req.user.role !== 'ADMIN' &&
         String(req.user.departmentId) !== String(plan.department_id)
@@ -275,7 +250,6 @@ router.get(
 
     const client = await pool.connect();
     try {
-      // Plan + Department prüfen
       const planRes = await client.query(
         `SELECT p.id, p.department_id, p.year, p.created_at
          FROM plans p WHERE p.id = $1`,
@@ -288,7 +262,6 @@ router.get(
         return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
       }
 
-      // Plan-Employees + Stammdaten
       const peRes = await client.query(
         `SELECT pe.id AS plan_employee_id,
                 e.id AS employee_id,
@@ -305,7 +278,6 @@ router.get(
         [id]
       );
 
-      // Urlaubstage-Verbrauch (View)
       const vuRes = await client.query(
         `SELECT employee_id, used_days
            FROM v_vacation_usage
@@ -314,7 +286,6 @@ router.get(
       );
       const usedByEmp = new Map(vuRes.rows.map(r => [String(r.employee_id), Number(r.used_days)]));
 
-      // Aufbereiten
       const employees = peRes.rows.map(r => {
         const used = usedByEmp.get(String(r.employee_id)) || 0;
         const available = (r.initial_balance ?? 0) + (r.carryover_days ?? 0) + (r.annual_leave_days ?? 0);
@@ -380,12 +351,11 @@ router.get(
 router.post(
   '/plans',
   requireAuth,
-  requireRole('MOD'), // USER verboten, MOD ok, ADMIN ok (im middleware-code)
+  requireRole('MOD'),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const { departmentId, year, employees } = req.body || {};
 
-    // Basic Validation
     if (!departmentId || !year || !Array.isArray(employees) || employees.length === 0) {
       return res.status(400).json({ error: 'departmentId, year und employees[] benötigt' });
     }
@@ -411,14 +381,12 @@ router.post(
     try {
       await client.query('BEGIN');
 
-      // Prüfe Department existiert
       const dep = await client.query('SELECT id FROM departments WHERE id = $1', [departmentId]);
       if (dep.rowCount === 0) {
         await client.query('ROLLBACK');
         return res.status(404).json({ error: 'Fachbereich wurde nicht gefunden' });
       }
 
-      // Unique constraint (department_id, year) beachten: prüfen, ob es schon existiert
       const existing = await client.query(
         'SELECT id FROM plans WHERE department_id = $1 AND year = $2',
         [departmentId, year]
@@ -428,7 +396,6 @@ router.post(
         return res.status(409).json({ error: 'Ein Plan existiert bereits für das ausgewählte Jahr' });
       }
 
-      // Plan anlegen
       const planInsert = await client.query(
         `INSERT INTO plans (department_id, year, created_by)
          VALUES ($1, $2, $3)
@@ -437,7 +404,6 @@ router.post(
       );
       const plan = planInsert.rows[0];
 
-      // employees prüfen: gehören alle zum Department?
       const empIds = employees.map(e => e.employeeId);
       const empCheck = await client.query(
         `SELECT id FROM employees WHERE department_id = $1 AND id = ANY($2::int[])`,
@@ -451,7 +417,6 @@ router.post(
         }
       }
 
-      // plan_employees anlegen
       const insertPEText = `
         INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
         VALUES ($1, $2, $3, $4, $5)
@@ -477,7 +442,6 @@ router.post(
     } catch (err) {
       await client.query('ROLLBACK');
       console.error(err);
-      // Unique-Constraint usw. nett abfangen
       if (err.code === '23505') {
         return res.status(409).json({ error: 'Duplikat erkannt' });
       }
