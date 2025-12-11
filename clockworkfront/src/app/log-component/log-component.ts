@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BackendAccess, PlanLogDTO } from '../backend-access';
 import { AuthService } from '../auth-service';
+import { LogService, PlanLogDTO } from '../log-service';
+import { PlanService } from '../plan-service';
 import { ImpersonationService } from '../impersonation-service';
 import { OverlayService } from '../overlay-service';
 import { switchMap, map, take, catchError } from 'rxjs/operators';
@@ -12,7 +13,6 @@ import { of } from 'rxjs';
 
 @Component({
   selector: 'app-log-component',
-  standalone: true,
   imports: [RouterLink, CommonModule, FormsModule],
   templateUrl: './log-component.html',
   styleUrl: './log-component.css'
@@ -22,24 +22,22 @@ export class LogComponent implements OnInit {
   month!: number;
   planId: number | null = null;
 
-  /** alle Logs vom Server (unverändert) */
   allLogs: PlanLogDTO[] = [];
-  /** gefilterte Logs, die angezeigt werden */
   logs: PlanLogDTO[] = [];
 
   loading = false;
 
-  /** Filterzustände */
   actionFilter: '' | 'VACATION' | 'HOME' | 'SICK' | 'TRAINING' | 'FLEXTIME' | 'APPOINTMENT' | 'OTHER' = '';
   employeeFilter: '' | number = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private backend: BackendAccess,
     private auth: AuthService,
     private imp: ImpersonationService,
     private overlay: OverlayService,
-    private router: Router
+    private router: Router,
+    private log: LogService,
+    private plan: PlanService
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +63,7 @@ export class LogComponent implements OnInit {
           this.router.navigate(['/auth']);
           return of(null);
         }
-        return this.backend.getPlansForDepartment(depId).pipe(
+        return this.plan.getPlansForDepartment(depId).pipe(
           map(res => ({ depId, plans: res.plans }))
         );
       }),
@@ -78,7 +76,7 @@ export class LogComponent implements OnInit {
           return of(null);
         }
         this.planId = plan.id;
-        return this.backend.getPlanLogs(this.planId, this.year, this.month);
+        return this.log.getPlanLogs(this.planId, this.year, this.month);
       }),
       catchError(err => {
         console.error('Fehler beim Laden der Logs:', err);
@@ -96,8 +94,6 @@ export class LogComponent implements OnInit {
       this.applyFilters();
     });
   }
-
-  // === Filter ===
 
   get employeeOptions(): { id: number; name: string }[] {
     const map = new Map<number, string>();
@@ -133,8 +129,6 @@ export class LogComponent implements OnInit {
     this.logs = filtered;
   }
 
-  // === Anzeige-Helfer ===
-
   describeLog(log: PlanLogDTO): string {
     const type = log.action_type;
     const st = (log.status_code || '').toUpperCase();
@@ -161,7 +155,6 @@ export class LogComponent implements OnInit {
     return type;
   }
 
-  /** ISO-String -> "DD/MM/YY" */
   formatDateShort(raw: string | null | undefined): string {
     if (!raw) return '-';
     const str = String(raw);

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { OverlayService } from '../overlay-service';
-import { BackendAccess } from '../backend-access';
+import { PlanService } from '../plan-service';
 import { EmployeeService, Employee } from '../employee-service';
 import { AuthService } from '../auth-service';
 import { of } from 'rxjs';
@@ -28,13 +28,12 @@ export class ModPlanComponent implements OnInit {
 
   activeEmployees: Employee[] = [];
 
-  /** Effektiver Fachbereich (JWT oder Impersonation) */
   private currentDepartmentId: number | null = null;
 
   constructor(
     private overlay: OverlayService,
     private fb: FormBuilder,
-    private backend: BackendAccess,
+    private plan: PlanService,
     private employeeService: EmployeeService,
     private imp: ImpersonationService,
     public auth: AuthService,
@@ -50,12 +49,10 @@ export class ModPlanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 1) Fachbereich EINMALIG auflösen
     this.auth.authStatus$.pipe(take(1)).subscribe(status => {
       const fromJwt = status?.user?.departmentId ?? null;
       const impDep = this.imp.getEffectiveDepartmentId?.() ?? null;
 
-      // Admin: nimmt Impersonation, Mod/User: nimmt JWT
       const depId = this.auth.isAdmin() ? impDep : fromJwt;
 
       if (this.auth.isAdmin() && !depId) {
@@ -70,13 +67,10 @@ export class ModPlanComponent implements OnInit {
         return;
       }
 
-      // Ab hier haben wir einen gültigen Fachbereich
       this.currentDepartmentId = depId;
 
-      // Mitarbeiter für das initiale Jahr laden
       this.loadActiveEmployees(depId);
 
-      // Wenn sich das Jahr ändert, neu filtern
       this.planForm.get('year')!.valueChanges.subscribe((year: number) => {
         if (!this.currentDepartmentId) return;
         this.loadActiveEmployees(this.currentDepartmentId, year);
@@ -84,17 +78,14 @@ export class ModPlanComponent implements OnInit {
     });
   }
 
-  /** Getter für bestehenden Code – nutzt jetzt die aufgelöste ID */
   get effectiveDepartmentId(): number | null {
     return this.currentDepartmentId;
   }
 
-  /** FormArray Accessor */
   get employees(): FormArray {
     return this.planForm.get('employees') as FormArray;
   }
 
-  /** Prüft, ob Mitarbeiter irgendeinen Overlap mit dem Planjahr hat */
   private employeeOverlapsYear(e: Employee, year: number): boolean {
     const yearStart = new Date(year, 0, 1);
     const yearEnd = new Date(year, 11, 31);
@@ -113,7 +104,6 @@ export class ModPlanComponent implements OnInit {
     return start <= yearEnd && end >= yearStart;
   }
 
-  /** Mitarbeiter laden + auf Planjahr filtern */
   private loadActiveEmployees(departmentId: number, yearOverride?: number): void {
     const formYear = this.planForm.get('year')!.value as number;
     const year = yearOverride ?? formYear;
@@ -123,7 +113,6 @@ export class ModPlanComponent implements OnInit {
         next: (emps) => {
           const list = (emps || []).filter(e => e.is_active !== false);
 
-          // Nur Mitarbeiter, die im Planjahr wirklich aktiv sind
           const filtered = list.filter(e => this.employeeOverlapsYear(e, year));
 
           this.activeEmployees = filtered;
@@ -137,7 +126,6 @@ export class ModPlanComponent implements OnInit {
       });
   }
 
-  /** Eine Formularzeile pro aktivem Employee */
   private rowFromEmployee(e: Employee): FormGroup {
     return this.fb.group({
       id: [e.id, Validators.required],
@@ -147,13 +135,11 @@ export class ModPlanComponent implements OnInit {
     });
   }
 
-  /** sichere YYYY-MM-01 für Start/Ende */
   private yearMonthStart(year: number, month = 1): string {
     const mm = String(month).padStart(2, '0');
     return `${year}-${mm}-01`;
   }
 
-  // src/app/mod-plan-component/mod-plan-component.ts
   submit(): void {
     const depId = this.effectiveDepartmentId;
 
@@ -172,13 +158,12 @@ export class ModPlanComponent implements OnInit {
       annual: Number(g.vacation_days_total) || 0,
     }));
 
-    // Hilfsfunktionen für saubere Strings
     const yearStart = `${year}-01-01`;
     const yearEnd = `${year}-12-31`;
 
     function clampDateToYear(dateStr: string | null | undefined): string | null {
       if (!dateStr) return null;
-      const d = dateStr.slice(0, 10); // 'YYYY-MM-DD'
+      const d = dateStr.slice(0, 10);
       if (d < yearStart) return yearStart;
       if (d > yearEnd) return yearEnd;
       return d;
@@ -187,22 +172,15 @@ export class ModPlanComponent implements OnInit {
     const employeesPayload = rows.map(r => {
       const emp = this.activeEmployees.find(e => e.id === r.employeeId);
 
-      // Start: wenn Mitarbeiter vor dem Planjahr startet -> 01.01.YYYY
-      //        wenn im Planjahr startet -> tatsächliches Startdatum
-      //        wenn gar kein Start gesetzt -> 01.01.YYYY
       let startMonth = yearStart;
       if (emp?.start_month) {
         const clamped = clampDateToYear(emp.start_month);
         startMonth = clamped ?? yearStart;
       }
 
-      // Ende: wenn Mitarbeiter im Planjahr endet -> tatsächliches Enddatum
-      //       wenn danach endet oder gar kein Enddatum -> null (für "läuft weiter")
       let endMonth: string | null = null;
       if (emp?.end_month) {
         const clampedEnd = clampDateToYear(emp.end_month);
-        // wenn Enddatum vor dem Planjahr liegt, würde er ohnehin nicht im Payload landen,
-        // weil er dann gar nicht in activeEmployees war
         endMonth = clampedEnd;
       }
 
@@ -220,7 +198,7 @@ export class ModPlanComponent implements OnInit {
       employees: employeesPayload
     };
 
-    this.backend.createPlan(payload).pipe(
+    this.plan.createPlan(payload).pipe(
       catchError(err => {
         this.submitting = false;
         this.overlay.showOverlay('error', err?.error?.error || 'Fehler beim Erstellen des Dienstplans.');

@@ -14,3 +14,10 @@ V1.4.0:
 Export & import of employee status
 Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed
+
+für die migration auf die produktionsumgebung: diese sql befehle habe ich auf der datenbank ausgeführt:
+
+ALTER TABLE plan_entries
+ADD COLUMN notes TEXT;
+ALTER TABLE plan_entries
+DROP COLUMN description;

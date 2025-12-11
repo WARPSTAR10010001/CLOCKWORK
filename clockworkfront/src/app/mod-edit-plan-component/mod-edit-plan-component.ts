@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BackendAccess } from '../backend-access';
+import { PlanService } from '../plan-service';
 import { EmployeeService, Employee } from '../employee-service';
 import { ImpersonationService } from '../impersonation-service';
 import { OverlayService } from '../overlay-service';
@@ -32,7 +32,7 @@ export class ModEditPlanComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private backend: BackendAccess,
+    private plan: PlanService,
     private empService: EmployeeService,
     private imp: ImpersonationService,
     private overlay: OverlayService,
@@ -88,7 +88,7 @@ export class ModEditPlanComponent implements OnInit {
         if (!depId) return of(null);
 
         // PlanId für das Jahr auflösen
-        return this.backend.getPlansForDepartment(depId).pipe(
+        return this.plan.getPlansForDepartment(depId).pipe(
           take(1),
           map(res => res.plans.find(p => p.year === this.year) || null),
           switchMap(plan => {
@@ -100,7 +100,7 @@ export class ModEditPlanComponent implements OnInit {
 
             return forkJoin({
               employees: this.empService.getEmployeesForDepartment(this.depId).pipe(take(1)),
-              links: this.backend.getPlanEmployeeLinks(this.planId).pipe(take(1))
+              links: this.plan.getPlanEmployeeLinks(this.planId).pipe(take(1))
             });
           })
         );
@@ -171,7 +171,7 @@ export class ModEditPlanComponent implements OnInit {
       end = clampedEnd;
     }
 
-    this.backend.addEmployeeToPlan(this.planId, e.id, start, end).pipe(take(1)).subscribe({
+    this.plan.addEmployeeToPlan(this.planId, e.id, start, end).pipe(take(1)).subscribe({
       next: () => {
         this.inPlanIds.add(e.id);
         this.overlay.showOverlay('success', `${e.name} in den Plan aufgenommen.`);
@@ -196,7 +196,7 @@ export class ModEditPlanComponent implements OnInit {
   }
 
   syncMissing(): void {
-    this.backend.syncPlanEmployees(this.planId).pipe(take(1)).subscribe({
+    this.plan.syncPlanEmployees(this.planId).pipe(take(1)).subscribe({
       next: (res) => {
         this.overlay.showOverlay('success', `${res.added} Mitarbeitende ergänzt.`);
         this.init();
@@ -210,7 +210,7 @@ export class ModEditPlanComponent implements OnInit {
    * und schreibt sie in plan_employees für dieses Jahr.
    */
   syncDates(): void {
-    this.backend.syncPlanEmployeeDates(this.planId).pipe(take(1)).subscribe({
+    this.plan.syncPlanEmployeeDates(this.planId).pipe(take(1)).subscribe({
       next: (res) => {
         this.overlay.showOverlay('success', `${res.updated} Mitarbeitende aktualisiert.`);
         this.init();

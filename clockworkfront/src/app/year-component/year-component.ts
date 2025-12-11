@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OverlayService } from '../overlay-service';
-import { BackendAccess } from '../backend-access';
+import { PlanService } from '../plan-service';
 import { AuthService } from '../auth-service';
 import { ImpersonationService } from '../impersonation-service';
 import { map, switchMap, take, catchError } from 'rxjs/operators';
@@ -32,23 +32,20 @@ export class YearComponent implements OnInit {
   showDeptHint = false;
 
   constructor(
-    private backend: BackendAccess,
+    private plan: PlanService,
     public auth: AuthService,
     private overlay: OverlayService,
     private imp: ImpersonationService
   ) {}
 
   ngOnInit(): void {
-    // 1️⃣ Department-ID abrufen (Impersonation → JWT)
     this.auth.authStatus$
       .pipe(
         take(1),
         map(status => {
-          // falls Admin im Impersonationsmodus
           const impDepId = this.imp.getEffectiveDepartmentId();
           if (this.auth.isAdmin() && impDepId) return impDepId;
 
-          // sonst JWT-DeptId
           return status?.user?.departmentId ?? null;
         }),
         switchMap(depId => {
@@ -62,8 +59,7 @@ export class YearComponent implements OnInit {
             return of<{ plans: PlanListItem[] }>({ plans: [] });
           }
 
-          // 2️⃣ Backend-Aufruf mit der finalen Department-ID
-          return this.backend.getPlansForDepartment(depId);
+          return this.plan.getPlansForDepartment(depId);
         }),
         catchError(() => {
           this.overlay.showOverlay('error', 'Fehler beim Laden der verfügbaren Jahre.');
@@ -81,7 +77,6 @@ export class YearComponent implements OnInit {
 
         this.years = cards;
 
-        // Hinweis für normale User ohne Pläne
         if (this.years.length === 0 && !this.auth.isAdmin()) {
           this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihren Fachbereich erstellt.');
         }

@@ -527,6 +527,16 @@ export const DOC_SECTIONS: DocSection[] = [
             `
           },
           {
+            id: "fachbereiche-und-teams-loeschen",
+            title: "Fachbereiche und Teams löschen",
+            html: `
+            <p>Administratoren haben ebenfalls die Berechtigung, erstellte Fachbereiche/Teams zu löschen. Dies ist z.B. bei inaktiven oder versehentlich erstellten Fachbereichen/Teams sinnvoll.</p>
+            <p>Hinweis: Damit ein Team gelöscht werden kann, müssen alle Mitarbeiter des Teams gelöscht werden und es dürfen keine Dienstpläne für das Team existieren.</p>
+            <p>Um ein Team zu löschen müssen Administratoren auf das Adminpanel und unten in der "Bestehende Fachbereiche"-Liste den gewünschten Fachbereich auswählen. Es befindet sich ein roter Knopf in der Zeile des Fachbereiches mit der Beschriftung "Fachbereich löschen". Auf diesen muss geklickt werden.</p>
+            <p>Sobald ein Fachbereich/Team gelöscht wurde, besteht kein Eintrag mehr in der Datenbank, also können sich die Nutzer des Teams sich nicht mehr anmelden (da auch die Benutzer gelöscht werden) und Administratoren können sich nicht über den Impersonationsmodus draufschalten.</p>
+            `
+          },
+          {
             id: "impersonationsmodus-aktivieren",
             title: "Impersonationsmodus aktivieren",
             html: `

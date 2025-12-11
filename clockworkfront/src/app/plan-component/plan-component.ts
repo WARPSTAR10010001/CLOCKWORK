@@ -2,8 +2,9 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OverlayService } from '../overlay-service';
-import { BackendAccess } from '../backend-access';
-import { PlanEntry, PlanEntryStatus } from '../types';
+import { PlanService } from '../plan-service';
+import { PlanEntry, PlanEntryStatus } from '../plan-service';
+import { LogService } from '../log-service';
 import { Employee, EmployeeService } from '../employee-service';
 import { switchMap, map, catchError, take } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
@@ -18,7 +19,6 @@ interface SelectedCell {
 
 @Component({
   selector: 'app-plan',
-  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './plan-component.html',
   styleUrl: './plan-component.css'
@@ -52,14 +52,15 @@ export class PlanComponent implements OnInit {
   private readonly WEEKENDS_COOKIE = 'clockwork_show_weekends';
 
   constructor(
-    private backend: BackendAccess,
+    private plan: PlanService,
     private employeeService: EmployeeService,
     private auth: AuthService,
     private imp: ImpersonationService,
     private activatedRoute: ActivatedRoute,
     private overlay: OverlayService,
     private router: Router,
-    private holidays: HolidayService
+    private holidays: HolidayService,
+    private log: LogService
   ) { }
 
   ngOnInit(): void {
@@ -157,7 +158,7 @@ export class PlanComponent implements OnInit {
           return of(null);
         }
 
-        return this.backend.getPlansForDepartment(depId).pipe(
+        return this.plan.getPlansForDepartment(depId).pipe(
           map(res => ({ depId, plans: res.plans }))
         );
       }),
@@ -178,8 +179,8 @@ export class PlanComponent implements OnInit {
 
         return forkJoin({
           employees: this.employeeService.getEmployeesForDepartment(depId),
-          entries: this.backend.getPlanEntriesForMonth(plan.id, monthStr),
-          planDetails: this.backend.getPlanDetails(plan.id),
+          entries: this.plan.getPlanEntriesForMonth(plan.id, monthStr),
+          planDetails: this.plan.getPlanDetails(plan.id),
           holidays: this.holidays.getForYear(this.year)
         }).pipe(
           map(({ employees, entries, planDetails, holidays }) => ({
@@ -398,10 +399,10 @@ export class PlanComponent implements OnInit {
     const calls: any[] = [];
     groupedByEmployee.forEach((dates, employeeId) => {
       if (!status) {
-        calls.push(this.backend.deleteEntriesByDates(this.planId!, employeeId, dates));
+        calls.push(this.plan.deleteEntriesByDates(this.planId!, employeeId, dates));
       } else {
         calls.push(
-          this.backend.createEntriesBatch(
+          this.plan.createEntriesBatch(
             {
               planId: this.planId!,
               departmentId: this.departmentId!,
@@ -431,7 +432,7 @@ export class PlanComponent implements OnInit {
         }
 
         const log$ = (this.planId && this.departmentId && affectedDays > 0)
-          ? this.backend.createPlanLog({
+          ? this.log.createPlanLog({
             planId: this.planId!,
             departmentId: this.departmentId!,
             employeeId: summary.employeeId,
@@ -451,7 +452,7 @@ export class PlanComponent implements OnInit {
 
         return log$.pipe(
           switchMap(() =>
-            this.backend.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month))
+            this.plan.getPlanEntriesForMonth(this.planId!, this.monthKey(this.year, this.month))
           )
         );
       })
