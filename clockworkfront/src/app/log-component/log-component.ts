@@ -38,7 +38,7 @@ export class LogComponent implements OnInit {
     private router: Router,
     private log: LogService,
     private plan: PlanService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.year = Number(this.activatedRoute.snapshot.paramMap.get('year'));
@@ -52,9 +52,9 @@ export class LogComponent implements OnInit {
     this.auth.authStatus$.pipe(
       take(1),
       map(status => {
-        const impDep  = this.imp.getEffectiveDepartmentId();
+        const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
-        const depId   = this.auth.isAdmin() ? (impDep ?? null) : fromJwt ?? null;
+        const depId = this.auth.isAdmin() ? (impDep ?? null) : fromJwt ?? null;
         return depId;
       }),
       switchMap(depId => {
@@ -143,15 +143,49 @@ export class LogComponent implements OnInit {
       OTHER: 'Anderes'
     };
 
+    const truncate = (txt: string | null | undefined, max = 40): string => {
+      if (!txt) return '';
+      const t = txt.trim();
+      if (t.length <= max) return t;
+      return t.slice(0, max - 1) + '…';
+    };
+
+    if (type === 'NOTE_SET') {
+      const after = truncate(log.note_new);
+      return after
+        ? `Notiz hinzugefügt: "${after}"`
+        : 'Notiz hinzugefügt';
+    }
+
+    if (type === 'NOTE_UPDATE') {
+      const before = truncate(log.note_old);
+      const after = truncate(log.note_new);
+
+      if (before || after) {
+        return `Notiz bearbeitet: "${before || '(leer)'}" → "${after || '(leer)'}"`;
+      }
+      return 'Notiz bearbeitet';
+    }
+
+    if (type === 'NOTE_DELETE') {
+      const before = truncate(log.note_old);
+      return before
+        ? `Notiz gelöscht: "${before}"`
+        : 'Notiz gelöscht';
+    }
+
     if (type === 'SET' && st) {
       const label = statusLabel[st] || st;
       return `${label} eingetragen`;
     }
+
     if (type === 'DELETE' && st) {
       const label = statusLabel[st] || st;
       return `${label}-Einträge gelöscht`;
     }
+
     if (type === 'DELETE') return 'Einträge gelöscht';
+
     return type;
   }
 

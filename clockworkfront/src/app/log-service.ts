@@ -15,27 +15,28 @@ export interface PlanLogDTO {
   day_count: number;
   dates: string[];
   created_at: string;
+  note_old?: string | null;
+  note_new?: string | null;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-
+@Injectable({ providedIn: 'root' })
 export class LogService {
   private base = environment.apiBase;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createPlanLog(payload: {
     planId: number;
     departmentId: number;
     employeeId: number;
-    actionType: 'SET' | 'DELETE';
+    actionType: 'SET' | 'DELETE' | 'NOTE_SET' | 'NOTE_UPDATE' | 'NOTE_DELETE';
     statusCode: string | null;
     dateFrom: string;
     dateTo: string;
     dayCount: number;
     dates: string[];
+    noteBefore?: string | null;
+    noteAfter?: string | null;
   }) {
     return this.http.post<{ log: PlanLogDTO }>(
       `${this.base}/plans/${payload.planId}/logs`,
@@ -47,7 +48,9 @@ export class LogService {
         dateFrom: payload.dateFrom,
         dateTo: payload.dateTo,
         dayCount: payload.dayCount,
-        dates: payload.dates
+        dates: payload.dates,
+        noteBefore: payload.noteBefore ?? null,
+        noteAfter: payload.noteAfter ?? null
       }
     );
   }

@@ -520,7 +520,7 @@ export class PlanComponent implements OnInit {
     event.preventDefault();
 
     if (this.isWeekend(day)) return;
-    if (!this.planId) return;
+    if (!this.planId || !this.departmentId) return;
 
     const isoDate = this.toIso(day);
     const monthKey = this.monthKey(this.year, this.month);
@@ -539,11 +539,15 @@ export class PlanComponent implements OnInit {
           }
 
           const note = entry.notes ?? null;
+          const status = entry.status ?? null;
 
           this.overlay.openPlanNote(note, {
             entryId: entry.id,
             employeeId,
-            date: isoDate
+            date: isoDate,
+            planId: this.planId,
+            departmentId: this.departmentId,
+            statusCode: status
           });
         },
         error: (err) => {

@@ -1,4 +1,3 @@
-<!-- src/app/log-component/log-component.html -->
 <div class="comp-wrap">
   <h1 class="emp page-header">
     Dienstplan-Logs
@@ -7,7 +6,6 @@
     </a>
   </h1>
 
-  <!-- Filter-Toolbar -->
   <div class="log-toolbar">
     <label>Aktion:</label>
     <select id="fltr-act" [(ngModel)]="actionFilter" (change)="onActionFilterChange()">
@@ -31,7 +29,7 @@
   </div>
 
   @if (loading) {
-    <p>Lade Logs...</p>
+    <h1>Lade Logs...</h1>
   } @else if (logs.length === 0) {
     <h1>Für diesen Monat sind keine Logs vorhanden.</h1>
   } @else {
@@ -56,6 +54,31 @@
           <div class="dates">
             Tage: {{ formatDates(log.dates) }}
           </div>
+
+          @if (
+            log.action_type === 'NOTE_SET' ||
+            log.action_type === 'NOTE_UPDATE' ||
+            log.action_type === 'NOTE_DELETE'
+          ) {
+            <div class="note-diff">
+              <div>
+                <strong>Vorher:</strong>
+                @if (log.note_old) {
+                  <span>"{{ log.note_old }}"</span>
+                } @else {
+                  <span>(leer)</span>
+                }
+              </div>
+              <div>
+                <strong>Nachher:</strong>
+                @if (log.note_new) {
+                  <span>"{{ log.note_new }}"</span>
+                } @else {
+                  <span>(leer)</span>
+                }
+              </div>
+            </div>
+          }
         </div>
       }
     </div>

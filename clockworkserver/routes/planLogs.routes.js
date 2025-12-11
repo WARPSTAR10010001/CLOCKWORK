@@ -1,23 +1,9 @@
-// src/routes/planLogs.routes.js
 const express = require('express');
 const pool = require('../db');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-/**
- * POST /api/plans/:planId/logs
- * Body: {
- *   departmentId: number,
- *   employeeId:   number,
- *   actionType:   'SET' | 'DELETE',
- *   statusCode:   string | null,
- *   dateFrom:     'YYYY-MM-DD',
- *   dateTo:       'YYYY-MM-DD',
- *   dayCount:     number,
- *   dates:        string[]  // 'YYYY-MM-DD'
- * }
- */
 router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
   const planId = Number(req.params.planId);
   const {
@@ -28,14 +14,28 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
     dateFrom,
     dateTo,
     dayCount,
-    dates
+    dates,
+    noteBefore = null,
+    noteAfter = null
   } = req.body || {};
 
-  if (!planId || !departmentId || !employeeId || !actionType || !dateFrom || !dateTo || !dayCount || !Array.isArray(dates)) {
-    return res.status(400).json({ error: 'planId, departmentId, employeeId, actionType, dateFrom, dateTo, dayCount, dates benötigt' });
+  if (
+    !planId ||
+    !departmentId ||
+    !employeeId ||
+    !actionType ||
+    !dateFrom ||
+    !dateTo ||
+    !dayCount ||
+    !Array.isArray(dates)
+  ) {
+    return res.status(400).json({
+      error: 'planId, departmentId, employeeId, actionType, dateFrom, dateTo, dayCount, dates benötigt'
+    });
   }
 
-  if (!['SET', 'DELETE'].includes(actionType)) {
+  const allowedTypes = ['SET', 'DELETE', 'NOTE_SET', 'NOTE_UPDATE', 'NOTE_DELETE'];
+  if (!allowedTypes.includes(actionType)) {
     return res.status(400).json({ error: 'Ungültiger actionType' });
   }
 
@@ -51,9 +51,11 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
         date_from,
         date_to,
         day_count,
-        dates
+        dates,
+        note_before,
+        note_after
       )
-      VALUES ($1, $2, $3, $4, $5, $6::date, $7::date, $8, $9::date[])
+      VALUES ($1, $2, $3, $4, $5, $6::date, $7::date, $8, $9::date[], $10, $11)
       RETURNING
         id,
         plan_id,
@@ -65,6 +67,8 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
         date_to,
         day_count,
         dates,
+        note_before,
+        note_after,
         created_at
       `,
       [
@@ -76,7 +80,9 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
         dateFrom,
         dateTo,
         dayCount,
-        dates
+        dates,
+        noteBefore,
+        noteAfter
       ]
     );
 
@@ -87,10 +93,6 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/plans/:planId/logs?year=YYYY&month=MM
- * zeigt alle Logs, deren betroffene Tage in diesem Monat liegen
- */
 router.get('/plans/:planId/logs', requireAuth, async (req, res) => {
   const planId = Number(req.params.planId);
   const year = Number(req.query.year);

@@ -5,12 +5,18 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
-V1.2.0:
-Show and edit status for plans
-Show comments for "others" on plan
+V1.2.1:
+Write documentation and changelog for plannotes
+
+
+V1.3.0:
+Improve log readability + fix visual bugs on log
 
 
 V1.4.0:
+Show and edit status for plans
+
+V1.6.0:
 Export & import of employee status
 Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed

@@ -6,6 +6,7 @@ import { take } from 'rxjs/operators';
 import { FeedbackService, FeedbackCategory } from '../feedback-service';
 import { VersionService } from '../version-service';
 import { PlanService } from '../plan-service';
+import { LogService } from '../log-service';
 
 @Component({
   selector: 'app-overlay-component',
@@ -20,6 +21,7 @@ export class OverlayComponent implements OnInit {
   private feedbackService = inject(FeedbackService);
   private versionService = inject(VersionService);
   private planService = inject(PlanService);
+  private logService = inject(LogService);
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
@@ -104,19 +106,64 @@ export class OverlayComponent implements OnInit {
   saveNote() {
     const payload = this.overlayState.payload;
     const entryId = payload?.entryId;
+    const planId = payload?.planId;
+    const departmentId = payload?.departmentId;
+    const employeeId = payload?.employeeId;
+    const date = payload?.date as string | undefined;
+    const statusCode = (payload?.statusCode ?? null) as string | null;
 
-    if (!entryId) {
+    if (!entryId || !planId || !departmentId || !employeeId || !date) {
       this.overlayService.openPlanNote(this.noteText, payload);
       return;
     }
 
-    this.planService.updateEntry(entryId, { notes: this.noteText || null })
+    const oldNote = (this.overlayState.note ?? '').trim();
+    const newNote = (this.noteText ?? '').trim();
+
+    if (oldNote === newNote) {
+      this.overlayService.openPlanNote(this.noteText, payload);
+      return;
+    }
+
+    let actionType: 'NOTE_SET' | 'NOTE_UPDATE' | 'NOTE_DELETE';
+
+    if (!oldNote && newNote) {
+      actionType = 'NOTE_SET';
+    } else if (oldNote && !newNote) {
+      actionType = 'NOTE_DELETE';
+    } else {
+      actionType = 'NOTE_UPDATE';
+    }
+
+    this.planService.updateEntry(entryId, { notes: newNote || null })
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.overlayService.emitNoteChanged();
+          this.logService.createPlanLog({
+            planId,
+            departmentId,
+            employeeId,
+            actionType,
+            statusCode,
+            dateFrom: date,
+            dateTo: date,
+            dayCount: 1,
+            dates: [date],
+            noteBefore: oldNote || null,
+            noteAfter: newNote || null
+          }).pipe(take(1)).subscribe({
+            next: () => {
+              this.overlayService.emitNoteChanged();
 
-          this.overlayService.openPlanNote(this.noteText, payload);
+              this.overlayService.openPlanNote(this.noteText, payload);
+            },
+            error: (err) => {
+              console.error('Log konnte nicht geschrieben werden:', err);
+              this.overlayService.showOverlay('error', 'Die Änderung wurde gespeichert, aber der Log-Eintrag konnte nicht geschrieben werden.');
+              this.overlayService.emitNoteChanged();
+              this.overlayService.openPlanNote(this.noteText, payload);
+            }
+          });
         },
         error: (err) => {
           const msg = err?.error?.error || 'Die Beschreibung konnte nicht gespeichert werden.';
