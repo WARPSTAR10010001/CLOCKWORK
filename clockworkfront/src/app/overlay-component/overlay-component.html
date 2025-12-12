@@ -98,12 +98,8 @@
     <h1 class="emp page-header">Notiz bearbeiten</h1>
     <textarea [value]="noteText" (input)="onNoteInput($event)" placeholder="Notiz hinzufügen (optional)"></textarea>
     <div class="button-row">
-      <a class="button-primary" (click)="saveNote()">
-        Speichern
-      </a>
-      <a class="button-action" (click)="close()">
-        Schließen
-      </a>
+      <a class="button-primary" (click)="saveNote()">Speichern</a>
+      <a class="button-action" (click)="close()">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "planNote") {
@@ -118,17 +114,11 @@
 
     <div class="button-row">
       @if (noteText) {
-      <a class="button-primary" (click)="openNoteEdit()">
-        Notiz bearbeiten
-      </a>
+      <a class="button-primary" (click)="openNoteEdit()">Notiz bearbeiten</a>
       } @else {
-      <a class="button-primary" (click)="openNoteEdit()">
-        Notiz hinzufügen
-      </a>
+      <a class="button-primary" (click)="openNoteEdit()">Notiz hinzufügen</a>
       }
-      <a class="button-action" (click)="close()">
-        Schließen
-      </a>
+      <a class="button-action" (click)="close()">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "quickAction") {

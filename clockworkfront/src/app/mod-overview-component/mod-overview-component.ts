@@ -10,7 +10,6 @@ import { OverlayService } from '../overlay-service';
 
 @Component({
   selector: 'app-mod-overview-component',
-  standalone: true,
   imports: [RouterLink, FormsModule],
   templateUrl: './mod-overview-component.html',
   styleUrl: './mod-overview-component.css'
@@ -49,13 +48,11 @@ export class ModOverviewComponent implements OnInit {
     return this.authService.isAdmin() ? this.selectedDeptId != null : true;
   }
 
-  // ===== Helper =====
   private requireDept(): number | null {
     if (this.authService.isAdmin()) return this.selectedDeptId ?? null;
     return this.selectedDeptId ?? null;
   }
 
-  // ===== Reset-Actions =====
   resetUserPassword() {
     const deptId = this.requireDept();
     if (!deptId) {
@@ -63,7 +60,6 @@ export class ModOverviewComponent implements OnInit {
       return;
     }
 
-    // 🔒 Bestätigung
     const confirmReset = confirm(
       'Möchten Sie wirklich alle Nutzerpasswörter in diesem Fachbereich zurücksetzen?'
     );
@@ -92,7 +88,6 @@ export class ModOverviewComponent implements OnInit {
       return;
     }
 
-    // 🔒 Bestätigung
     const confirmReset = confirm(
       'Möchten Sie wirklich das Moderatorpasswort dieses Fachbereichs zurücksetzen?'
     );

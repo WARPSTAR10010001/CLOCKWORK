@@ -3,8 +3,6 @@
     Plan bearbeiten
     <a [routerLink]="['/years']" class="hidden-link">{{ year }}</a>
   </h1>
-
-  <!-- Sync-Bereich im Adminpanel-Stil -->
   <h1 id="sync" class="subtitle">Sync-Funktionen</h1>
   <div class="details sync-details">
     <div class="form-row">
@@ -20,11 +18,8 @@
       Datum-Sync übernimmt Start- und Enddaten aus den <a [routerLink]="['/mod/employees']">Stammdaten</a>.
     </h1>
   </div>
-
   <hr>
-
   <h1 class="subtitle">Mitarbeitende im Planjahr {{ year }}</h1>
-
   @if (loading) {
   <p>Lade…</p>
   } @else {
@@ -36,33 +31,23 @@
       <div>Übertrag</div>
       <div>Aktion</div>
     </div>
-
     <div class="employees-container">
       @for (e of employees; track e.id) {
       <div class="employee-entry-row">
-        <!-- Name -->
         <div class="cell name-cell">
           <span class="emp-name">{{ e.name }}</span>
         </div>
-
-        <!-- Status-Chip -->
         <div class="cell status-cell">
           <span class="chip" [class.in]="isInPlan(e)" [class.out]="!isInPlan(e)">
             {{ isInPlan(e) ? 'im Plan' : 'nicht im Plan' }}
           </span>
         </div>
-
-        <!-- Jahresurlaub -->
         <div class="cell">
           <input type="number" class="days-input" [(ngModel)]="edits[e.id].annual" min="0">
         </div>
-
-        <!-- Übertrag -->
         <div class="cell">
           <input type="number" class="days-input" [(ngModel)]="edits[e.id].carry" min="0">
         </div>
-
-        <!-- Aktionen -->
         <div class="cell action-cell">
           <button type="button" class="button-primary save-btn" (click)="saveEmployee(e)">
             Speichern
@@ -74,7 +59,6 @@
         </div>
       </div>
       }
-
       @if (employees.length === 0) {
       <p class="hint">Keine Mitarbeitenden für dieses Planjahr gefunden.</p>
       }

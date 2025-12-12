@@ -2,6 +2,30 @@
     <h1 class="emp page-header">Changelog</h1>
     <div id="page-content" class="text">
         <h1 class="emp" id="beta">Vollversionen</h1>
+        <div id="1-2-0">
+            <h2>[V1.2.0 // 12.12.2025]: Plannotizen, Logging-Erweiterungen & Code-Optimierungen</h2>
+            <ul>
+                <li>Plannotizen können nun im Dienstplan erstellt, bearbeitet und gelöscht werden.</li>
+                <li>Ein visueller Indikator in den Zellen zeigt an, ob zu einem Eintrag eine Notiz vorhanden ist.</li>
+                <li>Alle Änderungen an Notizen (Erstellung, Bearbeitung, Löschung) werden vollständig im Logsystem
+                    erfasst und transparent dargestellt.</li>
+                <li>Das Logsystem zeigt nun Notizänderungen inklusive Vorher-/Nachher-Werten an und wurde insgesamt
+                    lesbarer gestaltet.</li>
+                <li>Ein Fehler in der Datumsausgabe der Logs (Off-by-one-Anzeige) wurde behoben, sodass Zeiträume jetzt
+                    korrekt dargestellt werden.</li>
+                <li>Die CSS-Struktur wurde überarbeitet: Wiederholender Code wurde reduziert, Zustände zusammengeführt und die
+                    Wartbarkeit deutlich verbessert.</li>
+                <li>Verbesserte interne Code-Struktur in Angular-Komponenten und Services für leichteres Auffinden von
+                    Funktionen und klarere Verantwortlichkeiten.</li>
+                <li>Services wurden aufgeräumt und konsistent aufgebaut, was zukünftige Erweiterungen vereinfacht und
+                    Fehleranfälligkeit reduziert.</li>
+            </ul>
+            <p>V1.2.0 erweitert CLOCKWORK um ein stark nachgefragtes Feature: Plannotizen. Sie sind vollständig
+                integriert, visuell erkennbar und revisionssicher geloggt. Zusätzlich sorgen umfangreiche
+                Refactorings für klareren Code, bessere Wartbarkeit und eine insgesamt robustere Basis für kommende
+                Updates.</p>
+        </div>
+        <hr>
         <div id="1-1-0">
             <h2>[V1.1.0 // 10.12.2025]: Behebung visueller Fehler & neue Adminfunktionen</h2>
             <ul>

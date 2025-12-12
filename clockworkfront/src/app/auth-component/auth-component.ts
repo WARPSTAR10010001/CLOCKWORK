@@ -30,11 +30,7 @@ export class AuthComponent {
 
     this.isSubmitting = true;
 
-    // Der entscheidende Aufruf. Wir MÜSSEN subscriben, um ihn zu starten.
     this.authService.login(this.username.toLowerCase(), this.password).subscribe({
-      // Der `next`-Block ist jetzt LEER.
-      // Die Erfolgslogik (Weiterleitung, Erfolgsmeldung) wird
-      // komplett vom `tap`-Operator im AuthService übernommen.
       next: () => {
         if (this.authService.isAdmin()) {
           this.router.navigate(["/admin"]);

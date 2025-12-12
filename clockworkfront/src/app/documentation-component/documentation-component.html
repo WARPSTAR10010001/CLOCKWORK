@@ -11,7 +11,6 @@
       />
     </div>
   </div>
-
   @if (isSearching && searchResults.length > 0) {
     <div class="search-results">
       <h2>Suchergebnisse ({{ searchResults.length }})</h2>
@@ -36,11 +35,9 @@
       </ul>
     </div>
   }
-
   @if (isSearching && searchResults.length === 0) {
     <p class="hint">Keine Treffer für "{{ searchTerm }}" gefunden.</p>
   }
-
   @if (!isSearching && viewMode === 'overview') {
     <div class="tile-grid">
       @for (section of sections; track section.id) {
@@ -53,15 +50,12 @@
       }
     </div>
   }
-
   @if (!isSearching && viewMode === 'section' && currentSection) {
     <div class="breadcrumbs">
       <a [routerLink]="['/docs']">Dokumentation</a> /
       <span>{{ currentSection.title }}</span>
     </div>
-
     <h2 class="subtitle">{{ currentSection.title }}</h2>
-
     <div class="tile-grid subtiles">
       @for (page of currentSection.pages; track page.id) {
         <a class="doc-tile" [routerLink]="['/docs', currentSection.id, page.id]">
@@ -73,7 +67,6 @@
       }
     </div>
   }
-
   @if (!isSearching && viewMode === 'page' && currentSection && currentPage) {
     <div class="breadcrumbs">
       <a [routerLink]="['/docs']">Dokumentation</a> /
@@ -82,16 +75,12 @@
       </a> /
       <span>{{ currentPage.title }}</span>
     </div>
-
     <h2 class="subtitle">{{ currentPage.title }}</h2>
-
     <div class="doc-page">
       @for (article of currentPage.articles; track article.id; let isFirst = $first) {
-
         @if (!isFirst) {
           <hr>
         }
-
         <section class="doc-article" [id]="article.id">
           <h3>{{ article.title }}</h3>
           <div class="doc-article-content" [innerHTML]="article.html"></div>

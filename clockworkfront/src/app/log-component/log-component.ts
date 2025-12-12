@@ -27,7 +27,11 @@ export class LogComponent implements OnInit {
 
   loading = false;
 
-  actionFilter: '' | 'VACATION' | 'HOME' | 'SICK' | 'TRAINING' | 'FLEXTIME' | 'APPOINTMENT' | 'OTHER' = '';
+  actionFilter:
+    | ''
+    | 'VACATION' | 'HOME' | 'SICK' | 'TRAINING' | 'FLEXTIME' | 'APPOINTMENT' | 'OTHER'
+    | 'NOTE_CHANGES'
+    = '';
   employeeFilter: '' | number = '';
 
   constructor(
@@ -119,7 +123,17 @@ export class LogComponent implements OnInit {
     let filtered = [...this.allLogs];
 
     if (this.actionFilter) {
-      filtered = filtered.filter(l => (l.status_code || '').toUpperCase() === this.actionFilter);
+      if (this.actionFilter === 'NOTE_CHANGES') {
+        filtered = filtered.filter(l =>
+          l.action_type === 'NOTE_SET' ||
+          l.action_type === 'NOTE_UPDATE' ||
+          l.action_type === 'NOTE_DELETE'
+        );
+      } else {
+        filtered = filtered.filter(l =>
+          (l.status_code || '').toUpperCase() === this.actionFilter
+        );
+      }
     }
 
     if (this.employeeFilter) {
@@ -151,26 +165,26 @@ export class LogComponent implements OnInit {
     };
 
     if (type === 'NOTE_SET') {
-      const after = truncate(log.note_new);
+      const after = truncate(log.note_after);
       return after
-        ? `Notiz hinzugefügt: "${after}"`
+        ? `Notiz hinzugefügt`
         : 'Notiz hinzugefügt';
     }
 
     if (type === 'NOTE_UPDATE') {
-      const before = truncate(log.note_old);
-      const after = truncate(log.note_new);
+      const before = truncate(log.note_before);
+      const after = truncate(log.note_after);
 
       if (before || after) {
-        return `Notiz bearbeitet: "${before || '(leer)'}" → "${after || '(leer)'}"`;
+        return `Notiz bearbeitet`;
       }
       return 'Notiz bearbeitet';
     }
 
     if (type === 'NOTE_DELETE') {
-      const before = truncate(log.note_old);
+      const before = truncate(log.note_before);
       return before
-        ? `Notiz gelöscht: "${before}"`
+        ? `Notiz gelöscht`
         : 'Notiz gelöscht';
     }
 
@@ -192,11 +206,28 @@ export class LogComponent implements OnInit {
   formatDateShort(raw: string | null | undefined): string {
     if (!raw) return '-';
     const str = String(raw);
-    const ymd = str.slice(0, 10);
-    const parts = ymd.split('-');
-    if (parts.length !== 3) return ymd;
-    const [y, m, d] = parts;
-    return `${d}/${m}/${y.slice(2)}`;
+
+    if (str.length >= 10 && str[4] === '-' && str[7] === '-' && !str.includes('T')) {
+      const ymd = str.slice(0, 10);
+      const parts = ymd.split('-');
+      if (parts.length !== 3) return ymd;
+      const [y, m, d] = parts;
+      return `${d}/${m}/${y.slice(2)}`;
+    }
+
+    const d = new Date(str);
+    if (isNaN(d.getTime())) {
+      const ymd = str.slice(0, 10);
+      const parts = ymd.split('-');
+      if (parts.length !== 3) return ymd;
+      const [y, m, day] = parts;
+      return `${day}/${m}/${y.slice(2)}`;
+    }
+
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(2);
+    return `${dd}/${mm}/${yy}`;
   }
 
   formatDates(dates: string[] | null | undefined): string {
@@ -204,5 +235,15 @@ export class LogComponent implements OnInit {
     return dates
       .map(d => this.formatDateShort(d))
       .join(', ');
+  }
+
+  formatRange(from: string | null | undefined, to: string | null | undefined): string {
+    const f = this.formatDateShort(from);
+    const t = this.formatDateShort(to);
+
+    if (!from && !to) return '-';
+    if (f === t) return f;
+
+    return `${f} - ${t}`;
   }
 }

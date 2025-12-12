@@ -10,6 +10,7 @@
 
 body.light {
     --bgc: #fff;
+    --bgca: #f0f0f5;
     --tc: #000;
     --olc: #000;
     --bsc: #0000003f;
@@ -20,6 +21,7 @@ body.light {
 
 body.dim {
     --bgc: #1e1e1e;
+    --bgca: #252525;
     --tc: #fff;
     --olc: #fff;
     --bsc: #00000080;
@@ -30,6 +32,7 @@ body.dim {
 
 body.neon {
     --bgc: #080022;
+    --bgca: #0b002e;
     --tc: #fff;
     --olc: #fff;
     --bsc: #3dc2ff30;
@@ -293,26 +296,26 @@ body.outlines .doc-table-wrapper {
 
 /* Kopfzeile etwas hervorheben */
 body.light .doc-role-table thead th {
-    background-color: #f0f0f5;
+    background-color: var(--bgca);
 }
 
 body.dim .doc-role-table thead th {
-    background-color: #252525;
+    background-color: var(--bgca);
 }
 
 body.neon .doc-role-table thead th {
-    background-color: #0b002e;
+    background-color: var(--bgca);
 }
 
 /* Zebra-Streifen im Body */
 body.light .doc-role-table tbody tr:nth-child(odd) td {
-    background-color: #f0f0f5;
+    background-color: var(--bgca);
 }
 
 body.dim .doc-role-table tbody tr:nth-child(odd) td {
-    background-color: #252525;
+    background-color: var(--bgca);
 }
 
 body.neon .doc-role-table tbody tr:nth-child(odd) td {
-    background-color: #0b002e;
+    background-color: var(--bgca);
 }

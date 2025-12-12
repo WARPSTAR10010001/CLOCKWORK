@@ -1,4 +1,3 @@
-/* --- Globale Styles (unverändert) --- */
 input,
 select,
 button {
@@ -16,32 +15,19 @@ select {
     gap: 20px;
 }
 
-/* --- Tabellen-Darstellung --- */
 
-/* Header-Row (5 Spalten: Name, Status, Jahresurlaub, Übertrag, Aktion) */
 .employee-header-row {
     display: grid;
-    /* Angepasste Spaltenbreiten (insgesamt 5 Spalten) */
     grid-template-columns: 1.5fr 0.7fr 1fr 1fr 2fr;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
     border-radius: 10px;
 }
-/* Header-Hintergrundfarben */
-:host-context(body.light) .employee-header-row {
-    background: #f0f0f5;
+.employee-header-row {
+    background: var(--bgca);
 }
 
-:host-context(body.dim) .employee-header-row {
-    background: #252525;
-}
-
-:host-context(body.neon) .employee-header-row {
-    background: #0b002e;
-}
-
-/* Listen-Container */
 .plan-employees {
     border-radius: 10px;
 }
@@ -50,10 +36,8 @@ select {
     border: 4px solid var(--tc);
 }
 
-/* Zeilen (5 Spalten: Name, Status, Jahresurlaub, Übertrag, Aktion) */
 .employee-entry-row {
     display: grid;
-    /* Identisch zum Header: 5 Spalten */
     grid-template-columns: 1.5fr 0.7fr 1fr 1fr 2fr;
     gap: 10px;
     align-items: center;
@@ -61,49 +45,33 @@ select {
     border-radius: 10px;
 }
 
-/* Zebra-Streifen */
 .employees-container > .employee-entry-row:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-:host-context(body.light) .employees-container > .employee-entry-row:nth-child(even) {
-    background: #f0f0f5;
+.employees-container > .employee-entry-row:nth-child(even) {
+    background: var(--bgca);
 }
 
-:host-context(body.dim) .employees-container > .employee-entry-row:nth-child(even) {
-    background: #252525;
-}
-
-:host-context(body.neon) .employees-container > .employee-entry-row:nth-child(even) {
-    background: #0b002e;
-}
-
-/* Text- und Eingabefelder in den Zeilen */
 .employee-entry-row .cell {
-    /* Stellt sicher, dass der Zelleninhalt vertikal zentriert ist */
     display: flex;
     align-items: center;
-    min-height: 40px; /* Oder ähnlicher Wert für konsistente Zeilenhöhe */
+    min-height: 40px;
     min-width: 0;
 }
 
-/* Name und Chip sollen links ausgerichtet sein */
 .name-cell,
 .status-cell {
     justify-content: flex-start;
     font-size: 2em;
 }
 
-/* Text-Inputs (Jahresurlaub, Übertrag) füllen Spalten */
 .days-input {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    /* Optional: Passen Sie die Höhe an, falls nötig, um mit Buttons übereinzustimmen */
 }
 
-
-/* Status-Chip-Styles (Basis für 'in' und 'out') */
 .chip {
     padding: 3px 8px;
     border-radius: 12px;
@@ -111,7 +79,6 @@ select {
 }
 
 .chip.in {
-    /* Beispiel-Farben für "im Plan" */
     background-color: var(--bgc);
     color: var(--green);
     border: 3px solid var(--green);
@@ -120,7 +87,6 @@ select {
 }
 
 .chip.out {
-    /* Beispiel-Farben für "nicht im Plan" */
     background-color: var(--bgc);
     color: var(--red);
     border: 3px solid var(--red);
@@ -129,31 +95,13 @@ select {
 }
 
 
-/* Aktionen-Zelle: Buttons nebeneinander */
 .action-cell {
     display: flex;
-    justify-content: space-between; /* Abstand zwischen den Buttons */
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
 }
 
-/* Buttons in der Aktion-Zelle */
-.action-cell .button-primary,
-.action-cell .button-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 110px; /* Konsistente Buttonbreite */
-    flex-grow: 1; /* Beide Buttons füllen den verfügbaren Platz in der Zelle aus */
-}
-
-/* Hinweise */
-.hint {
-    margin: 15px;
-    font-size: 1.5em;
-}
-
-/* Buttons in der Aktion-Zelle */
 .action-cell .button-primary,
 .action-cell .button-action {
     display: inline-flex;
@@ -163,7 +111,20 @@ select {
     flex-grow: 1;
 }
 
-/* Spezieller Zustand: Mitarbeiter ist schon im Plan */
+.hint {
+    margin: 15px;
+    font-size: 1.5em;
+}
+
+.action-cell .button-primary,
+.action-cell .button-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    flex-grow: 1;
+}
+
 .add-btn.already-in {
     visibility: hidden;
 }

@@ -126,17 +126,10 @@ hr {
     transform: translateX(10px);
 }
 
-:host-context(body.light) .search-results li:nth-last-child(odd) {
-    background-color: #f0f0f5;
+.search-results li:nth-last-child(odd) {
+    background-color: var(--bgca);
 }
 
-:host-context(body.dim) .search-results li:nth-last-child(odd) {
-    background-color: #252525;
-}
-
-:host-context(body.neon) .search-results li:nth-last-child(odd) {
-    background-color: #0b002e;
-}
 
 .hint {
     font-size: 2em;

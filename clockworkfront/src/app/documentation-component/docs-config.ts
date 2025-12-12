@@ -138,14 +138,14 @@ export const DOC_SECTIONS: DocSection[] = [
             html: `
             <p>Die Jahresübersicht ist das zentrale Dashboard von CLOCKWORK, auf dem alle Dienstpläne angezeigt werden. Hier können Nutzer und Moderatoren schnell auf die Dienstpläne zugreifen und diese verwalten.</p>
             <p>Der aktuelle Dienstplan wird immer ganz oben links angezeigt, gefolgt von den vorherigen Jahren in absteigender Reihenfolge. Moderatoren haben zusätzlich die Möglichkeit, in der Jahresübersicht die spezifischen Pläne zu bearbeiten.</p>
-            `
+          `
           },
           {
             id: "monatsübersicht",
             title: "Monatsübersicht",
             html: `
             <p>Nachdem ein Jahr ausgewählt wurde öffnet sich die Monatsübersicht. Hier werden alle Monate des ausgewählten Jahres angezeigt. Nutzer können auf einen Monat klicken, um die detaillierte Ansicht des Dienstplans (auch Planviewer genannt) für diesen Monat zu öffnen.</p>
-            `
+          `
           },
           {
             id: "planviewer",
@@ -153,47 +153,54 @@ export const DOC_SECTIONS: DocSection[] = [
             html: `
             <p>Der Planviewer ist die detaillierte Ansicht eines Dienstplans für einen bestimmten Monat eines bestimmten Jahres. Hier können Nutzer und Moderatoren die Einträge für jeden Mitarbeiter sehen und bearbeiten.</p>
             <p>Im Planviewer befinden sich die primäre Knopfleiste oben, die es ermöglicht, für eine ausgewählte Zelle einen Status einzutragen (also z.B. Urlaub, Krank, Gleitzeit, etc.). Außerdem kann die momentane Auswahl auch aufgehoben werden. Zusätzlich dazu kann ein gesetzter Status auch wieder mit dem "Löschen"-Knopf aufgehoben werden.</p>
-            <p>Man wählt im Planviewer eine Zelle aus, indem man auf diese klickt. Dabei bilden die Spalten jeweils das Datum ab und die Zeilen die Mitarbeiter. Sobald eine Zelle ausgewählt ist, wird diese mit einer Umrandung hervorgehoben. Nun kann ein Status gesetzt oder gelöscht werden.</p>
-            <p>Um mehrere aufeinanderfolgende Zellen auszuwählen, muss die erste Zelle angeklickt werden (z.B. der 1.1.2025), dann die "Shift"-Taste gedrückt gehalten werden und anschließend die letzte Zelle angeklickt werden (z.B. der 5.1.2025). Dadurch werden alle Zellen dazwischen ebenfalls ausgewählt. Nun kann für alle ausgewählten Zellen gleichzeitig ein Status gesetzt oder gelöscht werden.</p>
-            <p>Um mehrere nicht aufeinanderfolgende Zellen auszuwählen, muss die erste Zelle angeklickt werden (z.B. der 1.1.2025), dann die "Strg"-Taste gedrückt gehalten werden und anschließend können weitere Zellen einzeln angeklickt werden (z.B. der 3.1.2025 und der 5.1.2025). Dadurch werden nur die angeklickten Zellen ausgewählt. Nun kann für alle ausgewählten Zellen gleichzeitig ein Status gesetzt oder gelöscht werden.</p>
-            <p>Hinweis: Wenn oben in dem Dienstplan bestimmte Tage invertiert dargestellt werden, sind diese Tage Feiertage.</p>
-            <p>Außerdem besteht die Möglichkeit, über Tastenkürzel Einträge zu erstellen, dadurch muss nicht immer die Maus benutzt werden. Die Tastenkürzel sind wie folgt:</p>
+            <p>Jede Zelle steht für einen Mitarbeiter an einem bestimmten Tag. Ausgewählte Zellen werden hervorgehoben, und es können mehrere Zellen gleichzeitig ausgewählt werden - zusammenhängend über <b>Shift</b> oder getrennt über <b>Strg</b>.</p>
+            <p>Feiertage werden in der Kopfzeile invertiert dargestellt. Wochenenden können optional eingeblendet werden, sind jedoch nicht beschreibbar.</p>
+            <p>Wenn eine Zelle eine Plannotiz enthält, wird ein kleiner Punkt oben rechts in der Zelle angezeigt. Dies erleichtert das schnelle Erkennen von Zellen mit zusätzlichen Informationen.</p>
+            <p>Die im Planviewer verfügbaren Tastenkürzel sind:</p>
             <ul>
-              <li>U: Urlaub eintragen</li>
-              <li>H: Alternierende Telearbeit eintragen</li>
-              <li>K: Krank eintragen</li>
-              <li>L: Lehrgang eintragen</li>
-              <li>G: Gleitzeit eintragen</li>
-              <li>T: Termin eintragen</li>
-              <li>O: Anderes eintragen</li>
-              <li>Entf: Eintrag bzw. Einträge löschen</li>
-              <li>Esc: Auswahl aufheben</li>
+              <li>U - Urlaub eintragen</li>
+              <li>H - Alternierende Telearbeit eintragen</li>
+              <li>K - Krank eintragen</li>
+              <li>L - Lehrgang eintragen</li>
+              <li>G - Gleitzeit eintragen</li>
+              <li>T - Termin eintragen</li>
+              <li>O - Anderes eintragen</li>
+              <li>Entf - Einträge löschen</li>
+              <li>Esc - Auswahl aufheben</li>
             </ul>
-            <p>Hinweis: Diese Tastenkürzel funktionieren nur, wenn eine oder mehrere Zellen ausgewählt sind.</p>
-            <p>Zusätzlich zu der primären Knopfleiste oben, gibt es noch eine sekundäre Knopfleiste unten im Planviewer. Diese ermöglicht es, zwischen den Monaten zu navigieren (vorheriger Monat/nächster Monat) und die Anzeige von Wochenenden umzuschalten (Wochenenden anzeigen/ausblenden).</p>
-            <p>Hinweis: Das Anzeigen der Wochenenden kann hilfreich sein zur visuellen Orientierung, jedoch können keine Einträge an Wochenenden gemacht werden, da diese Tage standardmäßig arbeitsfrei sind.</p>
-            <p>Außerdem befindet sich auch der Knopf "Logs anzeigen" in der sekundären Knopfleiste. Was dieser macht erläutert der nächste Abschnitt.</p>
-            <p>Um von hier aus zurück auf die Monatsübersicht zu gelangen, kann die Jahreszahl im Titel der Seite angeklickt werden.</p>
-            `
+            <p>Unten befindet sich die sekundäre Knopfleiste (Navigation: vorheriger Monat / nächster Monat, Wochenenden anzeigen/ausblenden, Logs anzeigen).</p>
+            <p>Hinweis: Für eine detaillierte Nachverfolgung aller Änderungen kann der Knopf "Logs anzeigen" verwendet werden.</p>
+          `
+          },
+          {
+            id: "plannotizen",
+            title: "Plannotizen",
+            html: `
+            <p>Plannotizen ermöglichen es, für jeden Eintrag im Dienstplan zusätzliche Informationen zu hinterlegen. Diese Funktion wurde aufgrund von Nutzerfeedback eingeführt.</p>
+            <p>Durch einen Doppelklick auf eine Zelle mit einem Eintrag wird das Notizfenster geöffnet. Falls bereits eine Notiz existiert, wird diese direkt angezeigt und kann beim Drücken des entsprechenden Knopfes bearbeitet werden.</p>
+            <p>Im Bearbeitungsfenster einer Notiz kann ein beliebiger Text eingetragen werden. Durch Speichern wird die Notiz der entsprechenden Zelle zugewiesen.</p>
+            <p>Wenn der Text vollständig entfernt und gespeichert wird, gilt die Notiz als gelöscht.</p>
+            <p>Außerdem wird eine Notiz gelöscht wenn sich der Status der Zelle ändert (z.B. von Urlaub zu Krank).</p>
+            <p>Änderungen an den Notizen werden natürlich auch in den Planlogs angezeigt.</p>
+          `
           },
           {
             id: "logs",
             title: "Logs",
             html: `
-            <p>Die Logs sind ein wichtiges Werkzeug zur Nachverfolgung von Änderungen im Dienstplan. Sie bieten eine detaillierte Übersicht über alle Aktionen, die durchgeführt wurden, einschließlich der Erstellung, Bearbeitung und Löschung von Einträgen.</p>
-            <p>Um die Logs anzuzeigen, klicken Sie im Planviewer auf den Knopf "Logs anzeigen" in der sekundären Knopfleiste unten. Dies öffnet eine neue Seite, auf der alle relevanten Logs für den aktuellen Dienstplan angezeigt werden.</p>
-            <p>In einem Log-Eintrag finden Sie folgende Informationen:</p>
+            <p>Die Logs dienen der vollständigen Nachverfolgung aller Änderungen im Dienstplan. Hierbei werden Eintragungen, Löschungen und (neu) auch Änderungen an Plannotizen protokolliert.</p>
+            <p>Über den Knopf "Logs anzeigen" im Planviewer gelangt man zur Log-Übersicht des aktuellen Monats.</p>
+            <p>Ein Log beinhaltet folgende Informationen:</p>
             <ul>
-            <li>Datum und Uhrzeit der Aktion</li>
-            <li>Art der Aktion (Erstellung, Bearbeitung, Löschung)</li>
-            <li>Betroffener Mitarbeiter</li>
-            <li>Zeitraum, der verändert wurde</li>
-            <li>Detaillierte Tagesangaben der Änderung</li>
+              <li>Datum und Uhrzeit der Aktion</li>
+              <li>Art der Aktion (Eintrag, Löschung, Notizänderung)</li>
+              <li>Betroffener Mitarbeiter</li>
+              <li>Korrigierter Zeitraum (jetzt fehlerfrei - ein früherer Datumsfehler wurde behoben)</li>
+              <li>Liste der betroffenen Tage</li>
             </ul>
-            <p>Die Logs sind nach Datum sortiert, wobei die neuesten Einträge oben angezeigt werden. Dies ermöglicht es Ihnen, schnell die jüngsten Änderungen zu überprüfen und bei Bedarf auf frühere Aktionen zurückzublicken.</p>
-            <p>Außerdem besteht die Möglichkeit, die Logs nach Mitarbeitern und/oder Aktionen zu filtern. Dies erleichtert die Suche nach spezifischen Einträgen und hilft dabei, den Überblick über die durchgeführten Änderungen zu behalten.</p>
-            <p>Um zurück zum Planviewer zu gelangen, kann die Jahreszahl im Titel der Seite angeklickt werden.</p>
-            `
+            <p>Logs können nach Aktionstyp und Mitarbeiter gefiltert werden, um schnelle Analysen zu ermöglichen.</p>
+            <p>Um zurück zum Planviewer zu gelangen, kann die Jahreszahl im Titel angeklickt werden.</p>
+          `
           }
         ]
       },

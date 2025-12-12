@@ -17,8 +17,8 @@ import { ImpersonationService } from '../impersonation-service';
 type RowForm = {
   id: FormControl<number>;
   name: FormControl<string>;
-  start_date: FormControl<string | null>; // 'YYYY-MM-DD' oder null
-  end_date: FormControl<string | null>;   // 'YYYY-MM-DD' oder null
+  start_date: FormControl<string | null>;
+  end_date: FormControl<string | null>;
 };
 
 type NewForm = {
@@ -49,7 +49,6 @@ export class ModEmployeeComponent implements OnInit {
   activeFa = this.fb.array<FormGroup<RowForm>>([]);
   inactiveFa = this.fb.array<FormGroup<RowForm>>([]);
 
-  // Neuer Mitarbeiter (oben)
   newEmployeeForm = this.fb.group<NewForm>({
     name: this.fb.nonNullable.control('', {
       validators: [Validators.required, Validators.minLength(2)],
@@ -58,10 +57,7 @@ export class ModEmployeeComponent implements OnInit {
     end_date: this.fb.control<string | null>(null),
   });
 
-
-
   ngOnInit(): void {
-    // Dept ermitteln: Admin → Impersonation, sonst JWT
     this.resolveDepartmentOnceAndLoad();
   }
 
@@ -75,7 +71,7 @@ export class ModEmployeeComponent implements OnInit {
       if (this.auth.isAdmin() && !this.deptId) {
         this.overlay.showOverlay('info', 'Bitte zuerst einen Fachbereich im Modpanel auswählen.');
         this.loading = false;
-        return; // blockt bis Impersonation gesetzt wurde
+        return;
       }
 
       if (!this.deptId) {
@@ -87,7 +83,6 @@ export class ModEmployeeComponent implements OnInit {
     });
   }
 
-  // ---------- Laden & Split ----------
   private loadAll(): void {
     if (!this.deptId) return;
     this.loading = true;
@@ -120,7 +115,7 @@ export class ModEmployeeComponent implements OnInit {
     for (const e of list) {
       const end = e.end_month || null;
       const isActiveFlag = e.is_active !== false;
-      const notEnded = !end || end >= monthStart; // 'YYYY-MM-DD' Vergleich
+      const notEnded = !end || end >= monthStart;
 
       (isActiveFlag && notEnded ? actives : inactives).push(e);
     }
@@ -133,19 +128,17 @@ export class ModEmployeeComponent implements OnInit {
 
   // String-only Date Utils
   private toInputDate(s?: string | null): string | null {
-    return s ?? null; // vom Server kommt bereits 'YYYY-MM-DD'
+    return s ?? null;
   }
 
-  // String-Vergleich für 'YYYY-MM-DD' ist chronologisch okay
   private todayYmd(): string {
     const d = new Date();
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = '01'; // für Monatsanfang-Vergleich reicht das
+    const day = '01';
     return `${y}-${m}-${day}`;
   }
 
-  // ---------- Form-Factories ----------
   private rowToForm(e: Employee): FormGroup<RowForm> {
     return this.fb.group<RowForm>({
       id: this.fb.nonNullable.control(e.id),
@@ -157,7 +150,6 @@ export class ModEmployeeComponent implements OnInit {
     });
   }
 
-  // ---------- Aktionen: Update / Delete ----------
   saveRow(index: number, which: 'active' | 'inactive'): void {
     const fa = which === 'active' ? this.activeFa : this.inactiveFa;
     const group = fa.at(index);
@@ -172,8 +164,8 @@ export class ModEmployeeComponent implements OnInit {
     const v = group.getRawValue();
     const payload = {
       displayName: v.name.trim(),
-      startMonth: v.start_date || null, // 👈 exakt wie eingegeben
-      endMonth: v.end_date || null,     // 👈 exakt wie eingegeben
+      startMonth: v.start_date || null,
+      endMonth: v.end_date || null,
     };
 
     this.employeesApi.updateEmployee(v.id, payload).subscribe({
@@ -209,7 +201,6 @@ export class ModEmployeeComponent implements OnInit {
     });
   }
 
-  // ---------- Neuer Mitarbeiter ----------
   createEmployee(): void {
     if (this.newEmployeeForm.invalid) {
       this.newEmployeeForm.markAllAsTouched();
@@ -230,7 +221,7 @@ export class ModEmployeeComponent implements OnInit {
       .createEmployee({
         departmentId: this.deptId,
         displayName: v.name.trim(),
-        startMonth: v.start_date!, // required → non-null
+        startMonth: v.start_date!,
         endMonth: v.end_date || null,
       })
       .subscribe({
@@ -247,7 +238,6 @@ export class ModEmployeeComponent implements OnInit {
       });
   }
 
-  // Getter fürs Template
   get activeRows(): FormArray<FormGroup<RowForm>> { return this.activeFa; }
   get inactiveRows(): FormArray<FormGroup<RowForm>> { return this.inactiveFa; }
 }

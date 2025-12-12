@@ -5,11 +5,11 @@
       {{ month.toString().padStart(2, '0') }}/{{ year }}
     </a>
   </h1>
-
   <div class="log-toolbar">
     <label>Aktion:</label>
     <select id="fltr-act" [(ngModel)]="actionFilter" (change)="onActionFilterChange()">
       <option [ngValue]="''">Alle</option>
+      <option ngValue="NOTE_CHANGES">Notizänderung</option>
       <option ngValue="VACATION">Urlaub</option>
       <option ngValue="HOME">Homeoffice</option>
       <option ngValue="SICK">Krank</option>
@@ -23,64 +23,65 @@
     <select id="fltr-emp" [(ngModel)]="employeeFilter" (change)="onEmployeeFilterChange()">
       <option [ngValue]="''">Alle</option>
       @for (e of employeeOptions; track e.id) {
-        <option [ngValue]="e.id">{{ e.name }}</option>
+      <option [ngValue]="e.id">{{ e.name }}</option>
       }
     </select>
   </div>
-
   @if (loading) {
-    <h1>Lade Logs...</h1>
+  <h1>Lade Logs...</h1>
   } @else if (logs.length === 0) {
-    <h1>Für diesen Monat sind keine Logs vorhanden.</h1>
+  <h1>Für diesen Monat sind keine Logs vorhanden.</h1>
   } @else {
-    <div class="logs">
-      @for (log of logs; track log.id) {
-        <div class="log">
-          <div class="meta">
-            <span class="log-id">#{{ log.id }}</span>
-            <span>
-              {{ log.created_at | date:'short' }}
-              - {{ describeLog(log) }}
-              - {{ log.employee_name || ('Mitarbeiter #' + log.employee_id) }}
-            </span>
-          </div>
-          <hr>
-          <div class="range">
-            Zeitraum:
-            {{ formatDateShort(log.date_from) }}
-            -
-            {{ formatDateShort(log.date_to) }}
-          </div>
-          <div class="dates">
-            Tage: {{ formatDates(log.dates) }}
-          </div>
-
-          @if (
-            log.action_type === 'NOTE_SET' ||
-            log.action_type === 'NOTE_UPDATE' ||
-            log.action_type === 'NOTE_DELETE'
-          ) {
-            <div class="note-diff">
-              <div>
-                <strong>Vorher:</strong>
-                @if (log.note_old) {
-                  <span>"{{ log.note_old }}"</span>
-                } @else {
-                  <span>(leer)</span>
-                }
-              </div>
-              <div>
-                <strong>Nachher:</strong>
-                @if (log.note_new) {
-                  <span>"{{ log.note_new }}"</span>
-                } @else {
-                  <span>(leer)</span>
-                }
-              </div>
-            </div>
+  <div class="logs">
+    @for (log of logs; track log.id) {
+    <div class="log">
+      <div class="meta">
+        <span class="log-id">#{{ log.id }}</span>
+        <span>
+          {{ log.created_at | date:'short' }}
+          - {{ describeLog(log) }}
+          - {{ log.employee_name || ('Mitarbeiter #' + log.employee_id) }}
+        </span>
+      </div>
+      <hr>
+      @if (log.action_type !== "NOTE_SET" && log.action_type !== "NOTE_UPDATE" && log.action_type !== "NOTE_DELETE") {
+      <div class="range">
+        Zeitraum:
+        {{ formatRange(log.date_from, log.date_to) }}
+      </div>
+      <div class="dates">
+        Tage: {{ formatDates(log.dates) }}
+      </div>
+      } @else {
+        <div class="range">
+        Datum:
+        {{ formatRange(log.date_from, log.date_to) }}
+      </div>
+      }
+      @if (
+      log.action_type === 'NOTE_SET' ||
+      log.action_type === 'NOTE_UPDATE' ||
+      log.action_type === 'NOTE_DELETE'
+      ) {
+      <div class="note-diff">
+        <div>
+          @if (log.note_before) {
+          <h2>Vorher: "{{ log.note_before }}"</h2>
+          } @else {
+          <h2>Vorher: Keine Notiz vorhanden</h2>
           }
         </div>
+        <div>
+          @if (log.note_after) {
+          <h2>Nachher: "{{ log.note_after }}"</h2>
+          } @else {
+          <h2>Nachher: Keine Notiz vorhanden</h2>
+          }
+        </div>
+      </div>
       }
     </div>
+    }
+  </div>
   }
 </div>

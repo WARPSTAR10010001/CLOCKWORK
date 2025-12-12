@@ -1,6 +1,5 @@
 <div class="comp-wrap">
   <h1 class="page-header emp">Modpanel</h1>
-
   <div id="link-list">
     @if (authService.isAdmin()) {
     <h1 class="subtitle">Fachbereich auswählen</h1>
@@ -24,7 +23,6 @@
     <a class="card" [routerLink]="canNavigate ? ['/mod/plans'] : null"
       [class.disabled]="!canNavigate && authService.isAdmin()">Dienstplan erstellen</a>
   </div>
-
   <hr>
   <div class="systemuser-management">
     <h1 class="subtitle">Systemnutzer verwalten</h1>
@@ -32,7 +30,6 @@
       <a class="button-primary" (click)="resetUserPassword()">
         Nutzerpasswort zurücksetzen
       </a>
-
       @if (authService.isAdmin()) {
       <a class="button-primary" (click)="resetModPassword()">
         Moderatorpasswort zurücksetzen
@@ -43,5 +40,4 @@
       Bitte daran denken, dass alle Nutzer eines Fachbereiches mit der gleichen Berechtigungsstufe nun das gleiche
       Passwort haben.</h1>
   </div>
-
 </div>

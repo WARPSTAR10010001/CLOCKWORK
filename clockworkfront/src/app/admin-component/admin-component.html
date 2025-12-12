@@ -1,6 +1,5 @@
 <div class="comp-wrap">
   <h1 class="emp page-header">Adminpanel</h1>
-
   <h1 id="new" class="subtitle">Neuen Fachbereich erstellen</h1>
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="form-row">
@@ -14,7 +13,6 @@
     </div>
     <h1>Initiales Passwort beim Erstellen der Fachbereichsnutzer: init</h1>
     <h1>Das Initialpasswort muss beim ersten Login geändert werden.</h1>
-
     <details class="details">
       <summary class="subtitle">Optionale Benutzernamen festlegen</summary>
       <div id="optional">
@@ -24,8 +22,8 @@
             id="userU"
             type="text"
             formControlName="userUsername"
-            placeholder="leer = auto (user-it)"
-          />
+            placeholder="leer = auto (z.B.: user-it)"
+          >
         </div>
         <div class="form-row">
           <label for="modU">Moderatorname:</label>
@@ -33,12 +31,11 @@
             id="modU"
             type="text"
             formControlName="modUsername"
-            placeholder="leer = auto (mod-it)"
-          />
+            placeholder="leer = auto (z.B.: mod-it)"
+          >
         </div>
       </div>
     </details>
-
     <div class="button-row">
       <button
         class="button-primary"
@@ -49,15 +46,12 @@
       </button>
     </div>
   </form>
-
-  <hr />
-
+  <hr>
   <h1 class="subtitle">Bestehende Fachbereiche</h1>
   <div class="dept-list">
     @for (d of departments; track d.id) {
       <div class="dept-card">
         <div class="dept-title">{{ d.name }}</div>
-
         <div class="dept-users">
           @for (u of d.users; track u.id) {
             <span class="tag">
@@ -66,8 +60,6 @@
             </span>
           }
         </div>
-
-        <!-- Aktionen pro Fachbereich -->
         <div class="dept-actions">
           <button
             type="button"

@@ -188,7 +188,9 @@ textarea {
 }
 
 #confirm-overlay a,
-#feedback-overlay a {
+#feedback-overlay a,
+#planNote-overlay a,
+#planNoteEdit-overlay a {
   margin-right: 20px;
 }
 
@@ -204,11 +206,6 @@ textarea {
   box-sizing: border-box;
 }
 
-#planNote-overlay .button-row a,
-#planNoteEdit-overlay .button-row a {
-  margin-right: 20px;
-}
-
 #planNoteEdit-overlay textarea {
-  margin: 20px 0 30px 0;
+  margin: 30px 0 30px 0;
 }

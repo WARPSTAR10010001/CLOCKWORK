@@ -1,13 +1,10 @@
-/* Globale Feld-Ausrichtung */
 input,
 select {
     text-align: center;
     margin: 0;
-    /* verhindert abweichende Browser-Einrückung */
     box-sizing: border-box;
 }
 
-/* Obere Formularzeilen: Label links, Feld rechts */
 .form-row {
     display: grid;
     grid-template-columns: 220px minmax(260px, 1fr);
@@ -29,7 +26,6 @@ select {
     width: 400px;
 }
 
-/* Mitarbeitertabelle: Header als Grid (3 Spalten: Name | Übertrag | Urlaub) */
 .employee-header-row {
     width: 100%;
     display: grid;
@@ -42,23 +38,14 @@ select {
     box-sizing: border-box;
 }
 
-:host-context(body.light) .employee-header-row {
-    background: #f0f0f5;
-}
-
-:host-context(body.dim) .employee-header-row {
-    background: #252525;
-}
-
-:host-context(body.neon) .employee-header-row {
-    background-color: #0b002e;
+.employee-header-row {
+    background: var(--bgca);
 }
 
 .employee-header-row div {
     font-size: 1.3em;
 }
 
-/* Mitarbeiterzeilen (gleiche Spalten wie Header) */
 .employees-container {
     margin-top: 6px;
     box-sizing: border-box;
@@ -68,7 +55,6 @@ select {
     width: 100%;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
-    /* identisch zum Header */
     gap: 10px;
     align-items: center;
     padding: 8px 12px;
@@ -76,7 +62,6 @@ select {
     box-sizing: border-box;
 }
 
-/* Name-Cell (read-only Anzeige) */
 .name-cell {
     font-size: 2em;
     padding: 6px 10px;
@@ -85,44 +70,30 @@ select {
     white-space: nowrap;
 }
 
-/* Zebra-Streifen */
 .employees-container > .employee-entry-row:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.04) !important;
 }
 
-:host-context(body.light) .employees-container > .employee-entry-row:nth-child(even) {
-    background-color: #f0f0f5 !important;
+.employees-container > .employee-entry-row:nth-child(even) {
+    background-color: var(--bgca) !important;
 }
 
-:host-context(body.dim) .employees-container > .employee-entry-row:nth-child(even) {
-    background-color: #252525 !important;
-}
-
-:host-context(body.neon) .employees-container > .employee-entry-row:nth-child(even) {
-    background-color: #0b002e !important;
-}
-
-/* Eingabefelder pro Zeile */
 .employee-entry-row .num-entry-small {
     width: 140px;
-    /* etwas komfortabler */
     padding: 6px 10px;
     border-radius: 10px;
 }
 
-/* Buttons-Zeile unter der Tabelle */
 .button-row {
     display: flex;
     gap: 12px;
     margin-top: 18px;
 }
 
-/* Seitenkopf */
 .page-header {
     margin-bottom: -6px;
 }
 
-/* Fix: erste Mitarbeiterzeile bündig mit Header */
 .employees-container > .employee-entry-row:first-child {
     margin-left: 0;
     padding-left: 12px;

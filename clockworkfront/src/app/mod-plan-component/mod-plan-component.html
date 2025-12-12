@@ -1,34 +1,23 @@
 <div class="comp-wrap">
   <h1 class="emp page-header">Neuer Plan</h1>
-
   <form [formGroup]="planForm" (ngSubmit)="submit()">
-    <!-- Jahr -->
     <div class="form-row">
       <label for="year">Dienstplan für das Jahr:</label>
       <input id="year" type="number" class="num-entry" formControlName="year">
     </div>
-
     <hr>
-
     <h1 class="subtitle">Mitarbeiter</h1>
     <div id="employee">
-      <!-- Kopfzeile -->
       <div class="employee-header-row">
         <div>Name</div>
         <div>Übertrag</div>
         <div>Jahresurlaub</div>
       </div>
-
-      <!-- Nur aktive Mitarbeiter, Name read-only -->
       <div class="employees-container" formArrayName="employees">
         @for (row of employees.controls; track row; let i = $index) {
         <div class="employee-entry-row" [formGroupName]="i">
-          <!-- Name nur anzeigen -->
           <div class="name-cell">{{ row.get('name')?.value }}</div>
-
-          <!-- Urlaubswerte editierbar -->
           <input type="number" class="num-entry-small" min="0" formControlName="vacation_days_carryover" />
-
           <input type="number" class="num-entry-small" min="0" formControlName="vacation_days_total" />
         </div>
         }

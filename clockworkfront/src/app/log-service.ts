@@ -15,8 +15,8 @@ export interface PlanLogDTO {
   day_count: number;
   dates: string[];
   created_at: string;
-  note_old?: string | null;
-  note_new?: string | null;
+  note_before?: string | null;
+  note_after?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
