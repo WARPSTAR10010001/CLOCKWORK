@@ -57,10 +57,12 @@ export class AuthService {
     const loggedIn = !!(user && (!exp || Date.now() / 1000 < exp));
     this.authStatusSubject.next({ loggedIn, user, exp });
   }
+
   private clearSession() {
     localStorage.removeItem(this.tokenKey);
     this.authStatusSubject.next({ loggedIn: false, user: null, exp: null });
   }
+
   private restoreSession() {
     const t = localStorage.getItem(this.tokenKey); if (!t) return this.clearSession();
     const dec = this.decodeJwt(t); if (!dec) return this.clearSession();
@@ -74,6 +76,7 @@ export class AuthService {
     return this.http.get<{ loggedIn: boolean; user: any | null }>(`${this.baseUrl}/auth/status`)
       .pipe(catchError(() => of({ loggedIn: false, user: null })));
   }
+
   refreshStatus(): Observable<AuthStatus> {
     return this.fetchServerStatus().pipe(
       tap((srv) => {
@@ -123,7 +126,9 @@ export class AuthService {
             this.overlay.lockToPasswordReset();
           } else {
             this.overlay.unlockPasswordReset();
-            this.overlay.showOverlay('success', `Willkommen, ${username}!`);
+            if (username !== "admin") {
+              this.overlay.showOverlay('success', `Willkommen, ${username}!`);
+            }
           }
         });
       }),
