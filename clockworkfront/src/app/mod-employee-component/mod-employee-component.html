@@ -1,9 +1,6 @@
 <div class="comp-wrap">
   <h1 class="emp page-header">Mitarbeiter verwalten</h1>
-
   @if (false) { <p class="hint">Bitte zuerst einen Fachbereich auswählen.</p> }
-
-  <!-- Neuer Mitarbeiter -->
   <h1 id="new-emp" class="subtitle">Neuen Mitarbeiter anlegen</h1>
   <div class="new-employee-card" [formGroup]="newEmployeeForm">
     <div class="new-grid">
@@ -24,10 +21,7 @@
       </div>
     </div>
   </div>
-
   <hr>
-
-  <!-- AKTIVE -->
   <h1 class="subtitle">Aktive Mitarbeiter</h1>
   <div class="active-employees">
     <div class="employee-header-row">
@@ -36,7 +30,6 @@
       <div>Enddatum</div>
       <div>Aktion</div>
     </div>
-
     <div class="employees-container">
       @for (row of activeRows.controls; track row; let i = $index) {
       <div class="employee-entry-row" [formGroup]="row">
@@ -54,10 +47,7 @@
       }
     </div>
   </div>
-
   <hr>
-
-  <!-- INAKTIVE -->
   <h1 class="subtitle">Ehemalige / Deaktiviert</h1>
   <div class="inactive-employees">
     <div class="employee-header-row">
@@ -66,7 +56,6 @@
       <div>Enddatum</div>
       <div>Aktion</div>
     </div>
-
     <div class="employees-container">
       @for (row of inactiveRows.controls; track row; let i = $index) {
       <div class="employee-entry-row inactive" [formGroup]="row">
