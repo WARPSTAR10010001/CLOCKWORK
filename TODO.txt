@@ -4,9 +4,8 @@ Loading animation
 Employee management css for halfscreen
 Lock plans of last year at end of january
 
-
-V1.2.0:
-Write documentation and changelog for plannotes
+V1.3.0:
+...
 
 
 V1.4.0:
