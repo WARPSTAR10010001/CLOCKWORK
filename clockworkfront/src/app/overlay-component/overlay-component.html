@@ -105,13 +105,11 @@
   } @else if (overlayState.type === "planNote") {
   <div id="planNote-overlay">
     <h1 class="emp page-header">Notiz</h1>
-
     @if (noteText) {
     <h1>{{ noteText }}</h1>
     } @else {
     <h1>Für diesen Eintrag wurde keine Notiz hinterlegt.</h1>
     }
-
     <div class="button-row">
       @if (noteText) {
       <a class="button-primary" (click)="openNoteEdit()">Notiz bearbeiten</a>

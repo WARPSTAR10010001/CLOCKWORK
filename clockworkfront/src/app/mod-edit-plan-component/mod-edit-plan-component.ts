@@ -24,9 +24,8 @@ export class ModEditPlanComponent implements OnInit {
   loading = false;
 
   employees: Employee[] = [];
-  inPlanIds = new Set<number>(); // wer ist im Plan?
+  inPlanIds = new Set<number>();
 
-  // Edit-Puffer: Urlaubswerte
   edits: Record<number, { annual: number; carry: number }> = {};
 
   constructor(
@@ -46,7 +45,7 @@ export class ModEditPlanComponent implements OnInit {
 
   private clampDateToYear(dateStr: string | null | undefined, year: number): string | null {
     if (!dateStr) return null;
-    const d = dateStr.slice(0, 10); // 'YYYY-MM-DD'
+    const d = dateStr.slice(0, 10);
     const yearStart = `${year}-01-01`;
     const yearEnd = `${year}-12-31`;
 
@@ -64,8 +63,6 @@ export class ModEditPlanComponent implements OnInit {
         const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
 
-        // Admin: nutzt Impersonation (wenn gesetzt), sonst nix
-        // MOD/USER: nutzt immer das Department aus dem JWT
         const depId = this.auth.isAdmin()
           ? (impDep ?? null)
           : (fromJwt ?? null);
@@ -87,7 +84,6 @@ export class ModEditPlanComponent implements OnInit {
       switchMap(depId => {
         if (!depId) return of(null);
 
-        // PlanId für das Jahr auflösen
         return this.plan.getPlansForDepartment(depId).pipe(
           take(1),
           map(res => res.plans.find(p => p.year === this.year) || null),
@@ -110,16 +106,12 @@ export class ModEditPlanComponent implements OnInit {
         this.loading = false;
         if (!bundle) return;
 
-        // 1) Nur aktive Mitarbeiter
         const active = (bundle.employees || []).filter(e => e.is_active !== false);
 
-        // 2) Nur Mitarbeiter, deren Zeitraum das Planjahr schneidet
         this.employees = active.filter(e => this.employeeOverlapsYear(e, this.year));
 
-        // 3) Set für "ist im Plan?"
         this.inPlanIds = new Set((bundle.links.items || []).map(x => x.employee_id));
 
-        // 4) Edit-Puffer initialisieren
         this.employees.forEach(e => {
           this.edits[e.id] = {
             annual: e.annual_leave_days ?? 30,
@@ -205,10 +197,6 @@ export class ModEditPlanComponent implements OnInit {
     });
   }
 
-  /**
-   * Holt aktualisierte Start-/Enddaten aus den Stammdaten (employees)
-   * und schreibt sie in plan_employees für dieses Jahr.
-   */
   syncDates(): void {
     this.plan.syncPlanEmployeeDates(this.planId).pipe(take(1)).subscribe({
       next: (res) => {
