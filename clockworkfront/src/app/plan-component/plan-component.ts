@@ -404,7 +404,12 @@ export class PlanComponent implements OnInit {
   }
 
   setEntry(type: string): void {
-    if (!this.planId || !this.departmentId || this.selectedCells.length === 0) return;
+    if (!this.planId || !this.departmentId) return;
+
+    if (this.selectedCells.length === 0) {
+      this.overlay.showOverlay("error", "Es müssen zuerst Zellen ausgewählt werden.");
+      return;
+    }
 
     const status = this.mapUiTypeToStatus(type);
 
