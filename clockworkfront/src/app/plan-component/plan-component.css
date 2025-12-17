@@ -75,14 +75,14 @@ td {
 #entry-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
     margin-bottom: 25px;
     justify-content: center;
 }
 
 #entry-buttons a {
     font-size: 1.5em;
-    padding: 10px 15px;
+    padding: 5px 10px;
 }
 
 #secondary-buttons {
