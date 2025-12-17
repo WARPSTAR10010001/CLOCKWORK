@@ -1,16 +1,16 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { OverlayService } from '../overlay-service';
-import { PlanService } from '../plan-service';
-import { PlanEntry, PlanEntryStatus } from '../plan-service';
-import { LogService } from '../log-service';
-import { Employee, EmployeeService } from '../employee-service';
-import { switchMap, map, catchError, take } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
-import { AuthService } from '../auth-service';
-import { ImpersonationService } from '../impersonation-service';
-import { HolidayService } from '../holiday-service';
+import { Component, OnInit, HostListener } from "@angular/core";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { OverlayService } from "../overlay-service";
+import { PlanService } from "../plan-service";
+import { PlanEntry, PlanEntryStatus } from "../plan-service";
+import { LogService } from "../log-service";
+import { Employee, EmployeeService } from "../employee-service";
+import { switchMap, map, catchError, take } from "rxjs/operators";
+import { forkJoin, of } from "rxjs";
+import { AuthService } from "../auth-service";
+import { ImpersonationService } from "../impersonation-service";
+import { HolidayService } from "../holiday-service";
 
 interface SelectedCell {
   employeeId: number;
@@ -18,10 +18,10 @@ interface SelectedCell {
 }
 
 @Component({
-  selector: 'app-plan',
+  selector: "app-plan",
   imports: [CommonModule, RouterLink],
-  templateUrl: './plan-component.html',
-  styleUrl: './plan-component.css'
+  templateUrl: "./plan-component.html",
+  styleUrl: "./plan-component.css"
 })
 export class PlanComponent implements OnInit {
   private holidaySet = new Set<number>();
@@ -41,15 +41,17 @@ export class PlanComponent implements OnInit {
   selectedCells: SelectedCell[] = [];
   anchorCell: SelectedCell | null = null;
 
-  weekdays: string[] = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  weekdays: string[] = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
   canGoPrev = false;
   canGoNext = false;
   availablePlanYears: number[] = [];
 
   showWeekends = false;
+  showShortcuts = false;
 
-  private readonly WEEKENDS_COOKIE = 'clockwork_show_weekends';
+  private readonly WEEKENDS_COOKIE = "clockwork_show_weekends";
+  private readonly SHORTCUTS_COOKIE = "clockwork_show_shortcuts";
 
   constructor(
     private plan: PlanService,
@@ -65,6 +67,7 @@ export class PlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.showWeekends = this.loadWeekendPreference();
+    this.showShortcuts = this.loadShortcutsPreference();
 
     this.overlay.noteChanged$
       .subscribe(() => {
@@ -72,8 +75,8 @@ export class PlanComponent implements OnInit {
       });
 
     this.activatedRoute.paramMap.subscribe(params => {
-      this.year = Number(params.get('year'));
-      this.month = Number(params.get('month'));
+      this.year = Number(params.get("year"));
+      this.month = Number(params.get("month"));
 
       this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
       this.deselect();
@@ -129,7 +132,7 @@ export class PlanComponent implements OnInit {
         this.holidaySet = set;
       },
       error: err => {
-        console.error('Feiertage laden fehlgeschlagen:', err);
+        console.error("Feiertage laden fehlgeschlagen:", err);
         this.holidaySet = new Set();
       }
     });
@@ -167,12 +170,12 @@ export class PlanComponent implements OnInit {
       switchMap(depId => {
         if (!depId) {
           if (this.auth.isAdmin()) {
-            this.overlay.showOverlay('info', 'Bitte zuerst einen Fachbereich im Modpanel auswählen.');
-            this.router.navigate(['/mod']);
+            this.overlay.showOverlay("info", "Bitte zuerst einen Fachbereich im Modpanel auswählen.");
+            this.router.navigate(["/mod"]);
             return of(null);
           }
-          this.overlay.showOverlay('error', 'Kein Fachbereich im Login gefunden.');
-          this.router.navigate(['/auth']);
+          this.overlay.showOverlay("error", "Kein Fachbereich im Login gefunden.");
+          this.router.navigate(["/auth"]);
           return of(null);
         }
 
@@ -188,8 +191,8 @@ export class PlanComponent implements OnInit {
 
         const plan = plans.find(p => p.year === this.year) || null;
         if (!plan) {
-          this.overlay.showOverlay('error', `Für ${this.year} existiert noch kein Plan.`);
-          this.router.navigate(['/mod']);
+          this.overlay.showOverlay("error", `Für ${this.year} existiert noch kein Plan.`);
+          this.router.navigate(["/mod"]);
           return of(null);
         }
         this.planId = plan.id;
@@ -211,8 +214,8 @@ export class PlanComponent implements OnInit {
       }),
 
       catchError(err => {
-        console.error('Fehler beim Laden der Plandaten:', err);
-        this.overlay.showOverlay('error', 'Fehler beim Laden der Plandaten.');
+        console.error("Fehler beim Laden der Plandaten:", err);
+        this.overlay.showOverlay("error", "Fehler beim Laden der Plandaten.");
         return of(null);
       })
     ).subscribe(bundle => {
@@ -266,7 +269,7 @@ export class PlanComponent implements OnInit {
     this.canGoNext = this.month < 12 || (this.month === 12 && nextYearExists);
   }
 
-  private pad2(n: number): string { return String(n).padStart(2, '0'); }
+  private pad2(n: number): string { return String(n).padStart(2, "0"); }
   private monthKey(year: number, month: number): string { return `${year}-${this.pad2(month)}`; }
 
   private buildEntryMap(): void {
@@ -304,17 +307,17 @@ export class PlanComponent implements OnInit {
 
   getHeaderClasses(day: Date): any {
     return {
-      'holiday': this.isHoliday(day),
-      'weekend-header': this.isWeekend(day)
+      "holiday": this.isHoliday(day),
+      "weekend-header": this.isWeekend(day)
     };
   }
 
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
     const classes: { [key: string]: boolean } = {
-      'cell': true,
-      'selected': this.isSelected(employeeId, day),
-      'weekend-col': this.isWeekend(day)
+      "cell": true,
+      "selected": this.isSelected(employeeId, day),
+      "weekend-col": this.isWeekend(day)
     };
     if (type) {
       classes[`${type.toLowerCase()}-cell`] = true;
@@ -390,15 +393,15 @@ export class PlanComponent implements OnInit {
   }
 
   private mapUiTypeToStatus(type: string): PlanEntryStatus | null {
-    switch ((type || '').trim().toUpperCase()) {
-      case 'U': return 'VACATION';
-      case 'H': return 'HOME';
-      case 'K': return 'SICK';
-      case 'L': return 'TRAINING';
-      case 'G': return 'FLEXTIME';
-      case 'T': return 'APPOINTMENT';
-      case 'O': return 'OTHER';
-      case '': return null;
+    switch ((type || "").trim().toUpperCase()) {
+      case "U": return "VACATION";
+      case "H": return "HOME";
+      case "K": return "SICK";
+      case "L": return "TRAINING";
+      case "G": return "FLEXTIME";
+      case "T": return "APPOINTMENT";
+      case "O": return "OTHER";
+      case "": return null;
       default: return null;
     }
   }
@@ -462,7 +465,7 @@ export class PlanComponent implements OnInit {
             planId: this.planId!,
             departmentId: this.departmentId!,
             employeeId: summary.employeeId,
-            actionType: status ? 'SET' : 'DELETE',
+            actionType: status ? "SET" : "DELETE",
             statusCode: status ?? null,
             dateFrom: summary.dateFrom,
             dateTo: summary.dateTo,
@@ -470,7 +473,7 @@ export class PlanComponent implements OnInit {
             dates: summary.dates
           }).pipe(
             catchError(err => {
-              console.error('Plan-Log konnte nicht geschrieben werden:', err);
+              console.error("Plan-Log konnte nicht geschrieben werden:", err);
               return of(null);
             })
           )
@@ -489,7 +492,7 @@ export class PlanComponent implements OnInit {
         this.deselect();
       },
       error: (err) => {
-        this.overlay.showOverlay('error', err?.error?.error || 'Aktion konnte nicht ausgeführt werden.');
+        this.overlay.showOverlay("error", err?.error?.error || "Aktion konnte nicht ausgeführt werden.");
         this.deselect();
       }
     });
@@ -502,18 +505,18 @@ export class PlanComponent implements OnInit {
   }
 
   statusLabel(status: PlanEntryStatus | null): string {
-    if (!status) return '';
+    if (!status) return "";
     const map: Record<PlanEntryStatus, string> = {
-      VACATION: 'U',
-      HOME: 'H',
-      SICK: 'K',
-      TRAINING: 'L',
-      FLEXTIME: 'G',
-      APPOINTMENT: 'T',
-      OTHER: 'O',
-      PRESENCE: 'P'
+      VACATION: "U",
+      HOME: "H",
+      SICK: "K",
+      TRAINING: "L",
+      FLEXTIME: "G",
+      APPOINTMENT: "T",
+      OTHER: "O",
+      PRESENCE: "P"
     };
-    return map[status] ?? '';
+    return map[status] ?? "";
   }
 
   private dayKeyFromDate(d: Date): number {
@@ -521,25 +524,44 @@ export class PlanComponent implements OnInit {
     return Math.floor(local.getTime() / 86400000);
   }
 
-  editNote(employeeId: number, day: Date, event: MouseEvent): void {
-    event.preventDefault();
+  editNote(employeeId?: number, day?: Date, event?: MouseEvent): void {
+    event?.preventDefault();
 
-    if (this.isWeekend(day)) return;
     if (!this.planId || !this.departmentId) return;
 
-    const isoDate = this.toIso(day);
+    let targetEmployeeId: number | null = null;
+    let targetDay: Date | null = null;
+
+    if (typeof employeeId === "number" && day instanceof Date) {
+      if (this.isWeekend(day)) return;
+      targetEmployeeId = employeeId;
+      targetDay = day;
+    } else {
+      if (this.selectedCells.length !== 1) {
+        this.overlay.showOverlay("info", "Bitte genau eine Zelle auswählen, um die Notiz zu bearbeiten.");
+        return;
+      }
+      const sel = this.selectedCells[0];
+      if (this.isWeekend(sel.day)) return;
+
+      targetEmployeeId = sel.employeeId;
+      targetDay = sel.day;
+    }
+
+    const isoDate = this.toIso(targetDay);
     const monthKey = this.monthKey(this.year, this.month);
 
     this.plan.getPlanEntriesForMonth(this.planId, monthKey)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
-          const entry = (res.entries || []).find(e =>
-            e.employee_id === employeeId &&
+          const entry = (res.entries || []).find((e: any) =>
+            e.employee_id === targetEmployeeId &&
             String(e.entry_date).slice(0, 10) === isoDate
           );
 
           if (!entry) {
+            this.overlay.showOverlay("info", "Für diese Zelle existiert noch kein Eintrag, daher kann auch keine Notiz gespeichert werden.");
             return;
           }
 
@@ -548,7 +570,7 @@ export class PlanComponent implements OnInit {
 
           this.overlay.openPlanNote(note, {
             entryId: entry.id,
-            employeeId,
+            employeeId: targetEmployeeId,
             date: isoDate,
             planId: this.planId,
             departmentId: this.departmentId,
@@ -556,78 +578,85 @@ export class PlanComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.error('Fehler beim Laden der Notiz:', err);
-          this.overlay.showOverlay('error', 'Die Beschreibung konnte nicht geladen werden.');
+          console.error("Fehler beim Laden der Notiz:", err);
+          this.overlay.showOverlay("error", "Die Beschreibung konnte nicht geladen werden.");
         }
       });
   }
 
-  @HostListener('document:keydown.u', ['$event'])
+  @HostListener("document:keydown.u", ["$event"])
   onUHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('U');
+      this.setEntry("U");
     }
   }
 
-  @HostListener('document:keydown.k', ['$event'])
+  @HostListener("document:keydown.k", ["$event"])
   onKHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('K');
+      this.setEntry("K");
     }
   }
 
-  @HostListener('document:keydown.h', ['$event'])
+  @HostListener("document:keydown.h", ["$event"])
   onHHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('H');
+      this.setEntry("H");
     }
   }
 
-  @HostListener('document:keydown.l', ['$event'])
+  @HostListener("document:keydown.l", ["$event"])
   onLHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('L');
+      this.setEntry("L");
     }
   }
 
-  @HostListener('document:keydown.g', ['$event'])
+  @HostListener("document:keydown.g", ["$event"])
   onGHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('G');
+      this.setEntry("G");
     }
   }
 
-  @HostListener('document:keydown.t', ['$event'])
+  @HostListener("document:keydown.t", ["$event"])
   onTHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('T');
+      this.setEntry("T");
     }
   }
 
-  @HostListener('document:keydown.o', ['$event'])
+  @HostListener("document:keydown.o", ["$event"])
   onOHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('O');
+      this.setEntry("O");
     }
   }
 
-  @HostListener('document:keydown.delete', ['$event'])
+  @HostListener("document:keydown.delete", ["$event"])
   onDelHandler(event: Event) {
     if (!this.overlay.current.show) {
-      this.setEntry('');
+      this.setEntry("");
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
+  @HostListener("document:keydown.escape", ["$event"])
   onEscHandler(event: Event) {
     if (!this.overlay.current.show) {
       this.deselect();
     }
   }
 
+  @HostListener("document:keydown.enter", ["$event"])
+  onEnterHandler(event: Event) {
+    if (!this.overlay.current.show) {
+      this.editNote();
+    }
+  }
+
   loadNextPlan(): void {
-    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
-    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get("year"));
+    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get("month"));
     let nextYear = currentYear;
     let nextMonth = currentMonth;
 
@@ -638,12 +667,12 @@ export class PlanComponent implements OnInit {
       nextMonth++;
     }
 
-    this.router.navigate(['/plan', nextYear, nextMonth]);
+    this.router.navigate(["/plan", nextYear, nextMonth]);
   }
 
   loadPrevPlan(): void {
-    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get('year'));
-    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get('month'));
+    const currentYear = Number(this.activatedRoute.snapshot.paramMap.get("year"));
+    const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get("month"));
     let nextYear = currentYear;
     let nextMonth = currentMonth;
 
@@ -654,7 +683,7 @@ export class PlanComponent implements OnInit {
       nextMonth--;
     }
 
-    this.router.navigate(['/plan', nextYear, nextMonth]);
+    this.router.navigate(["/plan", nextYear, nextMonth]);
   }
 
   toggleWeekends(): void {
@@ -667,23 +696,43 @@ export class PlanComponent implements OnInit {
 
     if (newValue) {
       this.overlay.showOverlay(
-        'info',
-        'Das Anzeigen der Wochenendtage dient nur zur erleichterten visuellen Orientierung, daher können keine Einträge an diesen Tagen vorgenommen werden.'
+        "info",
+        "Das Anzeigen der Wochenendtage dient nur zur erleichterten visuellen Orientierung, daher können keine Einträge an diesen Tagen vorgenommen werden."
       );
     }
   }
 
+  toggleShortcuts(): void {
+    const newValue = !this.showShortcuts;
+    this.showShortcuts = newValue;
+    this.saveShortcutsPreference();
+  }
+
   private loadWeekendPreference(): boolean {
-    if (typeof document === 'undefined') return false;
+    if (typeof document === "undefined") return false;
     const match = document.cookie.match(/(?:^|;\s*)clockwork_show_weekends=([^;]+)/);
     if (!match) return false;
-    return match[1] === '1';
+    return match[1] === "1";
   }
 
   private saveWeekendPreference(): void {
-    if (typeof document === 'undefined') return;
-    const value = this.showWeekends ? '1' : '0';
+    if (typeof document === "undefined") return;
+    const value = this.showWeekends ? "1" : "0";
     const maxAge = 60 * 60 * 24 * 365;
     document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
+  }
+
+  private loadShortcutsPreference(): boolean {
+    if (typeof document === "undefined") return false;
+    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_shortcuts=([^;]+)/);
+    if (!match) return false;
+    return match[1] === "1";
+  }
+
+  private saveShortcutsPreference(): void {
+    if (typeof document === "undefined") return;
+    const value = this.showShortcuts ? "1" : "0";
+    const maxAge = 60 * 60 * 24 * 365;
+    document.cookie = `${this.SHORTCUTS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 }
