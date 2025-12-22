@@ -538,7 +538,7 @@ export class PlanComponent implements OnInit {
       targetDay = day;
     } else {
       if (this.selectedCells.length !== 1) {
-        this.overlay.showOverlay("info", "Bitte genau eine Zelle auswählen, um die Notiz zu bearbeiten.");
+        this.overlay.showOverlay("error", "Bitte genau eine Zelle auswählen, um die Notiz zu bearbeiten.");
         return;
       }
       const sel = this.selectedCells[0];
@@ -561,7 +561,7 @@ export class PlanComponent implements OnInit {
           );
 
           if (!entry) {
-            this.overlay.showOverlay("info", "Für diese Zelle existiert noch kein Eintrag, daher kann auch keine Notiz gespeichert werden.");
+            this.overlay.showOverlay("error", "Für diese Zelle existiert noch kein Eintrag, daher kann auch keine Notiz gespeichert werden.");
             return;
           }
 
