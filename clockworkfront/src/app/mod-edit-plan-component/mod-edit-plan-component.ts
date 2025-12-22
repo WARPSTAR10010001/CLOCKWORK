@@ -1,4 +1,3 @@
-// src/app/mod-edit-plan-component/mod-edit-plan-component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +34,7 @@ export class ModEditPlanComponent implements OnInit {
     private empService: EmployeeService,
     private imp: ImpersonationService,
     private overlay: OverlayService,
-    private auth: AuthService
+    public auth: AuthService
   ) { }
 
   ngOnInit(): void {
