@@ -50,6 +50,12 @@ td {
     border: 3px solid #0d0038;
 }
 
+:host-context(body.xmas) th,
+:host-context(body.xmas) td {
+    background-color: #1f4718;
+    border: 3px solid #1f4718;
+}
+
 .sticky {
     position: sticky;
     left: 1px;
@@ -70,6 +76,11 @@ td {
 :host-context(body.neon) tbody tr:nth-child(odd) td {
     background-color: #100044;
     border: 3px solid #100044;
+}
+
+:host-context(body.xmas) tbody tr:nth-child(odd) td {
+    background-color: #224d1a;
+    border: 3px solid #224d1a;
 }
 
 #entry-buttons {
@@ -313,6 +324,11 @@ td {
     color: var(--tc);
     background-color: var(--bgc) !important;
     border: 3px solid var(--olc) !important;
+}
+
+:host-context(body.xmas) .selected {
+    background-color: var(--bgc) !important;
+    border: 3px solid var(--tc) !important;
 }
 
 .plan-nav-btn {
