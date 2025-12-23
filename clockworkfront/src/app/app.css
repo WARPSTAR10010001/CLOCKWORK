@@ -49,6 +49,12 @@
     margin-top: 17px;
 }
 
+#edition-holiday {
+    font-size: 0.4em;
+    color: var(--tc);
+    margin-top: 3px;
+}
+
 #header {
     display: flex;
     flex-direction: row;

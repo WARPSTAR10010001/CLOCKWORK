@@ -4,18 +4,19 @@
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
-      <span id="edition">Moderator</span>
+      <span id="edition-holiday">Frohe Feiertage!<br>Moderator</span>
     </a>
     } @else if (authService.isAdmin()) {
     <a id="root-link" [routerLink]="['/admin']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
-      <span id="edition">Admin</span>
+      <span id="edition-holiday">Frohe Feiertage!<br>Admin</span>
     </a>
     } @else {
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
+      <span id="edition-holiday">Frohe Feiertage!</span>
     </a>
     }
     @if (authService.isLoggedIn()) {

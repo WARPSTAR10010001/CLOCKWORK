@@ -22,7 +22,6 @@ interface YearCard {
 
 @Component({
   selector: 'app-year-component',
-  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './year-component.html',
   styleUrls: ['./year-component.css']

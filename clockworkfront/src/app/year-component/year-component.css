@@ -77,6 +77,10 @@
     background: radial-gradient(circle at center, #5be9ff 0%, #6effe9 50%, #72f3ff 100%) !important;
 }
 
+:host-context(body.xmas) .year-card {
+    background: radial-gradient(circle at center, #f40000 0%, #f54e00 50%, #b3000f 100%) !important;
+}
+
 .incard {
     font-size: 0.4em;
     margin-left: 40px;

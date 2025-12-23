@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'neon' | 'dim';
+export type Theme = 'light' | 'neon' | 'dim' | 'xmas';
 export type Outline = "outlines" | "no-outlines";
 export type Color = "standard" | "soft" | "color-wip";
 export type Material = "solid" | "glass";
@@ -26,9 +26,9 @@ export class ThemeService {
   constructor() {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
     if (savedTheme) {
-      this.setTheme(savedTheme, false);
+      this.setTheme('xmas', false); //change back when to "savedTheme" when xmas is over
     } else {
-      this.setTheme('light', false);
+      this.setTheme('xmas', false); //change back when to "light" when xmas is over
     }
     const savedOutline = localStorage.getItem(this.outlineKey) as Outline;
     if (savedOutline) {
@@ -51,7 +51,7 @@ export class ThemeService {
   }
 
   setTheme(theme: Theme, save = true) {
-    document.body.classList.remove('light', 'neon', 'dim');
+    document.body.classList.remove('light', 'neon', 'dim', 'xmas');
     document.body.classList.add(theme);
 
     this.currentThemeSubject.next(theme);

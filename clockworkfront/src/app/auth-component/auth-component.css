@@ -43,6 +43,10 @@ input {
     margin-top: -30px;
 }
 
+:host-context(body.xmas) #colored {
+    filter: brightness(1) invert(100%);
+}
+
 #login {
     text-decoration: none;
 }

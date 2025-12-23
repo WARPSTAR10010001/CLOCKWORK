@@ -123,7 +123,7 @@ export class AuthService {
             this.overlay.lockToPasswordReset();
           } else {
             this.overlay.unlockPasswordReset();
-            this.overlay.showOverlay('success', `Willkommen, ${username}!`);
+            this.overlay.showOverlay('success', `Willkommen, ${username} & Frohe Feiertage!`);
           }
         });
       }),
