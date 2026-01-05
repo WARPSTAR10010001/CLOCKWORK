@@ -39,10 +39,6 @@
     text-decoration: none !important;
 }
 
-:host-context(body.xmas) .doc-tile {
-    background: linear-gradient(110deg, #f40000, #f54e00, #b3000f);
-}
-
 .doc-tile p {
     margin: 10px 0 0px 0;
 }

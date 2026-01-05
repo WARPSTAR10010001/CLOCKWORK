@@ -41,17 +41,6 @@ body.neon {
     --gbgb: #007bb473;
 }
 
-body.xmas {
-    --bgc: #25551d;
-    --bgca: #2a5e21;
-    --tc: #ffffff;
-    --olc: #000;
-    --bsc: #0000002c;
-    --bc: #48a737;
-    --gbgc: #53ad5d41;
-    --gbgb: #74d67f73;
-}
-
 body.soft .emp {
     background: linear-gradient(110deg, #76edff, #72ffea, #76edff);
     background-size: 200% auto;
@@ -63,15 +52,6 @@ body.soft .emp {
 
 .emp {
     background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientMove 3s linear infinite;
-}
-
-body.xmas .emp {
-    background: linear-gradient(110deg, #b3000f, #f40000, #b3000f);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -120,11 +100,6 @@ body.dim {
 }
 
 body.neon {
-    background-color: var(--bgc);
-    color: var(--tc);
-}
-
-body.xmas {
     background-color: var(--bgc);
     color: var(--tc);
 }

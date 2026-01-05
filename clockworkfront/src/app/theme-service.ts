@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'neon' | 'dim' | 'xmas';
+export type Theme = 'light' | 'neon' | 'dim';
 export type Outline = "outlines" | "no-outlines";
-export type Color = "standard" | "soft" | "color-wip";
+export type Color = "standard" | "soft";
 export type Material = "solid" | "glass";
 
 @Injectable({
@@ -14,41 +14,59 @@ export class ThemeService {
   outlineKey = "outline";
   colorKey = "color";
   materialKey = "material";
+
   currentThemeSubject = new BehaviorSubject<Theme>('light');
   currentOutlineSubject = new BehaviorSubject<Outline>("no-outlines");
   currentColorSubject = new BehaviorSubject<Color>("standard");
   currentMaterialSubject = new BehaviorSubject<Material>("solid");
+
   currentTheme$ = this.currentThemeSubject.asObservable();
   currentOutline$ = this.currentOutlineSubject.asObservable();
   currentColor$ = this.currentColorSubject.asObservable();
   currentMaterial$ = this.currentMaterialSubject.asObservable();
 
   constructor() {
-    const savedTheme = localStorage.getItem(this.themeKey) as Theme;
-    if (savedTheme) {
-      this.setTheme('xmas', false); //change back when to "savedTheme" when xmas is over
-    } else {
-      this.setTheme('xmas', false); //change back when to "light" when xmas is over
-    }
-    const savedOutline = localStorage.getItem(this.outlineKey) as Outline;
-    if (savedOutline) {
-      this.setOutline(savedOutline, false);
-    } else {
-      this.setOutline("no-outlines", false);
-    }
-    const savedColor = localStorage.getItem(this.colorKey) as Color;
-    if (savedColor) {
-      this.setColor(savedColor, false);
-    } else {
-      this.setColor("standard", false);
-    }
-    const savedMaterial = localStorage.getItem(this.materialKey) as Material;
-    if(savedMaterial) {
-      this.setMaterial(savedMaterial, false);
-    } else {
-      this.setMaterial("solid", false);
-    }
+    const savedThemeRaw = localStorage.getItem(this.themeKey);
+    const theme = this.sanitizeTheme(savedThemeRaw);
+    this.setTheme(theme, false);
+
+    const savedOutlineRaw = localStorage.getItem(this.outlineKey);
+    const outline = this.sanitizeOutline(savedOutlineRaw);
+    this.setOutline(outline, false);
+
+    const savedColorRaw = localStorage.getItem(this.colorKey);
+    const color = this.sanitizeColor(savedColorRaw);
+    this.setColor(color, false);
+
+    const savedMaterialRaw = localStorage.getItem(this.materialKey);
+    const material = this.sanitizeMaterial(savedMaterialRaw);
+    this.setMaterial(material, false);
   }
+
+  private sanitizeTheme(raw: string | null): Theme {
+    if (raw === 'light' || raw === 'neon' || raw === 'dim') return raw;
+    if (raw) localStorage.setItem(this.themeKey, 'light');
+    return 'light';
+  }
+
+  private sanitizeOutline(raw: string | null): Outline {
+    if (raw === 'outlines' || raw === 'no-outlines') return raw;
+    if (raw) localStorage.setItem(this.outlineKey, 'no-outlines');
+    return 'no-outlines';
+  }
+
+  private sanitizeColor(raw: string | null): Color {
+    if (raw === 'standard' || raw === 'soft') return raw;
+    if (raw) localStorage.setItem(this.colorKey, 'standard');
+    return 'standard';
+  }
+
+  private sanitizeMaterial(raw: string | null): Material {
+    if (raw === 'solid' || raw === 'glass') return raw;
+    if (raw) localStorage.setItem(this.materialKey, 'solid');
+    return 'solid';
+  }
+
 
   setTheme(theme: Theme, save = true) {
     document.body.classList.remove('light', 'neon', 'dim', 'xmas');
@@ -81,7 +99,7 @@ export class ThemeService {
   }
 
   setColor(color: Color, save = true) {
-    document.body.classList.remove("standard", "soft", "color-wip");
+    document.body.classList.remove("standard", "soft");
     document.body.classList.add(color);
 
     this.currentColorSubject.next(color);
@@ -101,7 +119,7 @@ export class ThemeService {
 
     this.currentMaterialSubject.next(material);
 
-    if(save) {
+    if (save) {
       localStorage.setItem(this.materialKey, material);
     }
   }

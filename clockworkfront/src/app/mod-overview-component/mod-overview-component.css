@@ -26,10 +26,6 @@
     text-decoration: none !important;
 }
 
-:host-context(body.xmas) .card {
-    background: radial-gradient(circle at center, #f40000 0%, #f54e00 50%, #b3000f 100%) !important;
-}
-
 :host-context(body.outlines) .card {
     outline: 3px solid var(--olc);
 }
