@@ -123,12 +123,12 @@ export class AuthService {
             this.overlay.lockToPasswordReset();
           } else {
             this.overlay.unlockPasswordReset();
-            this.overlay.showOverlay('success', `Willkommen, ${username} & Frohe Feiertage!`);
+            this.overlay.showOverlay('success', `Willkommen, ${username} & frohes neues Jahr! 🎉`);
           }
         });
       }),
       catchError(() => {
-        this.overlay.showOverlay('error', 'Login fehlgeschlagen.');
+        this.overlay.showOverlay('error', 'Login fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
         this.clearSession();
         return of({ loggedIn: false, user: null, exp: null });
       }),

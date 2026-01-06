@@ -48,6 +48,10 @@
     transform: translateY(-5px);
 }
 
+:host-context(body.outlines) .doc-tile {
+    outline: 3px solid var(--olc);
+}
+
 .subtitle {
     font-size: 3em;
     margin-bottom: 20px;
