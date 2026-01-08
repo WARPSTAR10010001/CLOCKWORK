@@ -180,7 +180,7 @@ export class ModEditPlanComponent implements OnInit {
       next: (updated) => {
         e.annual_leave_days = updated.annual_leave_days;
         e.carryover_days = updated.carryover_days;
-        this.overlay.showOverlay('success', 'Gespeichert.');
+        this.overlay.showOverlay('success', 'Die gewünschten Änderungen wurden gespeichert.');
       },
       error: () => this.overlay.showOverlay('error', 'Speichern fehlgeschlagen.')
     });

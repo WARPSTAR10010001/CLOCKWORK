@@ -1,7 +1,8 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Dienstplan {{ month.toString().padStart(2, '0') }}/<a id="back" class="hidden-link"
+  <h1 class="emp page-header">Planviewer {{ month.toString().padStart(2, '0') }}/<a id="back" class="hidden-link"
       [routerLink]="['/plan', year]">{{ year }}</a></h1>
   @if (planId !== null) {
+  <h1 class="subtitle">Dienstplan</h1>
   <div id="entry-buttons">
     @if (showShortcuts) {
     <a class="button-primary u" (click)="setEntry('U')">Urlaub (U)</a>
@@ -11,7 +12,7 @@
     <a class="button-primary g" (click)="setEntry('G')">Gleitzeit (G)</a>
     <a class="button-primary t" (click)="setEntry('T')">Termin (T)</a>
     <a class="button-primary o" (click)="setEntry('O')">Anderes (O)</a>
-    <a class="button-primary" (click)="editNote()">Notiz bearbeiten (Enter)</a>
+    <a class="button-primary" (click)="editNote()">Notiz (Enter)</a>
     <a class="button-action" (click)="setEntry('')">Löschen (Entf)</a>
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben (Esc)</a>
     } @else {
@@ -22,12 +23,11 @@
     <a class="button-primary g" (click)="setEntry('G')">Gleitzeit</a>
     <a class="button-primary t" (click)="setEntry('T')">Termin</a>
     <a class="button-primary o" (click)="setEntry('O')">Anderes</a>
-    <a class="button-primary" (click)="editNote()">Notiz bearbeiten</a>
+    <a class="button-primary" (click)="editNote()">Notiz</a>
     <a class="button-action" (click)="setEntry('')">Löschen</a>
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
     }
   </div>
-
   <div id="table-container">
     <table class="plan-table">
       <thead>
@@ -47,7 +47,8 @@
           <td class="sticky">{{ employee.name }}</td>
           @for (day of daysForMonth; track day) {
           <td (click)="selectCell(employee.id, day, $event)" (dblclick)="editNote(employee.id, day, $event)"
-            [ngClass]="getCellClasses(employee.id, day)" [attr.data-status]="getStatus(employee.id, day)">
+            [ngClass]="getCellClasses(employee.id, day)" [class.has-note]="hasNote(employee.id, day)"
+            [attr.data-status]="getStatus(employee.id, day)">
             @if (hasNote(employee.id, day)) {
             <span class="note-indicator"></span>
             }
@@ -76,6 +77,9 @@
     <a class="button-primary" (click)="toggleWeekends()">
       {{ showWeekends ? 'Wochenende ausblenden' : 'Wochenende anzeigen' }}
     </a>
+    <a class="button-primary" (click)="toggleVacationTable()">
+      {{ hideVacationTable ? "Urlaubsübersicht anzeigen" : "Urlaubsübersicht ausblenden" }}
+    </a>
     @if (canGoNext) {
     <a class="button-primary plan-nav-btn next" (click)="loadNextPlan()">
       <svg class="arrow-icon" viewBox="0 0 24 24">
@@ -85,6 +89,35 @@
       </svg>
     </a>
     }
+  </div>
+  }
+  @if (!hideVacationTable) {
+  <hr>
+  <div id="vacation-container">
+    <h1 class="subtitle">Urlaubsübersicht</h1>
+    <div class="table-container-like">
+      <table class="vacation-table-like">
+        <thead>
+          <tr>
+            <th class="sticky">Name</th>
+            <th>Resturlaub (Vormonat)</th>
+            <th>Urlaub im Monat</th>
+            <th>Resturlaub (nach Monat)</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (r of vacationRows; track r.name) {
+          <tr>
+            <td class="sticky">{{ r.name }}</td>
+            <td>{{ r.diffToPrevMonth }}</td>
+            <td>{{ r.usedThisMonth }}</td>
+            <td>{{ r.remainingAfterMonth }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
   }
 </div>

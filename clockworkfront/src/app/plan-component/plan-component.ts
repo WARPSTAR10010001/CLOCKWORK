@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { OverlayService } from "../overlay-service";
 import { PlanService } from "../plan-service";
-import { PlanEntry, PlanEntryStatus } from "../plan-service";
+import { PlanEntry, PlanEntryStatus, PlanDetails } from "../plan-service";
 import { LogService } from "../log-service";
 import { Employee, EmployeeService } from "../employee-service";
 import { switchMap, map, catchError, take } from "rxjs/operators";
@@ -36,6 +36,16 @@ export class PlanComponent implements OnInit {
   monthEntries: PlanEntry[] = [];
   daysForMonth: Date[] = [];
 
+  planEmployeeDetails: PlanDetails["employees"] = [];
+  vacationUsedBeforeMonthByEmployee = new Map<number, number>();
+  vacationRows: Array<{
+    name: string;
+    remainingAfterMonth: number;
+    usedThisMonth: number;
+    diffToPrevMonth: number;
+  }> = [];
+
+
   private entryMap = new Map<string, PlanEntry>();
 
   selectedCells: SelectedCell[] = [];
@@ -49,9 +59,11 @@ export class PlanComponent implements OnInit {
 
   showWeekends = false;
   showShortcuts = false;
+  hideVacationTable = false;
 
   private readonly WEEKENDS_COOKIE = "clockwork_show_weekends";
   private readonly SHORTCUTS_COOKIE = "clockwork_show_shortcuts";
+  private readonly VACATIONTABLE_COOKIE = "clockwork_hide_vacationtable"
 
   constructor(
     private plan: PlanService,
@@ -68,6 +80,7 @@ export class PlanComponent implements OnInit {
   ngOnInit(): void {
     this.showWeekends = this.loadWeekendPreference();
     this.showShortcuts = this.loadShortcutsPreference();
+    this.hideVacationTable = this.loadVacationTablePreference();
 
     this.overlay.noteChanged$
       .subscribe(() => {
@@ -123,6 +136,7 @@ export class PlanComponent implements OnInit {
       .subscribe(res => {
         this.monthEntries = res.entries;
         this.buildEntryMap();
+        this.rebuildVacationRows();
       });
   }
 
@@ -140,6 +154,87 @@ export class PlanComponent implements OnInit {
 
   isHoliday(day: Date): boolean {
     return this.holidaySet.has(this.dayKeyFromDate(day));
+  }
+
+  private countVacationInEntries(entries: PlanEntry[], employeeId: number): number {
+    return (entries || []).filter(e => {
+      if (e.employee_id !== employeeId) return false;
+      if ((e.status ?? (e as any).entry_type) !== "VACATION") return false;
+
+      const d = new Date(String(e.entry_date).slice(0, 10) + "T00:00:00");
+      if (this.isHoliday(d)) return false;
+
+      return true;
+    }).length;
+  }
+
+  private loadVacationUsedBeforeMonth(planId: number) {
+    this.vacationUsedBeforeMonthByEmployee.clear();
+
+    if (this.month <= 1) {
+      return of(void 0);
+    }
+
+    const calls = [];
+    for (let m = 1; m <= this.month - 1; m++) {
+      const key = this.monthKey(this.year, m);
+      calls.push(
+        this.plan.getPlanEntriesForMonth(planId, key).pipe(
+          catchError(() => of({ entries: [], departmentId: this.departmentId ?? 0 }))
+        )
+      );
+    }
+
+    return forkJoin(calls).pipe(
+      map((resArr: any[]) => {
+        const mapCounts = new Map<number, number>();
+
+        for (const res of resArr) {
+          for (const e of (res.entries || [])) {
+            const status = e.status ?? e.entry_type ?? null;
+            if (status !== "VACATION") continue;
+
+            const d = new Date(String(e.entry_date).slice(0, 10) + "T00:00:00");
+            if (this.isHoliday(d)) continue;
+
+            const empId = e.employee_id;
+            mapCounts.set(empId, (mapCounts.get(empId) ?? 0) + 1);
+          }
+        }
+
+        this.vacationUsedBeforeMonthByEmployee = mapCounts;
+      }),
+      map(() => void 0)
+    );
+  }
+
+  private rebuildVacationRows(): void {
+    const detailByEmpId = new Map<number, PlanDetails["employees"][0]>(
+      (this.planEmployeeDetails || []).map(pe => [pe.employeeId, pe])
+    );
+
+    this.vacationRows = (this.employees || []).map(emp => {
+      const pe = detailByEmpId.get(emp.id);
+
+      const annual = pe?.annualLeaveDays ?? 0;
+      const carry = pe?.carryoverDays ?? 0;
+      const initial = pe?.initialBalance ?? 0;
+
+      const startTotal = annual + carry + initial;
+
+      const usedBefore = this.vacationUsedBeforeMonthByEmployee.get(emp.id) ?? 0;
+      const usedThis = this.countVacationInEntries(this.monthEntries, emp.id);
+
+      const remainingPrev = Math.max(0, startTotal - usedBefore);
+      const remainingAfter = Math.max(0, remainingPrev - usedThis);
+
+      return {
+        name: pe?.name ?? emp.name,
+        remainingAfterMonth: remainingAfter,
+        usedThisMonth: usedThis,
+        diffToPrevMonth: remainingPrev
+      };
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   private isEmployeeActiveInMonth(emp: Employee, monthStart: Date, monthEnd: Date): boolean {
@@ -249,6 +344,16 @@ export class PlanComponent implements OnInit {
       }
 
       this.employees = (bundle.employees || []).filter(e => activeIds.has(e.id));
+
+      this.planEmployeeDetails = bundle.planDetails?.employees || [];
+
+      if (this.planId) {
+        this.loadVacationUsedBeforeMonth(this.planId)
+          .pipe(take(1))
+          .subscribe(() => this.rebuildVacationRows());
+      } else {
+        this.rebuildVacationRows();
+      }
 
       this.updateNavAvailability();
     });
@@ -489,6 +594,7 @@ export class PlanComponent implements OnInit {
       next: (res) => {
         this.monthEntries = res.entries;
         this.buildEntryMap();
+        this.rebuildVacationRows();
         this.deselect();
       },
       error: (err) => {
@@ -702,12 +808,6 @@ export class PlanComponent implements OnInit {
     }
   }
 
-  toggleShortcuts(): void {
-    const newValue = !this.showShortcuts;
-    this.showShortcuts = newValue;
-    this.saveShortcutsPreference();
-  }
-
   private loadWeekendPreference(): boolean {
     if (typeof document === "undefined") return false;
     const match = document.cookie.match(/(?:^|;\s*)clockwork_show_weekends=([^;]+)/);
@@ -722,6 +822,12 @@ export class PlanComponent implements OnInit {
     document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 
+  toggleShortcuts(): void {
+    const newValue = !this.showShortcuts;
+    this.showShortcuts = newValue;
+    this.saveShortcutsPreference();
+  }
+
   private loadShortcutsPreference(): boolean {
     if (typeof document === "undefined") return false;
     const match = document.cookie.match(/(?:^|;\s*)clockwork_show_shortcuts=([^;]+)/);
@@ -734,5 +840,25 @@ export class PlanComponent implements OnInit {
     const value = this.showShortcuts ? "1" : "0";
     const maxAge = 60 * 60 * 24 * 365;
     document.cookie = `${this.SHORTCUTS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
+  }
+
+  toggleVacationTable(): void {
+    const newValue = !this.hideVacationTable;
+    this.hideVacationTable = newValue;
+    this.saveVacationTablePreference();
+  }
+
+  private loadVacationTablePreference(): boolean {
+    if (typeof document === "undefined") return false;
+    const match = document.cookie.match(/(?:^|;\s*)clockwork_hide_vacationtable=([^;])/);
+    if (!match) return false;
+    return match[1] === "1";
+  }
+
+  private saveVacationTablePreference(): void {
+    if (typeof document === "undefined") return;
+    const value = this.hideVacationTable ? "1" : "0";
+    const maxAge = 60 * 60 * 24 * 365;
+    document.cookie = `${this.VACATIONTABLE_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 }

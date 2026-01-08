@@ -144,31 +144,21 @@ export const DOC_SECTIONS: DocSection[] = [
             id: "monatsübersicht",
             title: "Monatsübersicht",
             html: `
-            <p>Nachdem ein Jahr ausgewählt wurde öffnet sich die Monatsübersicht. Hier werden alle Monate des ausgewählten Jahres angezeigt. Nutzer können auf einen Monat klicken, um die detaillierte Ansicht des Dienstplans (auch Planviewer genannt) für diesen Monat zu öffnen.</p>
+            <p>Nachdem ein Jahr ausgewählt wurde öffnet sich die Monatsübersicht. Hier werden alle Monate des ausgewählten Jahres angezeigt. Nutzer können auf einen Monat klicken, um den Planviewer für den ausgewählten Monat zu öffnen.</p>
           `
           },
           {
             id: "planviewer",
             title: "Planviewer",
             html: `
-            <p>Der Planviewer ist die detaillierte Ansicht eines Dienstplans für einen bestimmten Monat eines bestimmten Jahres. Hier können Nutzer und Moderatoren die Einträge für jeden Mitarbeiter sehen und bearbeiten.</p>
+            <p>Der Planviewer ist die detaillierte Ansicht eines Dienstplans (inklusive Urlaubsübersicht) für einen bestimmten Monat eines bestimmten Jahres. Hier können Nutzer und Moderatoren die Einträge für jeden Mitarbeiter sehen und bearbeiten.</p>
             <p>Im Planviewer befinden sich die primäre Knopfleiste oben, die es ermöglicht, für eine ausgewählte Zelle einen Status einzutragen (also z.B. Urlaub, Krank, Gleitzeit, etc.). Außerdem kann die momentane Auswahl auch aufgehoben werden. Zusätzlich dazu kann ein gesetzter Status auch wieder mit dem "Löschen"-Knopf aufgehoben werden.</p>
             <p>Jede Zelle steht für einen Mitarbeiter an einem bestimmten Tag. Ausgewählte Zellen werden hervorgehoben, und es können mehrere Zellen gleichzeitig ausgewählt werden - zusammenhängend über <b>Shift</b> oder getrennt über <b>Strg</b>.</p>
             <p>Feiertage werden in der Kopfzeile invertiert dargestellt. Wochenenden können optional eingeblendet werden, sind jedoch nicht beschreibbar.</p>
             <p>Wenn eine Zelle eine Plannotiz enthält, wird ein kleiner Punkt oben rechts in der Zelle angezeigt. Dies erleichtert das schnelle Erkennen von Zellen mit zusätzlichen Informationen.</p>
-            <p>Die im Planviewer verfügbaren Tastenkürzel sind:</p>
-            <ul>
-              <li>U - Urlaub eintragen</li>
-              <li>H - Alternierende Telearbeit eintragen</li>
-              <li>K - Krank eintragen</li>
-              <li>L - Lehrgang eintragen</li>
-              <li>G - Gleitzeit eintragen</li>
-              <li>T - Termin eintragen</li>
-              <li>O - Anderes eintragen</li>
-              <li>Entf - Einträge löschen</li>
-              <li>Esc - Auswahl aufheben</li>
-            </ul>
-            <p>Unten befindet sich die sekundäre Knopfleiste (Navigation: vorheriger Monat / nächster Monat, Wochenenden anzeigen/ausblenden, Logs anzeigen).</p>
+            <p>Unten befindet sich die sekundäre Knopfleiste (vorheriger/nächster Monat, Tastenkürzel anzeigen/ausblenden, Wochenenden anzeigen/ausblenden, Urlaubsübersicht anzeigen/ausblenden, Logs anzeigen).</p>
+            <p>Unter der sekundären Knopfleiste befindet sich eine zweite Tabelle - die Urlaubsübersicht. Diese zeigt den Urlaub aus dem Vormonat, den genommenen Urlaub aus dem momentanen Monat und den daraus resultierenden Resturlaub an.</p>
+            <p>Hinweis: Wenn CLOCKWORK in der Zukunft genug Mitarbeiterdaten hat und die Urlaubseinträge korrekt gepflegt und eingetragen werden, wird es nicht mehr nötig sein seinen Resturlaub einzutragen.<p>
             <p>Hinweis: Für eine detaillierte Nachverfolgung aller Änderungen kann der Knopf "Logs anzeigen" verwendet werden.</p>
           `
           },
@@ -180,22 +170,23 @@ export const DOC_SECTIONS: DocSection[] = [
             <p>Durch einen Doppelklick auf eine Zelle mit einem Eintrag wird das Notizfenster geöffnet. Falls bereits eine Notiz existiert, wird diese direkt angezeigt und kann beim Drücken des entsprechenden Knopfes bearbeitet werden.</p>
             <p>Im Bearbeitungsfenster einer Notiz kann ein beliebiger Text eingetragen werden. Durch Speichern wird die Notiz der entsprechenden Zelle zugewiesen.</p>
             <p>Wenn der Text vollständig entfernt und gespeichert wird, gilt die Notiz als gelöscht.</p>
-            <p>Außerdem wird eine Notiz gelöscht wenn sich der Status der Zelle ändert (z.B. von Urlaub zu Krank).</p>
-            <p>Änderungen an den Notizen werden natürlich auch in den Planlogs angezeigt.</p>
+            <p>Außerdem wird eine Notiz gelöscht, wenn sich der Status der Zelle ändert (z.B. von Urlaub zu Krank).</p>
+            <p>Änderungen an den Notizen werden natürlich auch in den Logs festgehalten.</p>
           `
           },
           {
             id: "logs",
             title: "Logs",
             html: `
-            <p>Die Logs dienen der vollständigen Nachverfolgung aller Änderungen im Dienstplan. Hierbei werden Eintragungen, Löschungen und (neu) auch Änderungen an Plannotizen protokolliert.</p>
-            <p>Über den Knopf "Logs anzeigen" im Planviewer gelangt man zur Log-Übersicht des aktuellen Monats.</p>
+            <p>Die Logs dienen der vollständigen Nachverfolgung aller Änderungen im Dienstplan. Hierbei werden Eintragungen, Löschungen und auch Änderungen an Plannotizen protokolliert.</p>
+            <p>Über den Knopf "Logs ansehen" im Planviewer gelangt man zur Log-Übersicht des aktuellen Monats.</p>
             <p>Ein Log beinhaltet folgende Informationen:</p>
             <ul>
+              <li>Eindeutige Aktionsnummer</li>
               <li>Datum und Uhrzeit der Aktion</li>
               <li>Art der Aktion (Eintrag, Löschung, Notizänderung)</li>
               <li>Betroffener Mitarbeiter</li>
-              <li>Korrigierter Zeitraum (jetzt fehlerfrei - ein früherer Datumsfehler wurde behoben)</li>
+              <li>Betroffener Zeitraum</li>
               <li>Liste der betroffenen Tage</li>
             </ul>
             <p>Logs können nach Aktionstyp und Mitarbeiter gefiltert werden, um schnelle Analysen zu ermöglichen.</p>
@@ -623,6 +614,17 @@ export const DOC_SECTIONS: DocSection[] = [
         description: "Was tun, wenn die Anmeldung oder der Einstieg in CLOCKWORK nicht funktioniert?",
         tags: ["anmeldung", "login", "zugang", "passwort", "hilfe", "faq"],
         articles: [
+          {
+            id: "ich-habe-einen-fehler-gefunden",
+            title: "Ich habe einen Fehler gefunden - was kann ich tun?",
+            html: `
+            <p>Wenn Sie einen Fehler gefunden haben, können Sie folgendes unternehmen:</p>
+            <ul>
+              <li>Link kopieren um festzuhalten wo der Fehler sich befindet.</li>
+              <li>Sich merken welcher Fehler genau gefunden wurde und wie dieser ausgelöst wurde (ist es ein visueller Fehler, Tippfehler, Logikfehler, etc).</li>
+              <li>Die Systemadministratoren kontaktieren - dies kann per Mail (alpay.gueruez@rheinberg.de), per Telefon (180 oder 163) oder per eingebautes Feedbacksystem (in der Fußzeile).</li>
+            `
+          },
           {
             id: "ich-kann-mich-nicht-anmelden",
             title: "Ich kann mich nicht anmelden - was kann ich tun?",

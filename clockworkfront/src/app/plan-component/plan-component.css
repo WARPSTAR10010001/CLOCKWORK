@@ -52,7 +52,7 @@ td {
 
 .sticky {
     position: sticky;
-    left: 1px;
+    left: 2px;
     z-index: 2;
     outline: 2px solid var(--bgc);
 }
@@ -359,7 +359,6 @@ tbody td.weekend-col {
     cursor: default;
 }
 
-
 :host-context(body.light) tbody td.weekend-col {
     background-color: #dddddd !important;
     border-color: #dddddd !important;
@@ -381,7 +380,7 @@ thead th.holiday {
     color: var(--bgc) !important;
 }
 
-.plan-table td {
+.plan-table td.has-note {
   position: relative;
 }
 
@@ -394,4 +393,44 @@ thead th.holiday {
   border-radius: 50%;
   background-color: var(--tc);
   pointer-events: none;
+}
+
+.table-container-like {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0px 0px 30px var(--bsc);
+  background-color: var(--bgc);
+}
+
+:host-context(body.outlines) .table-container-like {
+  outline: 3px solid var(--olc);
+}
+
+.vacation-table-like {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 1.5em;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.vacation-table-like .sticky {
+  position: sticky;
+  left: 2px;
+  z-index: 2;
+  outline: 2px solid var(--bgc);
+}
+
+.plan-table th:not(.sticky),
+.plan-table td:not(.sticky) {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  padding: 10px 0;
 }

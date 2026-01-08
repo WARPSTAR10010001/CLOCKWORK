@@ -5,17 +5,13 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
-V1.3.1:
-correct this: /docs/grundlagen-der-nutzung/dienstplaene-auswählen-und-navigieren
-
-
-V1.4.0:
+V1.5.0:
 Export & import of employee status
 
 
-V1.5.0:
+V1.6.0:
 Show and edit status for plans
 
-V1.6.0:
+V1.7.0:
 Implement QuickAction logic (currently disabled in app.ts)
 -> Set quickaction input as focused when shift+k is pressed
