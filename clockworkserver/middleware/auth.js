@@ -17,18 +17,17 @@ function requireAuth(req, res, next) {
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ error: 'Kein Autorisierungskontext' });
-    if (req.user.role === 'ADMIN') return next(); // Admin darf alles
+    if (req.user.role === 'ADMIN') return next();
     if (roles.includes(req.user.role)) return next();
     return res.status(403).json({ error: 'Verboten' });
   };
 }
 
-// Nutze diese Helper, um Department-Isolation zentral zu erzwingen
 function enforceDepartmentScope(getDeptIdFromRequest) {
   return (req, res, next) => {
     try {
       const reqDeptId = getDeptIdFromRequest(req);
-      if (req.user.role === 'ADMIN') return next(); // Admin ist global
+      if (req.user.role === 'ADMIN') return next();
       if (!reqDeptId) return res.status(400).json({ error: 'Fehlende departmentId' });
       if (String(req.user.departmentId) !== String(reqDeptId)) {
         return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });

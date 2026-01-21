@@ -143,6 +143,11 @@ export class LogComponent implements OnInit {
     this.logs = filtered;
   }
 
+  toMonthName(month: number) {
+    const months = ["null", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    return months[month];
+  }
+
   describeLog(log: PlanLogDTO): string {
     const type = log.action_type;
     const st = (log.status_code || '').toUpperCase();

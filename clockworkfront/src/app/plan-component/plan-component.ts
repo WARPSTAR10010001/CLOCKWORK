@@ -690,6 +690,11 @@ export class PlanComponent implements OnInit {
       });
   }
 
+  toMonthName(month: number) {
+    const months = ["null", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    return months[month];
+  }
+
   @HostListener("document:keydown.u", ["$event"])
   onUHandler(event: Event) {
     if (!this.overlay.current.show) {

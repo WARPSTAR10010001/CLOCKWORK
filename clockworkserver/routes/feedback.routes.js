@@ -62,7 +62,7 @@ router.get('/feedback', requireAuth, requireRole('ADMIN'), async (req, res) => {
   const params = [];
   if (status) {
     if (!ALLOWED_STATUS.has(String(status))) {
-      return res.status(400).json({ error: 'invalid status filter' });
+      return res.status(400).json({ error: 'Invalid status filter' });
     }
     where = 'WHERE status = $1';
     params.push(status);
