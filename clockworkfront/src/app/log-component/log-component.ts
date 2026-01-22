@@ -217,7 +217,7 @@ export class LogComponent implements OnInit {
       const parts = ymd.split('-');
       if (parts.length !== 3) return ymd;
       const [y, m, d] = parts;
-      return `${d}/${m}/${y.slice(2)}`;
+      return `${d}.${m}.${y.slice(2)}`;
     }
 
     const d = new Date(str);
@@ -226,13 +226,13 @@ export class LogComponent implements OnInit {
       const parts = ymd.split('-');
       if (parts.length !== 3) return ymd;
       const [y, m, day] = parts;
-      return `${day}/${m}/${y.slice(2)}`;
+      return `${day}.${m}.${y.slice(2)}`;
     }
 
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const yy = String(d.getFullYear()).slice(2);
-    return `${dd}/${mm}/${yy}`;
+    return `${dd}.${mm}.${yy}`;
   }
 
   formatDates(dates: string[] | null | undefined): string {

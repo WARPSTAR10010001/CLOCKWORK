@@ -6,7 +6,10 @@ Lock plans of last year at end of january
 
 
 V1.4.1:
-Fix date format in plan logs
+Add time in plan logs
+Fix time format in feedback
+Fix time format in admin
+
 
 V1.5.0:
 Export & import of employee status

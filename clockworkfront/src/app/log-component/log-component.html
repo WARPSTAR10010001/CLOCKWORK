@@ -38,7 +38,7 @@
       <div class="meta">
         <span class="log-id">#{{ log.id }}</span>
         <span>
-          {{ log.created_at | date:'short' }}
+          {{ formatDateShort(log.created_at) + " [WIP]" }}
           - {{ describeLog(log) }}
           - {{ log.employee_name || ('Mitarbeiter #' + log.employee_id) }}
         </span>
