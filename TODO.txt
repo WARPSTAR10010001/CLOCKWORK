@@ -5,6 +5,9 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
+V1.4.1:
+Fix date format in plan logs
+
 V1.5.0:
 Export & import of employee status
 

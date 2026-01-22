@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Wichtig für die @if-Syntax im Template
+import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from './auth-service';
 import { OverlayComponent } from './overlay-component/overlay-component';
