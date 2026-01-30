@@ -80,7 +80,7 @@ export class AdminComponent implements OnInit {
   deleteDepartment(dep: any): void {
     const ok = window.confirm(
       `Fachbereich "${dep.name}" wirklich löschen?\n\n` +
-        'Hinweis: Das Löschen ist nur möglich, wenn noch keine Mitarbeitenden und keine Dienstpläne für diesen Fachbereich existieren.'
+      'Hinweis: Das Löschen ist nur möglich, wenn noch keine Mitarbeitenden und keine Dienstpläne für diesen Fachbereich existieren.'
     );
     if (!ok) return;
 
@@ -99,5 +99,53 @@ export class AdminComponent implements OnInit {
         this.overlay.showOverlay('error', msg);
       }
     });
+  }
+
+  formatDateShort(raw: string | null | undefined): string {
+    if (!raw) return '-';
+    const str = String(raw);
+
+    if (str.length >= 10 && str[4] === '-' && str[7] === '-' && !str.includes('T')) {
+      const ymd = str.slice(0, 10);
+      const parts = ymd.split('-');
+      if (parts.length !== 3) return ymd;
+      const [y, m, d] = parts;
+      return `${d}.${m}.${y.slice(2)}`;
+    }
+
+    const d = new Date(str);
+    if (isNaN(d.getTime())) {
+      const ymd = str.slice(0, 10);
+      const parts = ymd.split('-');
+      if (parts.length !== 3) return ymd;
+      const [y, m, day] = parts;
+      return `${day}.${m}.${y.slice(2)}`;
+    }
+
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(2);
+    return `${dd}.${mm}.${yy}`;
+  }
+
+  formatDateTimeShort(raw: string | null | undefined): string {
+    if (!raw) return '-';
+
+    const str = String(raw);
+
+    if (str.length >= 10 && str[4] === '-' && str[7] === '-' && !str.includes('T') && !str.includes(':')) {
+      return this.formatDateShort(str);
+    }
+
+    const d = new Date(str);
+    if (isNaN(d.getTime())) {
+      return this.formatDateShort(str);
+    }
+
+    const datePart = this.formatDateShort(d.toISOString());
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+
+    return `${datePart}, ${hh}:${mm}`;
   }
 }

@@ -235,6 +235,27 @@ export class LogComponent implements OnInit {
     return `${dd}.${mm}.${yy}`;
   }
 
+  formatDateTimeShort(raw: string | null | undefined): string {
+    if (!raw) return '-';
+
+    const str = String(raw);
+
+    if (str.length >= 10 && str[4] === '-' && str[7] === '-' && !str.includes('T') && !str.includes(':')) {
+      return this.formatDateShort(str);
+    }
+
+    const d = new Date(str);
+    if (isNaN(d.getTime())) {
+      return this.formatDateShort(str);
+    }
+
+    const datePart = this.formatDateShort(d.toISOString());
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+
+    return `${datePart}, ${hh}:${mm}`;
+  }
+
   formatDates(dates: string[] | null | undefined): string {
     if (!dates || dates.length === 0) return '-';
     return dates

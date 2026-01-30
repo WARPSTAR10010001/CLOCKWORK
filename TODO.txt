@@ -5,14 +5,12 @@ Employee management css for halfscreen
 Lock plans of last year at end of january
 
 
-V1.4.1:
-Add time in plan logs
-Fix time format in feedback
-Fix time format in admin
+V1.4.3:
+Fix error with vacation counter
 
 
 V1.5.0:
-Export & import of employee status
+Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans
 
 
 V1.6.0:

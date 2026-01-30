@@ -288,14 +288,12 @@ body.outlines .doc-table-wrapper {
     border-radius: 10px;
 }
 
-/* Kopf & Zellen */
 .doc-role-table th,
 .doc-role-table td {
     padding: 10px;
     border-radius: 10px;
 }
 
-/* Kopfzeile etwas hervorheben */
 body.light .doc-role-table thead th {
     background-color: var(--bgca);
 }
@@ -308,7 +306,6 @@ body.neon .doc-role-table thead th {
     background-color: var(--bgca);
 }
 
-/* Zebra-Streifen im Body */
 body.light .doc-role-table tbody tr:nth-child(odd) td {
     background-color: var(--bgca);
 }

@@ -20,7 +20,7 @@
         <article class="fb-card">
             <div class="fb-meta subtitle">
                 <span class="chip">{{ f.status }}</span>
-                <span>{{ f.category }} - {{ f.author_username }} - {{ f.created_at | date:'short' }}</span>
+                <span>{{ f.category }} - {{ f.author_username }} - {{ formatDateTimeShort(f.created_at) }}</span>
                 @if (f.app_version) {
                 <span>- V{{ f.app_version }}</span>
                 } @else {

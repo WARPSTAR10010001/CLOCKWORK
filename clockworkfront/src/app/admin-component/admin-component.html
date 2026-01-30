@@ -56,7 +56,7 @@
           @for (u of d.users; track u.id) {
             <span class="tag">
               {{ u.role }}: {{ u.username }}
-              ({{ u.last_login_at ? (u.last_login_at | date : 'short') : 'noch nie eingeloggt' }})
+              ({{ u.last_login_at ? formatDateTimeShort(u.last_login_at) : 'noch nie angemeldet' }})
             </span>
           }
         </div>
