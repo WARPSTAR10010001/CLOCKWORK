@@ -41,7 +41,8 @@ body.neon {
     --gbgb: #007bb473;
 }
 
-body.soft .emp {
+body.soft .emp,
+body.soft .hint {
     background: linear-gradient(110deg, #76edff, #72ffea, #76edff);
     background-size: 200% auto;
     -webkit-background-clip: text;
@@ -50,7 +51,8 @@ body.soft .emp {
     animation: gradientMove 3s linear infinite;
 }
 
-.emp {
+.emp,
+.hint {
     background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
     background-size: 200% auto;
     -webkit-background-clip: text;

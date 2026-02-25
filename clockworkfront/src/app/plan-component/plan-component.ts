@@ -765,6 +765,20 @@ export class PlanComponent implements OnInit {
     }
   }
 
+  @HostListener("document:keydown.ArrowRight", ["$event"])
+  onRightHandler(event: Event) {
+    if (this.canGoNext) {
+      this.loadNextPlan();
+    }
+  }
+
+  @HostListener("document:keydown.ArrowLeft", ["$event"])
+  onLeftHandler(event: Event) {
+    if (this.canGoPrev) {
+      this.loadPrevPlan();
+    }
+  }
+
   loadNextPlan(): void {
     const currentYear = Number(this.activatedRoute.snapshot.paramMap.get("year"));
     const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get("month"));

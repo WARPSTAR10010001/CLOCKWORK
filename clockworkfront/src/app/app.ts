@@ -13,7 +13,11 @@ import { VersionService } from './version-service';
   styleUrl: './app.css'
 })
 export class App {
-  constructor(public authService: AuthService, private overlayService: OverlayService, public versionService: VersionService) {}
+  constructor(
+    public authService: AuthService,
+    private overlayService: OverlayService,
+    public versionService: VersionService
+  ) {}
 
   logout() {
     this.authService.logout();
@@ -31,12 +35,17 @@ export class App {
     this.overlayService.showOverlay("info", "Um Feedback versenden zu können müssen Sie eingeloggt sein.");
   }
 
+  @HostListener("document:keydown.shift.q", ["$event"])
+  onShiftQHandler(event: Event) {
+    this.openStyleOverlay();
+  }
+
   /*
   @HostListener('document:keydown.shift.k', ['$event'])
-  onEscHandler(event: Event) {
+  onShiftKHandler(event: Event) {
     if (this.authService.isLoggedIn()) {
       this.overlayService.showOverlay("quickAction");
     }
   }
-    */
+  */
 }

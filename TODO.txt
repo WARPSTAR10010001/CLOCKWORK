@@ -6,6 +6,10 @@ Lock plans of last year at end of january
 
 
 V1.4.3:
+Fix routerlink and articlelink not working in documentation
+
+
+V1.4.5:
 Fix error with vacation counter
 
 
