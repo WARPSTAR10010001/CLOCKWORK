@@ -1,88 +1,98 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { PlanComponent } from './plan-component/plan-component';
+
+export type ShowWeekend = "show-weekend" | "hide-weekend";
+export type VacationTable = "show-vacationTable" | "hide-vacationTable";
+export type CompressedRows = "compressed-rows" | "standard-rows";
 
 @Injectable({ providedIn: 'root' })
 export class PlanOptionsService {
-  showWeekends = false;
-  showShortcuts = false;
-  hideVacationTable = false;
-  compressRows = false;
+  showWeekendKey = "showWeekend";
+  vacationTableKey = "vacationTable";
+  compressedRowsKey = "compressedRows";
 
-  private readonly WEEKENDS_COOKIE = "clockwork_show_weekends";
-  private readonly SHORTCUTS_COOKIE = "clockwork_show_shortcuts";
-  private readonly VACATIONTABLE_COOKIE = "clockwork_hide_vacationtable";
-  private readonly COMPRESSROWS_COOKIE = "clockwork_compress_rows";
+  currentShowWeekendSubject = new BehaviorSubject<ShowWeekend>("hide-weekend");
+  currentVacationTableSubject = new BehaviorSubject<VacationTable>("show-vacationTable");
+  currentCompressedRowsSubject = new BehaviorSubject<CompressedRows>("standard-rows");
 
-  loadWeekendPreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_weekends=([^;]+)/);
-    if (!match) return false;
-    return match[1] === "1";
+  currentShowWeekend$ = this.currentShowWeekendSubject.asObservable();
+  currentVacationTable$ = this.currentVacationTableSubject.asObservable();
+  currentCompressedRows$ = this.currentCompressedRowsSubject.asObservable();
+
+  constructor(
+    private plan: PlanComponent
+  ) {
+    const savedShowWeekendRaw = localStorage.getItem(this.showWeekendKey);
+    const showWeekend = this.sanitizeShowWeekend(savedShowWeekendRaw);
+    this.setShowWeekend(showWeekend, false);
+
+    const savedVacationTableRaw = localStorage.getItem(this.vacationTableKey);
+    const vacationTable = this.sanitizeVacationTable(savedVacationTableRaw);
+    this.setVacationTable(vacationTable, false);
+
+    const savedCompressedRowsRaw = localStorage.getItem(this.compressedRowsKey);
+    const compressedRows = this.sanitizeCompressedRows(savedCompressedRowsRaw);
+    this.setCompressedRows(compressedRows, false);
   }
 
-  saveWeekendPreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.showWeekends ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
+  private sanitizeShowWeekend(raw: string | null): ShowWeekend {
+    if (raw === "show-weekend" || raw === "hide-weekend") return raw;
+    if (raw) localStorage.setItem(this.showWeekendKey, "hide-weekend");
+    return "hide-weekend";
   }
 
-  toggleShortcuts(): void {
-    const newValue = !this.showShortcuts;
-    this.showShortcuts = newValue;
-    this.saveShortcutsPreference();
+  private sanitizeVacationTable(raw: string | null): VacationTable {
+    if (raw === "show-vacationTable" || raw === "hide-vacationTable") return raw;
+    if (raw) localStorage.setItem(this.vacationTableKey, "show-vacationTable");
+    return "show-vacationTable";
   }
 
-  private loadShortcutsPreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_shortcuts=([^;]+)/);
-    if (!match) return false;
-    return match[1] === "1";
+  private sanitizeCompressedRows(raw: string | null): CompressedRows {
+    if (raw === "compressed-rows" || raw === "standard-rows") return raw;
+    if (raw) localStorage.setItem(this.compressedRowsKey, "standard-rows");
+    return "standard-rows";
   }
 
-  private saveShortcutsPreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.showShortcuts ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.SHORTCUTS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
+  setShowWeekend(showWeekend: ShowWeekend, save = true) {
+    this.currentShowWeekendSubject.next(showWeekend);
+
+    if (save) {
+      localStorage.setItem(this.showWeekendKey, showWeekend);
+    }
+
+    this.plan.toggleWeekends();
   }
 
-  toggleVacationTable(): void {
-    const newValue = !this.hideVacationTable;
-    this.hideVacationTable = newValue;
-    this.saveVacationTablePreference();
+  getShowWeekend(): ShowWeekend {
+    return this.currentShowWeekendSubject.value;
   }
 
-  private loadVacationTablePreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_hide_vacationtable=([^;])/);
-    if (!match) return false;
-    return match[1] === "1";
+  setVacationTable(vacationTable: VacationTable, save = true) {
+    this.currentVacationTableSubject.next(vacationTable);
+
+    if (save) {
+      localStorage.setItem(this.vacationTableKey, vacationTable);
+    }
+
+    this.plan.reloadCurrentMonth();
   }
 
-  private saveVacationTablePreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.hideVacationTable ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.VACATIONTABLE_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
+  getVacationTable(): VacationTable {
+    return this.currentVacationTableSubject.value;
   }
 
-  toggleCompressedRows(): void {
-    const newValue = !this.compressRows;
-    this.compressRows = newValue;
-    this.saveCompressedRowsPreference();
+  setCompressedRows(compressedRows: CompressedRows, save = true) {
+    this.currentCompressedRowsSubject.next(compressedRows);
+
+    if (save) {
+      localStorage.setItem(this.compressedRowsKey, compressedRows);
+    }
+
+    this.plan.reloadCurrentMonth();
   }
 
-  private loadCompressedRowsPreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_compress_rows=([^;])/);
-    if (!match) return false;
-    return match[1] === "1";
-  }
-
-  private saveCompressedRowsPreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.compressRows ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.COMPRESSROWS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`
+  getCompressedRows(): CompressedRows {
+    return this.currentCompressedRowsSubject.value;
   }
 }

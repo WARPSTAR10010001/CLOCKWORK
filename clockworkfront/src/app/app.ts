@@ -39,13 +39,4 @@ export class App {
   onShiftQHandler(event: Event) {
     this.openStyleOverlay();
   }
-
-  /*
-  @HostListener('document:keydown.shift.k', ['$event'])
-  onShiftKHandler(event: Event) {
-    if (this.authService.isLoggedIn()) {
-      this.overlayService.showOverlay("quickAction");
-    }
-  }
-  */
 }

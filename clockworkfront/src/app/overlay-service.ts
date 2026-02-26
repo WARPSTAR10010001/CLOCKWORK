@@ -4,7 +4,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
 export type OverlayType =
   | 'style'
   | 'passwordReset'
-  | 'quickAction'
   | 'feedback'
   | 'error'
   | 'success'

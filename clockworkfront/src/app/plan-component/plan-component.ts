@@ -11,7 +11,7 @@ import { forkJoin, of } from "rxjs";
 import { AuthService } from "../auth-service";
 import { ImpersonationService } from "../impersonation-service";
 import { HolidayService } from "../holiday-service";
-import { PlanOptionsService } from "../plan-options-service";
+import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows } from "../plan-options-service";
 
 interface SelectedCell {
   employeeId: number;
@@ -58,15 +58,9 @@ export class PlanComponent implements OnInit {
   canGoNext = false;
   availablePlanYears: number[] = [];
 
-  showWeekends = false;
-  showShortcuts = false;
-  hideVacationTable = false;
-  compressRows = false;
-
-  private readonly WEEKENDS_COOKIE = "clockwork_show_weekends";
-  private readonly SHORTCUTS_COOKIE = "clockwork_show_shortcuts";
-  private readonly VACATIONTABLE_COOKIE = "clockwork_hide_vacationtable";
-  private readonly COMPRESSROWS_COOKIE = "clockwork_compress_rows";
+  showWeekends: ShowWeekend = "hide-weekend";
+  vacationTable: VacationTable = "show-vacationTable";
+  compressedRows: CompressedRows = "standard-rows";
 
   constructor(
     private plan: PlanService,
@@ -79,9 +73,13 @@ export class PlanComponent implements OnInit {
     private holidays: HolidayService,
     private log: LogService,
     private planOptions: PlanOptionsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.showWeekends = this.planOptions.getShowWeekend();
+    this.vacationTable = this.planOptions.getVacationTable();
+    this.compressedRows = this.planOptions.getCompressedRows();
+
     this.overlay.noteChanged$
       .subscribe(() => {
         this.reloadCurrentMonth();
@@ -91,7 +89,12 @@ export class PlanComponent implements OnInit {
       this.year = Number(params.get("year"));
       this.month = Number(params.get("month"));
 
-      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
+      if (this.showWeekends === "show-weekend") {
+        this.daysForMonth = this.generateDaysForMonth(this.year, this.month, true);
+      } else if (this.showWeekends === "hide-weekend") {
+        this.daysForMonth = this.generateDaysForMonth(this.year, this.month, false);
+      }
+
       this.deselect();
 
       this.loadHolidays(this.year);
@@ -820,18 +823,14 @@ export class PlanComponent implements OnInit {
   }
 
   toggleWeekends(): void {
-    const newValue = !this.showWeekends;
+    const newValue = this.planOptions.getShowWeekend();
     this.showWeekends = newValue;
-    this.planOptions.saveWeekendPreference();
 
-    this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
-    this.deselect();
-
-    if (newValue) {
-      this.overlay.showOverlay(
-        "info",
-        "Das Anzeigen der Wochenendtage dient nur zur erleichterten visuellen Orientierung, daher können keine Einträge an diesen Tagen vorgenommen werden."
-      );
+    if (this.showWeekends === "show-weekend") {
+      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, true);
+    } else if (this.showWeekends === "hide-weekend") {
+      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, false);
     }
+    this.deselect();
   }
 }

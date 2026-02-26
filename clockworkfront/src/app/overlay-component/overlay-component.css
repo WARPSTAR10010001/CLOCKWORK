@@ -30,7 +30,7 @@ input[type="password"] {
 }
 
 #planShortcuts-overlay {
-  width: min(1200px, 92vw);
+  width: min(1250px, 92vw);
 }
 
 :host-context(body.glass) .overlay {
@@ -91,14 +91,6 @@ h1 {
   flex-direction: row;
   gap: 20px;
   flex-wrap: wrap;
-}
-
-#quickAction-overlay h1 {
-  margin-bottom: 0;
-}
-
-#quickAction-overlay {
-  margin-top: -500px;
 }
 
 select {

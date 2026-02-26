@@ -67,7 +67,6 @@ export class ThemeService {
     return 'solid';
   }
 
-
   setTheme(theme: Theme, save = true) {
     document.body.classList.remove('light', 'neon', 'dim', 'xmas');
     document.body.classList.add(theme);

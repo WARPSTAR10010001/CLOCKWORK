@@ -31,8 +31,6 @@ export class OverlayComponent implements OnInit {
   selectedColor: Color = 'standard';
   selectedMaterial: Material = 'solid';
 
-  selectedShowWeekends: boolean = false;
-
   pw1 = '';
   pw2 = '';
   submitting = false;
