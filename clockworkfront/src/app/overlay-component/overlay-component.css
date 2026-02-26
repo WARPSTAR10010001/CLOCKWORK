@@ -16,16 +16,7 @@ input[type="password"] {
   width: 95%;
 }
 
-#style-overlay,
-#error-overlay,
-#success-overlay,
-#info-overlay,
-#passwordReset-overlay,
-#quickAction-overlay,
-#feedback-overlay,
-#confirm-overlay,
-#planNote-overlay,
-#planNoteEdit-overlay {
+.overlay {
   padding: 40px 50px;
   border-radius: 10px;
   width: min(800px, 92vw);
@@ -38,16 +29,11 @@ input[type="password"] {
   box-sizing: border-box;
 }
 
-:host-context(body.glass) #style-overlay,
-:host-context(body.glass) #error-overlay,
-:host-context(body.glass) #success-overlay,
-:host-context(body.glass) #info-overlay,
-:host-context(body.glass) #passwordReset-overlay,
-:host-context(body.glass) #quickAction-overlay,
-:host-context(body.glass) #feedback-overlay,
-:host-context(body.glass) #confirm-overlay,
-:host-context(body.glass) #planNote-overlay,
-:host-context(body.glass) #planNoteEdit-overlay {
+#planShortcuts-overlay {
+  width: min(1200px, 92vw);
+}
+
+:host-context(body.glass) .overlay {
   background: var(--gbgc);
   border-radius: 10px;
   box-shadow: 0px 0px 30px var(--bsc);
@@ -76,16 +62,7 @@ h1 {
   padding-bottom: 20px;
 }
 
-:host-context(body.outlines) #style-overlay,
-:host-context(body.outlines) #error-overlay,
-:host-context(body.outlines) #success-overlay,
-:host-context(body.outlines) #info-overlay,
-:host-context(body.outlines) #passwordReset-overlay,
-:host-context(body.outlines) #quickAction-overlay,
-:host-context(body.outlines) #feedback-overlay,
-:host-context(body.outlines) #confirm-overlay,
-:host-context(body.outlines) #planNote-overlay,
-:host-context(body.outlines) #planNoteEdit-overlay {
+:host-context(body.outlines) .overlay {
   outline: 3px solid var(--olc);
 }
 
@@ -158,10 +135,6 @@ textarea {
   color: var(--red);
 }
 
-.button-row-pw a {
-  margin-right: 20px;
-}
-
 #remaining {
   margin-top: -5px;
   margin-bottom: 15px;
@@ -187,11 +160,9 @@ textarea {
   height: 400px;
 }
 
-#confirm-overlay a,
-#feedback-overlay a,
-#planNote-overlay a,
-#planNoteEdit-overlay a {
-  margin-right: 20px;
+.button-row {
+  display: flex;
+  gap: 20px;
 }
 
 input[type="text"],
@@ -208,4 +179,46 @@ textarea {
 
 #planNoteEdit-overlay textarea {
   margin: 30px 0 30px 0;
+}
+
+table {
+  font-size: 1.5em;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+th,
+td {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+:host-context(body.light) th {
+  background-color: #e9e9e9;
+  border: 3px solid #e9e9e9;
+}
+
+:host-context(body.light) td {
+  background-color: #f3f3f3;
+  border: 3px solid #f3f3f3;
+}
+
+:host-context(body.dim) th {
+    background-color: #2a2a2a;
+    border: 3px solid #2a2a2a;
+}
+
+:host-context(body.dim) td {
+    background-color: #242424;
+    border: 3px solid #242424;
+}
+
+:host-context(body.neon) th {
+    background-color: #100044;
+    border: 3px solid #100044;
+}
+
+:host-context(body.neon) td {
+    background-color: #0d0038;
+    border: 3px solid #0d0038;
 }

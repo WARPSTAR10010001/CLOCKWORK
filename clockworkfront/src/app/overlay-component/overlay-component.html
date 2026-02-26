@@ -1,7 +1,7 @@
 @if (overlayState.show) {
 <div class="overlay-backdrop">
   @if (overlayState.type === "style") {
-  <div id="style-overlay">
+  <div id="style-overlay" class="overlay">
     <h1 class="emp page-header">Ansicht</h1>
     <div id="theme-selection">
       <h1>Anzeigemodus:</h1>
@@ -68,24 +68,107 @@
       </div>
     </div>
     <br>
-    <a (click)="close()" class="button-primary">Schließen</a>
+    <a (click)="close()" class="button-action">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "planOptions") {
+  <div id="planOptions-overlay" class="overlay">
+    <h1 class="emp page-header">Optionen</h1>
+    <div id="showWeekends">
+      <h1>Wochenenden anzeigen:</h1>
+      <div class="options">
+
+      </div>
+    </div>
+    <div class="button-row">
+      <a (click)="openShortcuts()" class="button-primary">Tastenkürzel anzeigen</a>
+      <a (click)="close()" class="button-action">Schließen</a>
+    </div>
+  </div>
+  } @else if (overlayState.type === "planShortcuts") {
+  <div id="planShortcuts-overlay" class="overlay">
+    <h1 class="emp page-header">Tastenkürzel</h1>
+    <h1>Einträge:</h1>
+    <table class="shortcuts">
+      <tr>
+        <th>Urlaub</th>
+        <th>alt. Telearbeit</th>
+        <th>Krank</th>
+        <th>Lehrgang</th>
+        <th>Gleitzeit</th>
+        <th>Termin</th>
+        <th>Anderes</th>
+        <th>Notiz öffnen</th>
+        <th>Eintrag Löschen</th>
+      </tr>
+      <tr>
+        <td>U</td>
+        <td>H</td>
+        <td>K</td>
+        <td>L</td>
+        <td>G</td>
+        <td>T</td>
+        <td>O</td>
+        <td>Enter</td>
+        <td>Entf</td>
+      </tr>
+    </table>
+    <hr>
+    <h1>Bedienung:</h1>
+    <table class="shortcuts">
+      <tr>
+        <th>Mehrere Tage auswählen (zusammenhängend)</th>
+        <th>Mehrere Tage auswählen (nicht zusammenhängend)</th>
+        <th>Auswahl aufheben</th>
+        <th>Vorherigen Monat laden</th>
+        <th>Nächsten Monat laden</th>
+      </tr>
+      <tr>
+        <td>Shift</td>
+        <td>Strg</td>
+        <td>Esc</td>
+        <td>Pfeil Links</td>
+        <td>Pfeil Rechts</td>
+      </tr>
+    </table>
+    <!--
+    <h1 class="shortcuts">
+      Einträge:
+      <ul>
+        <li>Urlaub: U</li>
+        <li>alternierende Telearbeit: H</li>
+        <li>Krank: K</li>
+        <li>Lehrgang: L</li>
+        <li>Gleitzeit: G</li>
+        <li>Termin: T</li>
+        <li>Anderes: O</li>
+        <li>Notiz öffnen: Enter</li>
+        <li>Eintrag löschen: Entf</li>
+      </ul>
+      <hr>
+      Bedienung:
+      <ul>
+        <li></li>
+      </ul>
+    </h1>
+    -->
+    <div class="button-row">
+      <a (click)="openOptions()" class="button-primary">Optionen anzeigen</a>
+      <a (click)="close()" class="button-action">Schließen</a>
+    </div>
   </div>
   } @else if (overlayState.type === "passwordReset") {
-  <div id="passwordReset-overlay">
+  <div id="passwordReset-overlay" class="overlay">
     <h1 class="emp page-header">Passwort ändern</h1>
     <h1>Das hier eingegebene Passwort gilt für alle in Ihrem Fachbereich mit Ihrer aktuellen Berechtigungsstufe. Bitte
-      sprechen Sie sich
-      mit Ihren Kollegen ab um gemeinsam ein sicheres Passwort festzulegen.</h1>
+      sprechen Sie sich mit Ihren Kollegen ab um gemeinsam ein sicheres Passwort festzulegen.</h1>
     <input type="text" placeholder="Neues Passwort eingeben" [value]="pw1" (input)="onPwInput(1, $event)" />
-
     <input type="text" placeholder="Neues Passwort wiederholen" [value]="pw2" (input)="onPwInput(2, $event)" />
-
     <div class="pw-hints">
       <h1 [class.ok]="pwMinLenOk" [class.bad]="!pwMinLenOk">1. ≥ 5 Zeichen</h1>
       <h1 [class.ok]="pwNotBanned" [class.bad]="!pwNotBanned">2. kein verbotenes Passwort</h1>
       <h1 [class.ok]="pwMatch" [class.bad]="!pwMatch">3. beide Eingaben identisch</h1>
     </div>
-    <div class="button-row-pw">
+    <div class="button-row">
       <a class="button-primary" [class.disabled]="!canSubmit" [attr.aria-disabled]="!canSubmit"
         (click)="saveNewPassword()">
         Passwort speichern
@@ -94,7 +177,7 @@
     </div>
   </div>
   } @else if (overlayState.type === "planNoteEdit") {
-  <div id="planNoteEdit-overlay">
+  <div id="planNoteEdit-overlay" class="overlay">
     <h1 class="emp page-header">Notiz bearbeiten</h1>
     <textarea [value]="noteText" (input)="onNoteInput($event)" placeholder="Notiz hinzufügen (optional)"></textarea>
     <div class="button-row">
@@ -103,7 +186,7 @@
     </div>
   </div>
   } @else if (overlayState.type === "planNote") {
-  <div id="planNote-overlay">
+  <div id="planNote-overlay" class="overlay">
     <h1 class="emp page-header">Notiz</h1>
     @if (noteText) {
     <h1>{{ noteText }}</h1>
@@ -120,14 +203,13 @@
     </div>
   </div>
   } @else if (overlayState.type === "quickAction") {
-  <div id="quickAction-overlay">
+  <div id="quickAction-overlay" class="overlay">
     <h1 class="emp page-header">QuickAction</h1>
     <input if="quickAction" type="text" placeholder="Befehl eingeben...">
   </div>
   } @else if (overlayState.type === "feedback") {
-  <div id="feedback-overlay">
+  <div id="feedback-overlay" class="overlay">
     <h1 class="emp page-header">Feedback geben</h1>
-
     <select [value]="feedbackCategory" (change)="onFeedbackCategoryChange($event)">
       <option value="">-- Kategorie --</option>
       <option value="Verbesserungsvorschlag">Verbesserungsvorschlag</option>
@@ -136,7 +218,6 @@
       <option value="Lob">Lob</option>
       <option value="Anderes">Anderes</option>
     </select>
-
     <textarea placeholder="Hier Feedback eintippen... (erforderlich)" [value]="feedbackContent"
       (input)="onFeedbackContentInput($event)"></textarea>
     @if (remainingFeedbackChars > 0) {
@@ -148,30 +229,29 @@
       (click)="sendFeedback()">
       {{ 'Feedback schicken' }}
     </a>
-
     <a (click)="close()" class="button-action">Schließen</a>
   </div>
   } @else if (overlayState.type === "error") {
-  <div id="error-overlay">
+  <div id="error-overlay" class="overlay">
     <h1 class="emp page-header">Fehler</h1>
     <h1>{{ overlayState.message }}</h1>
     <a (click)="close()" class="button-primary">Schließen</a>
   </div>
   } @else if (overlayState.type === "success") {
-  <div id="success-overlay">
+  <div id="success-overlay" class="overlay">
     <h1 class="emp page-header">Erfolg</h1>
     <h1>{{ overlayState.message }}</h1>
     <a (click)="close()" class="button-primary">Schließen</a>
   </div>
   } @else if (overlayState.type === "confirm") {
-  <div id="confirm-overlay">
+  <div id="confirm-overlay" class="overlay">
     <h1 class="emp page-header">Bestätigen</h1>
     <h1>{{ overlayState.message }}</h1>
     <a (click)="close()" class="button-primary">Bestätigen (WIP)</a>
     <a (click)="close()" class="button-action">Ablehnen</a>
   </div>
   } @else if (overlayState.type === "info") {
-  <div id="info-overlay">
+  <div id="info-overlay" class="overlay">
     <h1 class="emp page-header">Info</h1>
     <h1>{{ overlayState.message }}</h1>
     <a (click)="close()" class="button-primary">Schließen</a>

@@ -11,6 +11,7 @@ import { forkJoin, of } from "rxjs";
 import { AuthService } from "../auth-service";
 import { ImpersonationService } from "../impersonation-service";
 import { HolidayService } from "../holiday-service";
+import { PlanOptionsService } from "../plan-options-service";
 
 interface SelectedCell {
   employeeId: number;
@@ -60,10 +61,12 @@ export class PlanComponent implements OnInit {
   showWeekends = false;
   showShortcuts = false;
   hideVacationTable = false;
+  compressRows = false;
 
   private readonly WEEKENDS_COOKIE = "clockwork_show_weekends";
   private readonly SHORTCUTS_COOKIE = "clockwork_show_shortcuts";
-  private readonly VACATIONTABLE_COOKIE = "clockwork_hide_vacationtable"
+  private readonly VACATIONTABLE_COOKIE = "clockwork_hide_vacationtable";
+  private readonly COMPRESSROWS_COOKIE = "clockwork_compress_rows";
 
   constructor(
     private plan: PlanService,
@@ -74,14 +77,11 @@ export class PlanComponent implements OnInit {
     private overlay: OverlayService,
     private router: Router,
     private holidays: HolidayService,
-    private log: LogService
-  ) { }
+    private log: LogService,
+    private planOptions: PlanOptionsService
+  ) {}
 
   ngOnInit(): void {
-    this.showWeekends = this.loadWeekendPreference();
-    this.showShortcuts = this.loadShortcutsPreference();
-    this.hideVacationTable = this.loadVacationTablePreference();
-
     this.overlay.noteChanged$
       .subscribe(() => {
         this.reloadCurrentMonth();
@@ -811,10 +811,18 @@ export class PlanComponent implements OnInit {
     this.router.navigate(["/plan", nextYear, nextMonth]);
   }
 
+  openPlanOptions(): void {
+    this.overlay.showOverlay("planOptions");
+  }
+
+  openShortcuts(): void {
+    this.overlay.showOverlay("planShortcuts");
+  }
+
   toggleWeekends(): void {
     const newValue = !this.showWeekends;
     this.showWeekends = newValue;
-    this.saveWeekendPreference();
+    this.planOptions.saveWeekendPreference();
 
     this.daysForMonth = this.generateDaysForMonth(this.year, this.month, this.showWeekends);
     this.deselect();
@@ -825,59 +833,5 @@ export class PlanComponent implements OnInit {
         "Das Anzeigen der Wochenendtage dient nur zur erleichterten visuellen Orientierung, daher können keine Einträge an diesen Tagen vorgenommen werden."
       );
     }
-  }
-
-  private loadWeekendPreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_weekends=([^;]+)/);
-    if (!match) return false;
-    return match[1] === "1";
-  }
-
-  private saveWeekendPreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.showWeekends ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.WEEKENDS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
-  }
-
-  toggleShortcuts(): void {
-    const newValue = !this.showShortcuts;
-    this.showShortcuts = newValue;
-    this.saveShortcutsPreference();
-  }
-
-  private loadShortcutsPreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_show_shortcuts=([^;]+)/);
-    if (!match) return false;
-    return match[1] === "1";
-  }
-
-  private saveShortcutsPreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.showShortcuts ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.SHORTCUTS_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
-  }
-
-  toggleVacationTable(): void {
-    const newValue = !this.hideVacationTable;
-    this.hideVacationTable = newValue;
-    this.saveVacationTablePreference();
-  }
-
-  private loadVacationTablePreference(): boolean {
-    if (typeof document === "undefined") return false;
-    const match = document.cookie.match(/(?:^|;\s*)clockwork_hide_vacationtable=([^;])/);
-    if (!match) return false;
-    return match[1] === "1";
-  }
-
-  private saveVacationTablePreference(): void {
-    if (typeof document === "undefined") return;
-    const value = this.hideVacationTable ? "1" : "0";
-    const maxAge = 60 * 60 * 24 * 365;
-    document.cookie = `${this.VACATIONTABLE_COOKIE}=${value}; Max-Age=${maxAge}; Path=/`;
   }
 }

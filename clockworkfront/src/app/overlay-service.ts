@@ -11,7 +11,9 @@ export type OverlayType =
   | 'confirm'
   | 'info'
   | 'planNote'
-  | 'planNoteEdit';
+  | 'planNoteEdit'
+  | 'planOptions'
+  | 'planShortcuts';
 
 export interface OverlayState {
   show: boolean;

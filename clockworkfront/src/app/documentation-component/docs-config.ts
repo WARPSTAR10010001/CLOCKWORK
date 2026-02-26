@@ -780,7 +780,7 @@ export const DOC_SECTIONS: DocSection[] = [
           },
           {
             id: "technischer-aufbau",
-            title: "Technischer Aufbau (Achtung, es wird technisch!)",
+            title: "Technischer Aufbau",
             html: `
             <p>CLOCKWORK ist eine webbasierte Anwendung, die auf modernen Webtechnologien basiert. Das System besteht aus einem Frontend, das in Angular entwickelt wurde, und einem Backend, das auf Node.js und Express läuft. Die Daten werden in einer PostgreSQL-Datenbank gespeichert, die eine flexible und skalierbare Lösung für die Verwaltung der Dienstpläne und Nutzerinformationen bietet.</p>
             <p>Die Kommunikation zwischen dem Frontend und dem Backend erfolgt über REST-APIs, die eine effiziente Datenübertragung und Interaktion ermöglichen. Das System ist so konzipiert, dass es leicht erweiterbar ist, um zukünftige Anforderungen und Funktionen zu integrieren.</p>

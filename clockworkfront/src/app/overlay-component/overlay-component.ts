@@ -14,20 +14,24 @@ import { LogService } from '../log-service';
   styleUrl: './overlay-component.css',
 })
 export class OverlayComponent implements OnInit {
-  private overlayService = inject(OverlayService);
-  private themeService = inject(ThemeService);
-  private renderer = inject(Renderer2);
-  public auth = inject(AuthService);
-  private feedbackService = inject(FeedbackService);
-  private versionService = inject(VersionService);
-  private planService = inject(PlanService);
-  private logService = inject(LogService);
+  constructor(
+    private overlay: OverlayService,
+    private theme: ThemeService,
+    private renderer: Renderer2,
+    private feedback: FeedbackService,
+    private version: VersionService,
+    private plan: PlanService,
+    private log: LogService,
+    public auth: AuthService
+  ) {}
 
   overlayState: OverlayState = { show: false, type: 'info' };
   selectedTheme: Theme = 'light';
   selectedOutline: Outline = 'no-outlines';
   selectedColor: Color = 'standard';
   selectedMaterial: Material = 'solid';
+
+  selectedShowWeekends: boolean = false;
 
   pw1 = '';
   pw2 = '';
@@ -38,7 +42,7 @@ export class OverlayComponent implements OnInit {
   feedbackContent = '';
   sendingFeedback = false;
   readonly FEEDBACK_MAX = 750;
-  appVersion = this.versionService.getVersion();
+  appVersion: string = "";
 
   noteText = "";
 
@@ -51,14 +55,16 @@ export class OverlayComponent implements OnInit {
   ]);
 
   ngOnInit() {
-    this.selectedTheme = this.themeService.getTheme();
-    this.selectedOutline = this.themeService.getOutline();
-    this.selectedColor = this.themeService.getColor();
-    this.selectedMaterial = this.themeService.getMaterial();
-    this.themeService.currentTheme$.subscribe(v => this.selectedTheme = v);
-    this.themeService.currentOutline$.subscribe(v => this.selectedOutline = v);
-    this.themeService.currentColor$.subscribe(v => this.selectedColor = v);
-    this.themeService.currentMaterial$.subscribe(v => this.selectedMaterial = v);
+    this.appVersion = this.version.getVersion();
+
+    this.selectedTheme = this.theme.getTheme();
+    this.selectedOutline = this.theme.getOutline();
+    this.selectedColor = this.theme.getColor();
+    this.selectedMaterial = this.theme.getMaterial();
+    this.theme.currentTheme$.subscribe(v => this.selectedTheme = v);
+    this.theme.currentOutline$.subscribe(v => this.selectedOutline = v);
+    this.theme.currentColor$.subscribe(v => this.selectedColor = v);
+    this.theme.currentMaterial$.subscribe(v => this.selectedMaterial = v);
 
     this.auth.authStatus$.subscribe(status => {
       const mustReset = !!status?.user?.passwordReset;
@@ -71,7 +77,7 @@ export class OverlayComponent implements OnInit {
       }
     });
 
-    this.overlayService.overlay$.subscribe(state => {
+    this.overlay.overlay$.subscribe(state => {
       if (this.passwordResetRequired) {
         this.overlayState = { show: true, type: 'passwordReset' };
       } else {
@@ -97,7 +103,7 @@ export class OverlayComponent implements OnInit {
   }
 
   openNoteEdit() {
-    this.overlayService.openPlanNoteEdit(
+    this.overlay.openPlanNoteEdit(
       this.noteText,
       this.overlayState.payload
     );
@@ -113,7 +119,7 @@ export class OverlayComponent implements OnInit {
     const statusCode = (payload?.statusCode ?? null) as string | null;
 
     if (!entryId || !planId || !departmentId || !employeeId || !date) {
-      this.overlayService.openPlanNote(this.noteText, payload);
+      this.overlay.openPlanNote(this.noteText, payload);
       return;
     }
 
@@ -121,7 +127,7 @@ export class OverlayComponent implements OnInit {
     const newNote = (this.noteText ?? '').trim();
 
     if (oldNote === newNote) {
-      this.overlayService.openPlanNote(this.noteText, payload);
+      this.overlay.openPlanNote(this.noteText, payload);
       return;
     }
 
@@ -135,11 +141,11 @@ export class OverlayComponent implements OnInit {
       actionType = 'NOTE_UPDATE';
     }
 
-    this.planService.updateEntry(entryId, { notes: newNote || null })
+    this.plan.updateEntry(entryId, { notes: newNote || null })
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.logService.createPlanLog({
+          this.log.createPlanLog({
             planId,
             departmentId,
             employeeId,
@@ -153,21 +159,21 @@ export class OverlayComponent implements OnInit {
             noteAfter: newNote || null
           }).pipe(take(1)).subscribe({
             next: () => {
-              this.overlayService.emitNoteChanged();
+              this.overlay.emitNoteChanged();
 
-              this.overlayService.openPlanNote(this.noteText, payload);
+              this.overlay.openPlanNote(this.noteText, payload);
             },
             error: (err) => {
               console.error('Log konnte nicht geschrieben werden:', err);
-              this.overlayService.showOverlay('error', 'Die Änderung wurde gespeichert, aber der Log-Eintrag konnte nicht geschrieben werden.');
-              this.overlayService.emitNoteChanged();
-              this.overlayService.openPlanNote(this.noteText, payload);
+              this.overlay.showOverlay('error', 'Die Änderung wurde gespeichert, aber der Log-Eintrag konnte nicht geschrieben werden.');
+              this.overlay.emitNoteChanged();
+              this.overlay.openPlanNote(this.noteText, payload);
             }
           });
         },
         error: (err) => {
           const msg = err?.error?.error || 'Die Beschreibung konnte nicht gespeichert werden.';
-          this.overlayService.showOverlay('error', msg);
+          this.overlay.showOverlay('error', msg);
         }
       });
   }
@@ -190,19 +196,27 @@ export class OverlayComponent implements OnInit {
         this.auth.refreshStatus().pipe(take(1)).subscribe(() => {
           this.pw1 = this.pw2 = '';
           this.submitting = false;
-          if (!this.passwordResetRequired) this.overlayService.hideOverlay();
+          if (!this.passwordResetRequired) this.overlay.hideOverlay();
         });
       },
       error: (err) => {
         this.submitting = false;
-        this.overlayService.showOverlay('error', err?.error?.error || 'Passwort konnte nicht geändert werden.');
+        this.overlay.showOverlay('error', err?.error?.error || 'Passwort konnte nicht geändert werden.');
       }
     });
   }
 
   close() {
     if (this.passwordResetRequired || this.overlayState.type === 'passwordReset') return;
-    this.overlayService.hideOverlay();
+    this.overlay.hideOverlay();
+  }
+
+  openShortcuts() {
+    this.overlay.showOverlay("planShortcuts");
+  }
+
+  openOptions() {
+    this.overlay.showOverlay("planOptions");
   }
 
   @HostListener('document:keydown.escape')
@@ -212,10 +226,10 @@ export class OverlayComponent implements OnInit {
     }
   }
 
-  changeTheme(theme: Theme) { this.themeService.setTheme(theme); }
-  changeOutline(outline: Outline) { this.themeService.setOutline(outline); }
-  changeColor(color: Color) { this.themeService.setColor(color); }
-  changeMaterial(material: Material) { this.themeService.setMaterial(material); }
+  changeTheme(theme: Theme) { this.theme.setTheme(theme); }
+  changeOutline(outline: Outline) { this.theme.setOutline(outline); }
+  changeColor(color: Color) { this.theme.setColor(color); }
+  changeMaterial(material: Material) { this.theme.setMaterial(material); }
 
   get remainingFeedbackChars(): number {
     return this.FEEDBACK_MAX - this.feedbackContent.length;
@@ -253,18 +267,18 @@ export class OverlayComponent implements OnInit {
     const content = this.feedbackContent.trim();
     const version = this.appVersion || undefined;
 
-    this.feedbackService.send(category, content, version).pipe(take(1)).subscribe({
+    this.feedback.send(category, content, version).pipe(take(1)).subscribe({
       next: () => {
         this.resetFeedbackFields();
-        this.overlayService.showOverlay('success', 'Danke! Dein Feedback wurde gesendet.');
-        if (this.overlayState.type === 'feedback') this.overlayService.hideOverlay();
+        this.overlay.showOverlay('success', 'Danke! Dein Feedback wurde gesendet.');
+        if (this.overlayState.type === 'feedback') this.overlay.hideOverlay();
       },
       error: (err) => {
         this.sendingFeedback = false;
         const msg = err?.status === 401
           ? 'Sitzung abgelaufen. Bitte erneut anmelden.'
           : (err?.error?.error || 'Feedback konnte nicht gesendet werden.');
-        this.overlayService.showOverlay('error', msg);
+        this.overlay.showOverlay('error', msg);
         if (err?.status === 401) {
           this.auth.logout();
         }
