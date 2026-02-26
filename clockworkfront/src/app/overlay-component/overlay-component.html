@@ -3,7 +3,7 @@
   @if (overlayState.type === "style") {
   <div id="style-overlay" class="overlay">
     <h1 class="emp page-header">Ansicht</h1>
-    <div id="theme-selection">
+    <div id="theme-selection" class="selection">
       <h1>Anzeigemodus:</h1>
       <div class="options">
         <label>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <hr>
-    <div id="color-selection">
+    <div id="color-selection" class="selection">
       <h1>Farbauswahl:</h1>
       <div class="options">
         <label>
@@ -38,7 +38,7 @@
       </div>
     </div>
     <hr>
-    <div id="glass-selection">
+    <div id="glass-selection" class="selection">
       <h1>Material:</h1>
       <div class="options">
         <label>
@@ -52,7 +52,7 @@
       </div>
     </div>
     <hr>
-    <div id="outline-selection">
+    <div id="outline-selection" class="selection">
       <h1>Kontur:</h1>
       <div class="options">
         <label>
@@ -67,18 +67,59 @@
         </label>
       </div>
     </div>
-    <br>
     <a (click)="close()" class="button-action">Schließen</a>
   </div>
   } @else if (overlayState.type === "planOptions") {
   <div id="planOptions-overlay" class="overlay">
     <h1 class="emp page-header">Optionen</h1>
-    <div id="showWeekends">
-      <h1>Wochenenden anzeigen:</h1>
+    <div id="showWeekends-selection" class="selection">
+      <h1>Wochenende:</h1>
       <div class="options">
-
+        <label>
+          <input type="radio" name="showWeekends" [checked]="selectedShowWeekend === 'show-weekend'"
+            (change)="changeShowWeekend('show-weekend')">
+          Anzeigen
+        </label>
+        <label>
+          <input type="radio" name="showWeekends" [checked]="selectedShowWeekend === 'hide-weekend'"
+            (change)="changeShowWeekend('hide-weekend')">
+          Ausblenden
+        </label>
       </div>
     </div>
+    <hr>
+    <div id="vacationTable-selection" class="selection">
+      <h1>Urlaubstabelle:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="vacationTable" [checked]="selectedVacationTable === 'show-vacationTable'"
+            (change)="changeVacationTable('show-vacationTable')">
+          Anzeigen
+        </label>
+        <label>
+          <input type="radio" name="vacationTable" [checked]="selectedVacationTable=== 'hide-vacationTable'"
+            (change)="changeVacationTable('hide-vacationTable')">
+          Ausblenden
+        </label>
+      </div>
+    </div>
+    <hr>
+    <div id="compressedRows-selection" class="selection">
+      <h1>Zeilengröße:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="compressedRows" [checked]="selectedCompressedRows=== 'standard-rows'"
+            (change)="changeCompressedRows('standard-rows')">
+          Standard
+        </label>
+        <label>
+          <input type="radio" name="compressedRows" [checked]="selectedCompressedRows=== 'compressed-rows'"
+            (change)="changeCompressedRows('compressed-rows')">
+          Dünn
+        </label>
+      </div>
+    </div>
+    <br>
     <div class="button-row">
       <a (click)="openShortcuts()" class="button-primary">Tastenkürzel anzeigen</a>
       <a (click)="close()" class="button-action">Schließen</a>
@@ -130,27 +171,6 @@
         <td>Pfeil Rechts</td>
       </tr>
     </table>
-    <!--
-    <h1 class="shortcuts">
-      Einträge:
-      <ul>
-        <li>Urlaub: U</li>
-        <li>alternierende Telearbeit: H</li>
-        <li>Krank: K</li>
-        <li>Lehrgang: L</li>
-        <li>Gleitzeit: G</li>
-        <li>Termin: T</li>
-        <li>Anderes: O</li>
-        <li>Notiz öffnen: Enter</li>
-        <li>Eintrag löschen: Entf</li>
-      </ul>
-      <hr>
-      Bedienung:
-      <ul>
-        <li></li>
-      </ul>
-    </h1>
-    -->
     <div class="button-row">
       <a (click)="openOptions()" class="button-primary">Optionen anzeigen</a>
       <a (click)="close()" class="button-action">Schließen</a>

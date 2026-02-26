@@ -20,9 +20,7 @@ export class PlanOptionsService {
   currentVacationTable$ = this.currentVacationTableSubject.asObservable();
   currentCompressedRows$ = this.currentCompressedRowsSubject.asObservable();
 
-  constructor(
-    private plan: PlanComponent
-  ) {
+  constructor() {
     const savedShowWeekendRaw = localStorage.getItem(this.showWeekendKey);
     const showWeekend = this.sanitizeShowWeekend(savedShowWeekendRaw);
     this.setShowWeekend(showWeekend, false);
@@ -60,8 +58,6 @@ export class PlanOptionsService {
     if (save) {
       localStorage.setItem(this.showWeekendKey, showWeekend);
     }
-
-    this.plan.toggleWeekends();
   }
 
   getShowWeekend(): ShowWeekend {
@@ -74,8 +70,6 @@ export class PlanOptionsService {
     if (save) {
       localStorage.setItem(this.vacationTableKey, vacationTable);
     }
-
-    this.plan.reloadCurrentMonth();
   }
 
   getVacationTable(): VacationTable {
@@ -88,8 +82,6 @@ export class PlanOptionsService {
     if (save) {
       localStorage.setItem(this.compressedRowsKey, compressedRows);
     }
-
-    this.plan.reloadCurrentMonth();
   }
 
   getCompressedRows(): CompressedRows {

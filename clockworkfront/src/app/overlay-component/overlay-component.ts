@@ -7,6 +7,7 @@ import { FeedbackService, FeedbackCategory } from '../feedback-service';
 import { VersionService } from '../version-service';
 import { PlanService } from '../plan-service';
 import { LogService } from '../log-service';
+import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows } from '../plan-options-service';
 
 @Component({
   selector: 'app-overlay-component',
@@ -22,14 +23,20 @@ export class OverlayComponent implements OnInit {
     private version: VersionService,
     private plan: PlanService,
     private log: LogService,
+    private planOptions: PlanOptionsService,
     public auth: AuthService
   ) {}
 
   overlayState: OverlayState = { show: false, type: 'info' };
+
   selectedTheme: Theme = 'light';
   selectedOutline: Outline = 'no-outlines';
   selectedColor: Color = 'standard';
   selectedMaterial: Material = 'solid';
+
+  selectedShowWeekend: ShowWeekend = "hide-weekend";
+  selectedVacationTable: VacationTable = "show-vacationTable";
+  selectedCompressedRows: CompressedRows = "standard-rows";
 
   pw1 = '';
   pw2 = '';
@@ -59,10 +66,19 @@ export class OverlayComponent implements OnInit {
     this.selectedOutline = this.theme.getOutline();
     this.selectedColor = this.theme.getColor();
     this.selectedMaterial = this.theme.getMaterial();
+
     this.theme.currentTheme$.subscribe(v => this.selectedTheme = v);
     this.theme.currentOutline$.subscribe(v => this.selectedOutline = v);
     this.theme.currentColor$.subscribe(v => this.selectedColor = v);
     this.theme.currentMaterial$.subscribe(v => this.selectedMaterial = v);
+
+    this.selectedShowWeekend = this.planOptions.getShowWeekend();
+    this.selectedVacationTable = this.planOptions.getVacationTable();
+    this.selectedCompressedRows = this.planOptions.getCompressedRows();
+
+    this.planOptions.currentShowWeekend$.subscribe(v => this.selectedShowWeekend = v);
+    this.planOptions.currentVacationTable$.subscribe(v => this.selectedVacationTable = v);
+    this.planOptions.currentCompressedRows$.subscribe(v => this.selectedCompressedRows = v);
 
     this.auth.authStatus$.subscribe(status => {
       const mustReset = !!status?.user?.passwordReset;
@@ -228,6 +244,10 @@ export class OverlayComponent implements OnInit {
   changeOutline(outline: Outline) { this.theme.setOutline(outline); }
   changeColor(color: Color) { this.theme.setColor(color); }
   changeMaterial(material: Material) { this.theme.setMaterial(material); }
+
+  changeShowWeekend(showWeekend: ShowWeekend) { this.planOptions.setShowWeekend(showWeekend); }
+  changeVacationTable(vacationTable: VacationTable) { this.planOptions.setVacationTable(vacationTable); }
+  changeCompressedRows(compressedRows: CompressedRows) { this.planOptions.setCompressedRows(compressedRows); }
 
   get remainingFeedbackChars(): number {
     return this.FEEDBACK_MAX - this.feedbackContent.length;

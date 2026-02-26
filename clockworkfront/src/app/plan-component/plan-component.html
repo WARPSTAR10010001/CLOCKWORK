@@ -57,20 +57,6 @@
       </svg>
     </a>
     }
-    <!--
-    <a class="button-primary" (click)="toggleShortcuts()">
-      {{ showShortcuts ? "Tastenkürzel ausblenden" : "Tastenkürzel anzeigen" }}
-    </a>
-    <a class="button-primary" (click)="toggleWeekends()">
-      {{ showWeekends ? 'Wochenende ausblenden' : 'Wochenende anzeigen' }}
-    </a>
-    <a class="button-primary" (click)="toggleVacationTable()">
-      {{ hideVacationTable ? "Urlaubsübersicht anzeigen" : "Urlaubsübersicht ausblenden" }}
-    </a>
-    <a class="button-primary" (click)="toggleCompressedRows()">
-      {{ compressRows ? "Zeilen komprimieren" : "Zeilen dekomprimieren" }}
-    </a>
-  -->
     <a class="button-primary" [routerLink]="['logs']">Logs ansehen</a>
     <a class="button-primary" (click)="openPlanOptions()">Optionen & Tastenkürzel anzeigen</a>
     @if (canGoNext) {

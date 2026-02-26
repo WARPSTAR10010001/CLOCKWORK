@@ -85,6 +85,19 @@ export class PlanComponent implements OnInit {
         this.reloadCurrentMonth();
       });
 
+    this.planOptions.currentShowWeekend$
+      .subscribe(value => {
+        this.showWeekends = value;
+
+        this.daysForMonth = this.generateDaysForMonth(
+          this.year,
+          this.month,
+          value === "show-weekend"
+        );
+
+        this.deselect;
+      });
+
     this.activatedRoute.paramMap.subscribe(params => {
       this.year = Number(params.get("year"));
       this.month = Number(params.get("month"));
@@ -820,17 +833,5 @@ export class PlanComponent implements OnInit {
 
   openShortcuts(): void {
     this.overlay.showOverlay("planShortcuts");
-  }
-
-  toggleWeekends(): void {
-    const newValue = this.planOptions.getShowWeekend();
-    this.showWeekends = newValue;
-
-    if (this.showWeekends === "show-weekend") {
-      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, true);
-    } else if (this.showWeekends === "hide-weekend") {
-      this.daysForMonth = this.generateDaysForMonth(this.year, this.month, false);
-    }
-    this.deselect();
   }
 }

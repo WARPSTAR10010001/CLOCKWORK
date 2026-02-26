@@ -194,7 +194,7 @@ li {
 hr {
     border-radius: 5px;
     margin: 50px 20px;
-    border: 2px solid var(--tc);
+    border: 3px solid var(--tc);
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
