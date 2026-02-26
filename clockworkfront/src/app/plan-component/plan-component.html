@@ -1,6 +1,8 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">Planviewer {{ toMonthName(month) }} <a id="back" class="hidden-link"
-      [routerLink]="['/plan', year]">{{ year }}</a></h1>
+  <h1 class="emp page-header">
+    Planviewer {{ toMonthName(month) }}
+    <a id="back" class="hidden-link" [routerLink]="['/plan', year]">{{ year }}</a>
+  </h1>
   @if (planId !== null) {
   <h1 class="subtitle">Dienstplan</h1>
   <div id="entry-buttons">
@@ -16,12 +18,12 @@
     <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
   </div>
   <div id="table-container">
-    <table class="plan-table">
+    <table class="plan-table" [class.compressed]="compressedRows === 'compressed-rows'">
       <thead>
         <tr>
           <th class="sticky">Name</th>
-          @for (day of daysForMonth; track day) {
-          <th [ngClass]="getHeaderClasses(day)">
+          @for (day of daysForMonth; let colIndex = $index; track day) {
+          <th (click)="selectColumn(colIndex)" [ngClass]="getHeaderClasses(day)" style="cursor: pointer;">
             {{ day.getDate() }}<br>
             {{ weekdays[day.getDay()] }}
           </th>
@@ -29,10 +31,12 @@
         </tr>
       </thead>
       <tbody>
-        @for (employee of employees; track employee.id) {
+        @for (employee of employees; let rowIndex = $index; track employee.id) {
         <tr>
-          <td class="sticky">{{ employee.name }}</td>
-          @for (day of daysForMonth; track day) {
+          <td class="sticky" (click)="selectRow(rowIndex)" style="cursor: pointer;">
+            {{ employee.name }}
+          </td>
+          @for (day of daysForMonth; let colIndex = $index; track day) {
           <td (click)="selectCell(employee.id, day, $event)" (dblclick)="editNote(employee.id, day, $event)"
             [ngClass]="getCellClasses(employee.id, day)" [class.has-note]="hasNote(employee.id, day)"
             [attr.data-status]="getStatus(employee.id, day)">
@@ -57,8 +61,10 @@
       </svg>
     </a>
     }
-    <a class="button-primary" [routerLink]="['logs']">Logs ansehen</a>
-    <a class="button-primary" (click)="openPlanOptions()">Optionen & Tastenkürzel anzeigen</a>
+    <a class="button-primary" [routerLink]="['logs']">Logs anzeigen</a>
+    <a class="button-primary" (click)="openPlanOptions()">
+      Optionen & Tastenkürzel öffnen
+    </a>
     @if (canGoNext) {
     <a class="button-primary plan-nav-btn next" (click)="loadNextPlan()">
       <svg class="arrow-icon" viewBox="0 0 24 24">
@@ -70,12 +76,12 @@
     }
   </div>
   }
-  @if (!vacationTable) {
+  @if (vacationTable === "show-vacationTable") {
   <hr>
   <div id="vacation-container">
     <h1 class="subtitle">Urlaubsübersicht</h1>
     <div class="table-container-like">
-      <table class="vacation-table-like">
+      <table class="vacation-table-like" [class.compressed]="compressedRows === 'compressed-rows'">
         <thead>
           <tr>
             <th class="sticky">Name</th>
@@ -84,7 +90,6 @@
             <th>Resturlaub (nach Monat)</th>
           </tr>
         </thead>
-
         <tbody>
           @for (r of vacationRows; track r.name) {
           <tr>
@@ -100,7 +105,6 @@
   </div>
   }
 </div>
-
 <div class="comp-wrap">
   @if (planId === null) {
   <h1 class="page-header">Lade Dienstplan...</h1>

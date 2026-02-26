@@ -7,6 +7,7 @@ Lock plans of last year at end of january (after V1.6.0)
 
 V1.5.1:
 Fix routerlink and articlelink not working in documentation
+Documentation entry for plan options
 
 
 V1.5.2:

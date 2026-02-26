@@ -155,12 +155,11 @@ export const DOC_SECTIONS: DocSection[] = [
             html: `
             <p>Der Planviewer ist die detaillierte Ansicht eines Dienstplans (inklusive Urlaubsübersicht) für einen bestimmten Monat eines bestimmten Jahres. Hier können Nutzer und Moderatoren die Einträge für jeden Mitarbeiter sehen und bearbeiten.</p>
             <p>Im Planviewer befinden sich die primäre Knopfleiste oben, die es ermöglicht, für eine ausgewählte Zelle einen Status einzutragen (also z.B. Urlaub, Krank, Gleitzeit, etc.). Außerdem kann die momentane Auswahl auch aufgehoben werden. Zusätzlich dazu kann ein gesetzter Status auch wieder mit dem "Löschen"-Knopf aufgehoben werden.</p>
-            <p>Jede Zelle steht für einen Mitarbeiter an einem bestimmten Tag. Ausgewählte Zellen werden hervorgehoben, und es können mehrere Zellen gleichzeitig ausgewählt werden - zusammenhängend über Shift oder getrennt über Strg.</p>
-            <p>Für eine detaillierte Nachverfolgung aller Änderungen kann der Knopf "Logs anzeigen" verwendet werden. Wie genau Logs funktionieren und was diese dokumentieren wird unten erklärt.</p>
-            <p>Unten befindet sich die sekundäre Knopfleiste (vorheriger/nächster Monat, Tastenkürzel anzeigen/ausblenden, Wochenenden anzeigen/ausblenden, Urlaubsübersicht anzeigen/ausblenden, Logs anzeigen).</p>
+            <p>Jede Zelle steht für einen Mitarbeiter an einem bestimmten Tag. Zellen werden durch einen Klick ausgewählt und visuell hervorgehoben.</p>
+            <p>Unter dem Dienstplan befindet sich die sekundäre Knopfleiste. In dieser lässt sich der Knopf "Logs anzeigen" zum detailierten Nachverfolgen aller Änderungen im Plan finden, außerdem kann man dort auch die Tastenkürzel und Optionen sich anzeigen lassen. Zusätzlich dazu werden (wenn verfügbar) Pfeiltasten angezeigt um direkt zum vorherigen/nächsten Monat zu springen.</p>
+            <p><span class="hint">Hinweis:</span> Ganze Zeilen und Spalten können ausgewählt werden, indem man auf das Datum (für die Spalten) bzw. auf den Mitarbeiternamen (für die Zeilen) klickt.
             <p><span class="hint">Hinweis:</span> Feiertage werden in der Kopfzeile invertiert dargestellt. Wochenenden können optional eingeblendet werden, sind jedoch nicht beschreibbar.</p>
             <p><span class="hint">Hinweis:</span> Wenn eine Zelle eine Plannotiz enthält, wird ein kleiner Punkt oben rechts in der Zelle angezeigt.</p>
-            <p><span class="hint">Hinweis:</span> Es ist nicht nur möglich über die sekundäre Knopfleiste zum nächsten/vorherigen Monat (sofern verfügbar) zu springen, sondern auch über die rechte und linke Pfeiltaste.</p>
             <p><span class="hint">Hinweis:</span> Wenn CLOCKWORK in der Zukunft genug Mitarbeiterdaten hat und die Urlaubseinträge korrekt gepflegt und eingetragen werden, wird es nicht mehr nötig sein seinen Resturlaub einzutragen.<p>
           `
           },

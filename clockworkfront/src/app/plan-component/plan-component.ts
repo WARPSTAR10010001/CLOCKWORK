@@ -96,6 +96,18 @@ export class PlanComponent implements OnInit {
         );
 
         this.deselect;
+
+        this.showWeekends = this.planOptions.getShowWeekend();
+      });
+
+    this.planOptions.currentVacationTable$
+      .subscribe(() => {
+        this.vacationTable = this.planOptions.getVacationTable();
+      });
+
+    this.planOptions.currentCompressedRows$
+      .subscribe(() => {
+        this.compressedRows = this.planOptions.getCompressedRows();
       });
 
     this.activatedRoute.paramMap.subscribe(params => {
@@ -462,7 +474,10 @@ export class PlanComponent implements OnInit {
   }
 
   selectCell(employeeId: number, day: Date, event: MouseEvent): void {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
+
     if (this.isWeekend(day)) return;
 
     const newSelection: SelectedCell = { employeeId, day };
@@ -473,7 +488,7 @@ export class PlanComponent implements OnInit {
       return;
     }
 
-    if (event.ctrlKey || event.metaKey) {
+    if (event && (event.ctrlKey || event.metaKey)) {
       this.anchorCell = newSelection;
       const index = this.selectedCells.findIndex(c => this.isSameCell(c, newSelection));
       if (index > -1) {
@@ -481,7 +496,7 @@ export class PlanComponent implements OnInit {
       } else {
         this.selectedCells.push(newSelection);
       }
-    } else if (event.shiftKey && this.anchorCell) {
+    } else if (event && event.shiftKey && this.anchorCell) {
       this.selectedCells = this.getCellsInRange(this.anchorCell, newSelection);
     } else {
       this.anchorCell = newSelection;
@@ -709,6 +724,56 @@ export class PlanComponent implements OnInit {
   toMonthName(month: number) {
     const months = ["null", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     return months[month];
+  }
+
+  selectColumn(colIndex: number): void {
+    const day = this.daysForMonth[colIndex];
+
+    if (this.isWeekend(day)) return;
+
+    const columnCells: SelectedCell[] = this.employees
+      .map(emp => ({ employeeId: emp.id, day }))
+      .filter(cell => !this.isWeekend(cell.day));
+
+    const allSelected =
+      columnCells.length > 0 &&
+      columnCells.every(cell =>
+        this.selectedCells.some(c => this.isSameCell(c, cell))
+      );
+
+    if (allSelected) {
+      this.selectedCells = this.selectedCells.filter(
+        c => !columnCells.some(colCell => this.isSameCell(c, colCell))
+      );
+    } else {
+      this.selectedCells = columnCells;
+    }
+
+    this.anchorCell = columnCells[0] ?? null;
+  }
+
+  selectRow(rowIndex: number): void {
+    const employee = this.employees[rowIndex];
+
+    const rowCells: SelectedCell[] = this.daysForMonth
+      .filter(day => !this.isWeekend(day))
+      .map(day => ({ employeeId: employee.id, day }));
+
+    const allSelected =
+      rowCells.length > 0 &&
+      rowCells.every(cell =>
+        this.selectedCells.some(c => this.isSameCell(c, cell))
+      );
+
+    if (allSelected) {
+      this.selectedCells = this.selectedCells.filter(
+        c => !rowCells.some(rowCell => this.isSameCell(c, rowCell))
+      );
+    } else {
+      this.selectedCells = rowCells;
+    }
+
+    this.anchorCell = rowCells[0] ?? null;
   }
 
   @HostListener("document:keydown.u", ["$event"])

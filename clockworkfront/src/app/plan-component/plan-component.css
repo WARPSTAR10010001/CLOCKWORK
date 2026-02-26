@@ -434,3 +434,15 @@ thead th.holiday {
   max-width: 60px;
   padding: 10px 0;
 }
+
+.plan-table.compressed th,
+.plan-table.compressed td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.vacation-table-like.compressed th,
+.vacation-table-like.compressed td {
+    padding-top: 0;
+    padding-bottom: 0;
+}
