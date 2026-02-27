@@ -39,7 +39,7 @@ export const DOC_SECTIONS: DocSection[] = [
             id: "vorstellung",
             title: "Vorstellung und Zielsetzung",
             html: `
-            <p>CLOCKWORK ist ein webbasiertes Dienstplan-System, das speziell für die Bedürfnisse von der Rheinberger Stadtverwaltung entwickelt wurde. Es ermöglicht eine einfache Verwaltung von Dienstplänen, Urlaubseinträgen und Abwesenheiten für Mitarbeiter, Teams und Abteilungen.</p>
+            <p>CLOCKWORK ist ein webbasiertes Dienstplan-System, das speziell für die Bedürfnisse der Rheinberger Stadtverwaltung entwickelt wurde. Es ermöglicht eine einfache Verwaltung von Dienstplänen, Urlaubseinträgen und Abwesenheiten für Mitarbeiter, Teams und Abteilungen.</p>
             <p>Die Hauptfunktionen von CLOCKWORK umfassen:</p>
             <ul>
               <li>Erstellung und Verwaltung von Dienstplänen</li>

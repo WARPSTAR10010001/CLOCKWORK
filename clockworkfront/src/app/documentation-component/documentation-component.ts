@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { DOC_SECTIONS, DocSection, DocPage, DocArticle } from './docs-config';
 
 type ViewMode = 'overview' | 'section' | 'page';
