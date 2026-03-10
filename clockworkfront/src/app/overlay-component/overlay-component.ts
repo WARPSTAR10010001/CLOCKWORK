@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, HostListener, inject } from '@angular/core';
+import { Component, OnInit, Renderer2, HostListener } from '@angular/core';
 import { OverlayService, OverlayState } from '../overlay-service';
 import { ThemeService, Theme, Outline, Color, Material } from '../theme-service';
 import { AuthService } from '../auth-service';
