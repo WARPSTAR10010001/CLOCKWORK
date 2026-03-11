@@ -11,7 +11,7 @@ import { forkJoin, of } from "rxjs";
 import { AuthService } from "../auth-service";
 import { ImpersonationService } from "../impersonation-service";
 import { HolidayService } from "../holiday-service";
-import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows } from "../plan-options-service";
+import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows, ShowLetters } from "../plan-options-service";
 
 interface SelectedCell {
   employeeId: number;
@@ -61,6 +61,7 @@ export class PlanComponent implements OnInit {
   showWeekends: ShowWeekend = "hide-weekend";
   vacationTable: VacationTable = "show-vacationTable";
   compressedRows: CompressedRows = "standard-rows";
+  showLetters: ShowLetters = "show-letters";
 
   constructor(
     private plan: PlanService,
@@ -79,6 +80,7 @@ export class PlanComponent implements OnInit {
     this.showWeekends = this.planOptions.getShowWeekend();
     this.vacationTable = this.planOptions.getVacationTable();
     this.compressedRows = this.planOptions.getCompressedRows();
+    this.showLetters = this.planOptions.getShowLetters();
 
     this.overlay.noteChanged$
       .subscribe(() => {
@@ -108,6 +110,11 @@ export class PlanComponent implements OnInit {
     this.planOptions.currentCompressedRows$
       .subscribe(() => {
         this.compressedRows = this.planOptions.getCompressedRows();
+      });
+
+    this.planOptions.currentShowLetters$
+      .subscribe(() => {
+        this.showLetters = this.planOptions.getShowLetters();
       });
 
     this.activatedRoute.paramMap.subscribe(params => {

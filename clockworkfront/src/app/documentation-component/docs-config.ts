@@ -129,8 +129,8 @@ export const DOC_SECTIONS: DocSection[] = [
     tags: ["grundlagen", "konzepte", "funktionen", "tägliche_arbeit", "nutzung", "allgemein", "übersicht", "basiswissen", "einführung", "start", "erste_schritte"],
     pages: [
       {
-        id: "dienstplaene-auswaehlen-und-navigieren",
-        title: "Dienstpläne auswählen und navigieren",
+        id: "dienstplaene-bedienen-und-navigieren",
+        title: "Dienstpläne bedienen und navigieren",
         description: "Wie man sich in Dienstplänen zurechtfindet.",
         tags: ["navigation", "menü", "kopfzeile", "fußzeile", "bereiche", "seiten", "übersicht"],
         articles: [
@@ -156,7 +156,7 @@ export const DOC_SECTIONS: DocSection[] = [
             <p>Der Planviewer ist die detaillierte Ansicht eines Dienstplans (inklusive Urlaubsübersicht) für einen bestimmten Monat eines bestimmten Jahres. Hier können Nutzer und Moderatoren die Einträge für jeden Mitarbeiter sehen und bearbeiten.</p>
             <p>Im Planviewer befinden sich die primäre Knopfleiste oben, die es ermöglicht, für eine ausgewählte Zelle einen Status einzutragen (also z.B. Urlaub, Krank, Gleitzeit, etc.). Außerdem kann die momentane Auswahl auch aufgehoben werden. Zusätzlich dazu kann ein gesetzter Status auch wieder mit dem "Löschen"-Knopf aufgehoben werden.</p>
             <p>Jede Zelle steht für einen Mitarbeiter an einem bestimmten Tag. Zellen werden durch einen Klick ausgewählt und visuell hervorgehoben.</p>
-            <p>Unter dem Dienstplan befindet sich die sekundäre Knopfleiste. In dieser lässt sich der Knopf "Logs anzeigen" zum detailierten Nachverfolgen aller Änderungen im Plan finden, außerdem kann man dort auch die Tastenkürzel und Optionen sich anzeigen lassen. Zusätzlich dazu werden (wenn verfügbar) Pfeiltasten angezeigt um direkt zum vorherigen/nächsten Monat zu springen.</p>
+            <p>Unter dem Dienstplan befindet sich die sekundäre Knopfleiste. In dieser sind die Knöpfe zum Navigieren zum vorherigen/nächsten Monat, der Link zu den Planlogs (diese werden in einem weiteren Artikel unten genauer erklärt) und der Knopf zum Öffnen der Optionen & Tastenkürzel (diese werden ebenfalls in einem weiteren Artikel erläutert).</p>
             <p><span class="hint">Hinweis:</span> Ganze Zeilen und Spalten können ausgewählt werden, indem man auf das Datum (für die Spalten) bzw. auf den Mitarbeiternamen (für die Zeilen) klickt.
             <p><span class="hint">Hinweis:</span> Feiertage werden in der Kopfzeile invertiert dargestellt. Wochenenden können optional eingeblendet werden, sind jedoch nicht beschreibbar.</p>
             <p><span class="hint">Hinweis:</span> Wenn eine Zelle eine Plannotiz enthält, wird ein kleiner Punkt oben rechts in der Zelle angezeigt.</p>
@@ -173,6 +173,14 @@ export const DOC_SECTIONS: DocSection[] = [
             <p>Änderungen an den Notizen werden natürlich auch in den Logs festgehalten.</p>
             <p><span class="hint">Hinweis:</span> Wenn der Text vollständig entfernt und gespeichert wird, gilt die Notiz als gelöscht. Außerdem wird eine Notiz gelöscht, wenn sich der Status der Zelle ändert (z.B. von Urlaub zu Krank).</p>
           `
+          },
+          {
+            id: "planoptionen-tastenkuerzel",
+            title: "Planoptionen & Tastenkürzel",
+            html: `
+            <p>Planoptionen ermöglichen es die Ansicht des Dienstplanes individuell anzupassen. Z.B. kann man die Zeilenbreite einstellen, die Urlaubstabelle ein- bzw. ausblenden, die Wochenenden anzeigen oder ausblenden und die Zellenbeschriftung deaktivieren.</p>
+            <p>Außerdem kann man sich auch die Tastenkürzel anzeigen lassen indem man unten im Overlay auf den Knopf "Tastenkürzel anzeigen" klickt. Dadurch erscheint eine Tabelle, in der alle Tastenkürzel erklärt und aufgelistet werden.</p>
+            `
           },
           {
             id: "planlogs",

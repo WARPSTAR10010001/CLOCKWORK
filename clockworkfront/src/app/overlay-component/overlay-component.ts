@@ -7,7 +7,7 @@ import { FeedbackService, FeedbackCategory } from '../feedback-service';
 import { VersionService } from '../version-service';
 import { PlanService } from '../plan-service';
 import { LogService } from '../log-service';
-import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows } from '../plan-options-service';
+import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows, ShowLetters } from '../plan-options-service';
 
 @Component({
   selector: 'app-overlay-component',
@@ -37,6 +37,7 @@ export class OverlayComponent implements OnInit {
   selectedShowWeekend: ShowWeekend = "hide-weekend";
   selectedVacationTable: VacationTable = "show-vacationTable";
   selectedCompressedRows: CompressedRows = "standard-rows";
+  selectedShowLetters: ShowLetters = "show-letters";
 
   pw1 = '';
   pw2 = '';
@@ -75,10 +76,12 @@ export class OverlayComponent implements OnInit {
     this.selectedShowWeekend = this.planOptions.getShowWeekend();
     this.selectedVacationTable = this.planOptions.getVacationTable();
     this.selectedCompressedRows = this.planOptions.getCompressedRows();
+    this.selectedShowLetters = this.planOptions.getShowLetters();
 
     this.planOptions.currentShowWeekend$.subscribe(v => this.selectedShowWeekend = v);
     this.planOptions.currentVacationTable$.subscribe(v => this.selectedVacationTable = v);
     this.planOptions.currentCompressedRows$.subscribe(v => this.selectedCompressedRows = v);
+    this.planOptions.currentShowLetters$.subscribe(v => this.selectedShowLetters = v);
 
     this.auth.authStatus$.subscribe(status => {
       const mustReset = !!status?.user?.passwordReset;
@@ -248,6 +251,7 @@ export class OverlayComponent implements OnInit {
   changeShowWeekend(showWeekend: ShowWeekend) { this.planOptions.setShowWeekend(showWeekend); }
   changeVacationTable(vacationTable: VacationTable) { this.planOptions.setVacationTable(vacationTable); }
   changeCompressedRows(compressedRows: CompressedRows) { this.planOptions.setCompressedRows(compressedRows); }
+  changeShowLetters(showLetters: ShowLetters) { this.planOptions.setShowLetters(showLetters); }
 
   get remainingFeedbackChars(): number {
     return this.FEEDBACK_MAX - this.feedbackContent.length;

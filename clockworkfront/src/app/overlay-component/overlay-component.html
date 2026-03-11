@@ -104,6 +104,22 @@
       </div>
     </div>
     <hr>
+    <div id="showLetters-selection" class="selection">
+      <h1>Zellenbeschriftung:</h1>
+      <div class="options">
+        <label>
+          <input type="radio" name="showLetters" [checked]="selectedShowLetters=== 'show-letters'"
+            (change)="changeShowLetters('show-letters')">
+          Anzeigen
+        </label>
+        <label>
+          <input type="radio" name="showLetters" [checked]="selectedShowLetters === 'hide-letters'"
+            (change)="changeShowLetters('hide-letters')">
+          Ausblenden
+        </label>
+      </div>
+    </div>
+    <hr>
     <div id="compressedRows-selection" class="selection">
       <h1>Zeilenbreite:</h1>
       <div class="options">

@@ -1,24 +1,27 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PlanComponent } from './plan-component/plan-component';
 
 export type ShowWeekend = "show-weekend" | "hide-weekend";
 export type VacationTable = "show-vacationTable" | "hide-vacationTable";
 export type CompressedRows = "compressed-rows" | "standard-rows";
+export type ShowLetters = "show-letters" | "hide-letters";
 
 @Injectable({ providedIn: 'root' })
 export class PlanOptionsService {
   showWeekendKey = "showWeekend";
   vacationTableKey = "vacationTable";
   compressedRowsKey = "compressedRows";
+  showLettersKey = "showLetters";
 
   currentShowWeekendSubject = new BehaviorSubject<ShowWeekend>("hide-weekend");
   currentVacationTableSubject = new BehaviorSubject<VacationTable>("show-vacationTable");
   currentCompressedRowsSubject = new BehaviorSubject<CompressedRows>("standard-rows");
+  currentShowLettersSubject = new BehaviorSubject<ShowLetters>("show-letters");
 
   currentShowWeekend$ = this.currentShowWeekendSubject.asObservable();
   currentVacationTable$ = this.currentVacationTableSubject.asObservable();
   currentCompressedRows$ = this.currentCompressedRowsSubject.asObservable();
+  currentShowLetters$ = this.currentShowLettersSubject.asObservable();
 
   constructor() {
     const savedShowWeekendRaw = localStorage.getItem(this.showWeekendKey);
@@ -32,6 +35,10 @@ export class PlanOptionsService {
     const savedCompressedRowsRaw = localStorage.getItem(this.compressedRowsKey);
     const compressedRows = this.sanitizeCompressedRows(savedCompressedRowsRaw);
     this.setCompressedRows(compressedRows, false);
+
+    const savedShowLettersRaw = localStorage.getItem(this.showLettersKey);
+    const showLetters = this.sanitizeShowLetters(savedShowLettersRaw);
+    this.setShowLetters(showLetters, false);
   }
 
   private sanitizeShowWeekend(raw: string | null): ShowWeekend {
@@ -50,6 +57,12 @@ export class PlanOptionsService {
     if (raw === "compressed-rows" || raw === "standard-rows") return raw;
     if (raw) localStorage.setItem(this.compressedRowsKey, "standard-rows");
     return "standard-rows";
+  }
+
+  private sanitizeShowLetters(raw: string | null): ShowLetters {
+    if (raw === "show-letters" || raw === "hide-letters") return raw;
+    if (raw) localStorage.setItem(this.showLettersKey, "show-letters");
+    return "show-letters";
   }
 
   setShowWeekend(showWeekend: ShowWeekend, save = true) {
@@ -86,5 +99,17 @@ export class PlanOptionsService {
 
   getCompressedRows(): CompressedRows {
     return this.currentCompressedRowsSubject.value;
+  }
+
+  setShowLetters(showLetters: ShowLetters, save = true) {
+    this.currentShowLettersSubject.next(showLetters);
+
+    if (save) {
+      localStorage.setItem(this.showLettersKey, showLetters);
+    }
+  }
+
+  getShowLetters(): ShowLetters {
+    return this.currentShowLettersSubject.value;
   }
 }

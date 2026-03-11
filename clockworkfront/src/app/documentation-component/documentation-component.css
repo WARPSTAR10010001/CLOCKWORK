@@ -4,7 +4,6 @@
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
-    margin-bottom: 16px;
 }
 
 .doc-search {
@@ -55,6 +54,10 @@
 
 :host-context(body.soft) .doc-tile {
     background: linear-gradient(110deg, #76edff, #72ffea, #76edff) !important;
+}
+
+:host-context(body.outlines) .doc-tile {
+    outline: 3px solid var(--olc);
 }
 
 .doc-tile h2,
@@ -128,13 +131,4 @@ hr {
 
 .search-results li:nth-last-child(odd) {
     background-color: var(--bgca);
-}
-
-
-.hint {
-    font-size: 2em;
-}
-
-ol li{
-    list-style: lower-roman;
 }

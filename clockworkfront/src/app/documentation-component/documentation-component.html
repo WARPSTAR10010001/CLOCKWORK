@@ -1,14 +1,13 @@
 <div class="comp-wrap">
   <div class="doc-header">
-    <h1 class="emp page-header" [routerLink]="['/docs']" style="cursor: pointer;">Dokumentation</h1>
+    <h1 class="emp page-header">Dokumentation</h1>
 
     <div class="doc-search">
       <input
         type="text"
         [value]="searchTerm"
         (input)="onSearchInput($event)"
-        placeholder="Suche nach Begriffen oder Stichwörtern..."
-      />
+        placeholder="Suche nach Begriffen oder Stichwörtern...">
     </div>
   </div>
   @if (isSearching && searchResults.length > 0) {
@@ -36,7 +35,7 @@
     </div>
   }
   @if (isSearching && searchResults.length === 0) {
-    <p class="hint">Keine Treffer für "{{ searchTerm }}" gefunden.</p>
+    <h1>Keine Treffer für "{{ searchTerm }}" gefunden. <span class="hint" style="cursor: pointer;" (click)="clearSearch()">Zurück zur Übersicht</span></h1>
   }
   @if (!isSearching && viewMode === 'overview') {
     <div class="tile-grid">

@@ -124,12 +124,12 @@ td {
 }
 
 :host-context(body.soft) .u {
-    background-color: #d3ffa1 !important;
-    border: 4px solid #d3ffa1 !important;
+    background-color: #c6ff84 !important;
+    border: 4px solid #c6ff84 !important;
 }
 
 :host-context(body.soft) .u:hover {
-    color: #d3ffa1 !important;
+    color: #c6ff84 !important;
     background-color: var(--bgc) !important;
 }
 
@@ -244,9 +244,8 @@ td {
 }
 
 :host-context(body.soft) .vacation-cell {
-    background-color: #d3ffa1 !important;
-    border: 3px solid #d3ffa1 !important;
-    color: var(--bgc);
+    background-color: #c6ff84 !important;
+    border: 3px solid #c6ff84 !important;
 }
 
 .home-cell {
@@ -257,7 +256,6 @@ td {
 :host-context(body.soft) .home-cell {
     background-color: #74d3ff !important;
     border: 3px solid #74d3ff !important;
-    color: var(--bgc);
 }
 
 .sick-cell {
@@ -268,7 +266,6 @@ td {
 :host-context(body.soft) .sick-cell {
     background-color: #ff91e3 !important;
     border: 3px solid #ff91e3 !important;
-    color: var(--bgc);
 }
 
 .training-cell {
@@ -279,7 +276,6 @@ td {
 :host-context(body.soft) .training-cell {
     background-color: #ffd595 !important;
     border: 3px solid #ffd595 !important;
-    color: var(--bgc);
 }
 
 .flextime-cell {
@@ -290,7 +286,6 @@ td {
 :host-context(body.soft) .flextime-cell {
     background-color: #b492ff !important;
     border: 3px solid #b492ff !important;
-    color: var(--bgc);
 }
 
 .appointment-cell {
@@ -301,7 +296,6 @@ td {
 :host-context(body.soft) .appointment-cell {
     background-color: #7effd4 !important;
     border: 3px solid #7effd4 !important;
-    color: var(--bgc);
 }
 
 .selected {

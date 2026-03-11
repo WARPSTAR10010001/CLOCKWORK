@@ -1,19 +1,20 @@
 QOL:
 Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
-Loading animation
 Employee management css for halfscreen
-Lock plans of last year at end of january (after V1.6.0)
-
-
-V1.5.1:
-Fix routerlink and articlelink not working in documentation
-Documentation entry for plan options
 
 
 V1.5.2:
-Fix error with vacation counter
+Documentation entry for plan options
+
+
+V1.5.3:
+Fix routerlink and articlelink not working in documentation
 
 
 V1.6.0:
+Fix error with vacation counter
+
+
+V2.0.0:
 Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans
 Show and edit status for plans

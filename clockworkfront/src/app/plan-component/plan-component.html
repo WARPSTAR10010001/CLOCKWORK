@@ -43,7 +43,9 @@
             @if (hasNote(employee.id, day)) {
             <span class="note-indicator"></span>
             }
+            @if (showLetters === "show-letters") {
             {{ statusLabel(getStatus(employee.id, day)) }}
+            }
           </td>
           }
         </tr>
