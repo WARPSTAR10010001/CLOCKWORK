@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'neon' | 'dim';
-export type Outline = "outlines" | "no-outlines";
-export type Color = "standard" | "soft";
+export type Theme = 'light' | 'dim' | 'neon';
+export type Color = "standard" | "soft" | "alt";
 export type Material = "solid" | "glass";
+export type Outline = "no-outlines" | "outlines";
 
 @Injectable({
   providedIn: 'root'
@@ -98,7 +98,7 @@ export class ThemeService {
   }
 
   setColor(color: Color, save = true) {
-    document.body.classList.remove("standard", "soft");
+    document.body.classList.remove("standard", "soft", "alt");
     document.body.classList.add(color);
 
     this.currentColorSubject.next(color);

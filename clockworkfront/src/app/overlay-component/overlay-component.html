@@ -32,6 +32,10 @@
           Standard
         </label>
         <label>
+          <input type="radio" name="color" [checked]="selectedColor === 'alt'" (change)="changeColor('alt')">
+          Alternative
+        </label>
+        <label>
           <input type="radio" name="color" [checked]="selectedColor === 'soft'" (change)="changeColor('soft')">
           Soft
         </label>

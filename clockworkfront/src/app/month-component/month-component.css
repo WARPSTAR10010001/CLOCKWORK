@@ -37,6 +37,10 @@
     background: linear-gradient(120deg, #72ffea 0%, #75edff 100%) !important;
 }
 
+:host-context(body.alt) .gradient-1 {
+    background: linear-gradient(120deg, #ff279e 0%, #ff8800 100%) !important;
+}
+
 .gradient-2 {
     background: radial-gradient(circle at top left, #00f5d1 0%, #00b3e6 70%, #00d5f4 100%);
 }
@@ -45,12 +49,20 @@
     background: radial-gradient(circle at top left, #64ffe8 0%, #6cdfff 70%, #75edff 100%) !important;
 }
 
+:host-context(body.alt) .gradient-2 {
+    background: radial-gradient(circle at top left, #ff279e 0%, #ff8800 70%, #ff279e 100%) !important;
+}
+
 .gradient-3 {
     background: linear-gradient(200deg, #00c8a0 0%, #00f5d1 50%, #00d5f4 100%);
 }
 
 :host-context(body.soft) .gradient-3 {
     background: linear-gradient(200deg, #73ffe3 0%, #6effe9 50%, #6bebff 100%) !important;
+}
+
+:host-context(body.alt) .gradient-3 {
+    background: linear-gradient(200deg, #ff279e 0%, #ff27db 50%, #ff8800 100%) !important;
 }
 
 .gradient-4 {

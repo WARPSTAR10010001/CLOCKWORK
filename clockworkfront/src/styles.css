@@ -10,10 +10,41 @@
     --lcell: #ffa318;
     --gcell: #864eff;
     --tcell: #00ffaa;
+
+    --gradientbase: #00D5F4;
+    --gradientaccent: #00F5D1;
 }
 
 *::selection {
     background: var(--blue);
+}
+
+:root body.soft {
+    --red: #ff8282;
+    --green: #95ff87;
+    --blue: #a4f3ff;
+
+    --ucell: #c6ff84;
+    --hcell: #74d3ff;
+    --kcell: #ff91e3;
+    --lcell: #ffd595;
+    --gcell: #b492ff;
+    --tcell: #00ffaa;
+
+    --gradientbase: #76edff;
+    --gradientaccent: #72ffea;
+}
+
+:root body.alt {
+    --ucell: #4deeea;
+    --hcell: #74ee15;
+    --kcell: #ffe700;
+    --lcell: #b300ff;
+    --gcell: #006aff;
+    --tcell: #ff279e;
+
+    --gradientbase: #ff279e;
+    --gradientaccent: #ff8800;
 }
 
 body.light {
@@ -49,19 +80,9 @@ body.neon {
     --gbgb: #007bb473;
 }
 
-body.soft .emp,
-body.soft .hint {
-    background: linear-gradient(110deg, #76edff, #72ffea, #76edff);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientMove 3s linear infinite;
-}
-
 .emp,
 .hint {
-    background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
+    background: linear-gradient(110deg, var(--gradientbase), var(--gradientaccent), var(--gradientbase));
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -77,19 +98,6 @@ body.soft .hint {
     100% {
         background-position: 200% 50%;
     }
-}
-
-:root body.soft {
-    --red: #ff8282;
-    --green: #95ff87;
-    --blue: #a4f3ff;
-
-    --ucell: #c6ff84;
-    --hcell: #74d3ff;
-    --kcell: #ff91e3;
-    --lcell: #ffd595;
-    --gcell: #b492ff;
-    --tcell: #00ffaa;
 }
 
 body {

@@ -1,21 +1,7 @@
 .card {
     font-size: 3em;
     color: var(--bgc);
-    background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
-    max-width: 100vw;
-    display: block;
-    padding: 20px;
-    border: 5px solid var(--bc);
-    border-radius: 10px;
-    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-    margin-bottom: 25px;
-    text-decoration: none !important;
-}
-
-:host-context(body.soft) .card {
-    font-size: 3em;
-    color: var(--bgc);
-    background: linear-gradient(110deg, #76edff, #72ffea, #76edff) !important;
+    background: linear-gradient(110deg, var(--gradientbase), var(--gradientaccent), var(--gradientbase));
     max-width: 100vw;
     display: block;
     padding: 20px;

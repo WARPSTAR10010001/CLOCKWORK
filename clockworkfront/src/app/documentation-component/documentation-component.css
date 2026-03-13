@@ -29,7 +29,7 @@
     display: block;
     padding: 20px;
     border-radius: 10px;
-    background: linear-gradient(110deg, #00D5F4, #00F5D1, #00D5F4);
+    background: linear-gradient(110deg, var(--gradientbase), var(--gradientaccent), var(--gradientbase));
     font-size: 2em;
     color: var(--bgc);
     max-width: 100vw;
@@ -50,10 +50,6 @@
 .subtitle {
     font-size: 3em;
     margin-bottom: 20px;
-}
-
-:host-context(body.soft) .doc-tile {
-    background: linear-gradient(110deg, #76edff, #72ffea, #76edff) !important;
 }
 
 :host-context(body.outlines) .doc-tile {
