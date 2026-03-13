@@ -97,11 +97,6 @@ textarea {
   height: 250px;
 }
 
-#confirm-overlay a,
-#feedback-overlay a {
-  margin-right: 20px;
-}
-
 .pw-hints h1 {
   margin-bottom: -40px;
 }

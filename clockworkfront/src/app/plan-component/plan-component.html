@@ -6,22 +6,33 @@
   @if (planId !== null) {
   <h1 class="subtitle">Dienstplan</h1>
   <div id="entry-buttons">
-    <a class="button-primary u" (click)="setEntry('U')">Urlaub</a>
-    <a class="button-primary h" (click)="setEntry('H')">alt. Telearbeit</a>
-    <a class="button-primary k" (click)="setEntry('K')">Krank</a>
-    <a class="button-primary l" (click)="setEntry('L')">Lehrgang</a>
-    <a class="button-primary g" (click)="setEntry('G')">Gleitzeit</a>
-    <a class="button-primary t" (click)="setEntry('T')">Termin</a>
-    <a class="button-primary o" (click)="setEntry('O')">Anderes</a>
+    <a class="button-primary u action" (click)="setEntry('U')">Urlaub</a>
+    <a class="button-primary h action" (click)="setEntry('H')">alt. Telearbeit</a>
+    <a class="button-primary k action" (click)="setEntry('K')">Krank</a>
+    <a class="button-primary l action" (click)="setEntry('L')">Lehrgang</a>
+    <a class="button-primary g action" (click)="setEntry('G')">Gleitzeit</a>
+    <a class="button-primary t action" (click)="setEntry('T')">Termin</a>
+    <a class="button-primary o action" (click)="setEntry('O')">Anderes</a>
     <a class="button-primary" (click)="editNote()">Notiz</a>
     <a class="button-action" (click)="setEntry('')">Löschen</a>
-    <a class="button-action deselect" (click)="deselect()">Auswahl aufheben</a>
+    <a class="button-secondary" (click)="deselect()">Auswahl aufheben</a>
   </div>
   <div id="table-container">
-    <table class="plan-table" [class.compressed]="compressedRows === 'compressed-rows'">
+    <table class="plan-table" [class.compressed]="compressedRows === 'compressed-rows'"
+      [class.hide-letters]="showLetters === 'show-letters'">
       <thead>
         <tr>
-          <th class="sticky">Name</th>
+          @if (selectedCells.length === 0) {
+          <th class="sticky"></th>
+          } @else {
+          <th class="sticky">{{ selectedCells.length }} 
+            @if (selectedCells.length > 1) {
+              Zellen
+            } @else {
+              Zelle
+            }
+            <br> ausgewählt</th>
+          }
           @for (day of daysForMonth; let colIndex = $index; track day) {
           <th (click)="selectColumn(colIndex)" [ngClass]="getHeaderClasses(day)" style="cursor: pointer;">
             {{ day.getDate() }}<br>
@@ -43,9 +54,7 @@
             @if (hasNote(employee.id, day)) {
             <span class="note-indicator"></span>
             }
-            @if (showLetters === "show-letters") {
             {{ statusLabel(getStatus(employee.id, day)) }}
-            }
           </td>
           }
         </tr>

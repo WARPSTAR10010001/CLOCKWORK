@@ -67,7 +67,8 @@
         </label>
       </div>
     </div>
-    <a (click)="close()" class="button-action">Schließen</a>
+    <br>
+    <a (click)="close()" class="button-primary">Schließen</a>
   </div>
   } @else if (overlayState.type === "planOptions") {
   <div id="planOptions-overlay" class="overlay">
@@ -138,7 +139,7 @@
     <br>
     <div class="button-row">
       <a (click)="openShortcuts()" class="button-primary">Tastenkürzel anzeigen</a>
-      <a (click)="close()" class="button-action">Schließen</a>
+      <a (click)="close()" class="button-secondary">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "planShortcuts") {
@@ -193,7 +194,7 @@
     </div>
     <div class="button-row">
       <a (click)="openOptions()" class="button-primary">Optionen anzeigen</a>
-      <a (click)="close()" class="button-action">Schließen</a>
+      <a (click)="close()" class="button-secondary">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "passwordReset") {
@@ -222,7 +223,7 @@
     <textarea [value]="noteText" (input)="onNoteInput($event)" placeholder="Notiz hinzufügen (optional)"></textarea>
     <div class="button-row">
       <a class="button-primary" (click)="saveNote()">Speichern</a>
-      <a class="button-action" (click)="close()">Schließen</a>
+      <a class="button-secondary" (click)="close()">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "planNote") {
@@ -235,11 +236,11 @@
     }
     <div class="button-row">
       @if (noteText) {
-      <a class="button-primary" (click)="openNoteEdit()">Notiz bearbeiten</a>
+      <a class="button-primary" (click)="openNoteEdit()">Bearbeiten</a>
       } @else {
       <a class="button-primary" (click)="openNoteEdit()">Notiz hinzufügen</a>
       }
-      <a class="button-action" (click)="close()">Schließen</a>
+      <a class="button-secondary" (click)="close()">Schließen</a>
     </div>
   </div>
   } @else if (overlayState.type === "feedback") {
@@ -260,11 +261,13 @@
     } @else {
     <h1 id="remaining">Keine Zeichen verbleibend <span class="emp">(SWAMP IZZO)</span></h1>
     }
-    <a class="button-primary" [class.disabled]="!canSendFeedback" [attr.aria-disabled]="!canSendFeedback"
-      (click)="sendFeedback()">
-      {{ 'Feedback schicken' }}
-    </a>
-    <a (click)="close()" class="button-action">Schließen</a>
+    <div class="button-row">
+      <a class="button-primary" [class.disabled]="!canSendFeedback" [attr.aria-disabled]="!canSendFeedback"
+        (click)="sendFeedback()">
+        {{ 'Feedback schicken' }}
+      </a>
+      <a (click)="close()" class="button-secondary">Schließen</a>
+    </div>
   </div>
   } @else if (overlayState.type === "error") {
   <div id="error-overlay" class="overlay">

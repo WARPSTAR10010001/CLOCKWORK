@@ -97,205 +97,136 @@ td {
     font-size: 1.5em;
 }
 
-.deselect {
-    border: 4px solid var(--tc);
-    color: var(--tc) !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-}
-
-.deselect:hover {
-    color: var(--bgc) !important;
-    background-color: var(--tc) !important;
-}
-
 .cell {
     cursor: cell;
 }
 
-.u {
-    background-color: #88ff00 !important;
-    border: 4px solid #88ff00 !important;
+:host-context(body.soft) .cell {
+    color: var(--black);
+}
+
+
+:host-context(body.soft) .action:hover {
+    color: var(--black);
+}
+
+:host-context(body.soft) .cell.other-cell {
+    color: var(--tc);
+}
+
+:host-context(body.soft) .action {
+    color: var(--black);
+}
+
+:host-context(body.soft) .action.o {
+    color: var(--bgc);
+}
+
+.action:hover {
+    background-color: var(--bgc) !important;
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.u {
+    background-color: var(--ucell) !important;
+    border: 4px solid var(--ucell) !important;
 }
 
 .u:hover {
-    color: #88ff00 !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .u {
-    background-color: #c6ff84 !important;
-    border: 4px solid #c6ff84 !important;
-}
-
-:host-context(body.soft) .u:hover {
-    color: #c6ff84 !important;
-    background-color: var(--bgc) !important;
+    color: var(--ucell) !important;
 }
 
 .h {
-    background-color: #00aeff !important;
-    border: 4px solid #00aeff !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: var(--hcell) !important;
+    border: 4px solid var(--hcell) !important;
 }
 
 .h:hover {
-    color: #00aeff !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .h {
-    background-color: #74d3ff !important;
-    border: 4px solid #74d3ff !important;
-}
-
-:host-context(body.soft) .h:hover {
-    color: #74d3ff !important;
-    background-color: var(--bgc) !important;
+    color: var(--hcell) !important;
 }
 
 .k {
-    background-color: #ff00bf !important;
-    border: 4px solid #ff00bf !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: var(--kcell) !important;
+    border: 4px solid var(--kcell) !important;
 }
 
 .k:hover {
-    color: #ff00bf !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .k {
-    background-color: #ff91e3 !important;
-    border: 4px solid #ff91e3 !important;
-}
-
-:host-context(body.soft) .k:hover {
-    color: #ff91e3 !important;
-    background-color: var(--bgc) !important;
+    color: var(--kcell) !important;
 }
 
 .l {
-    background-color: #ffa318 !important;
-    border: 4px solid #ffa318 !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: var(--lcell) !important;
+    border: 4px solid var(--lcell) !important;
 }
 
 .l:hover {
-    color: #ffa318 !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .l {
-    background-color: #ffd595 !important;
-    border: 4px solid #ffd595 !important;
-}
-
-:host-context(body.soft) .l:hover {
-    color: #ffd595 !important;
-    background-color: var(--bgc) !important;
+    color: var(--lcell) !important;
 }
 
 .g {
-    background-color: #864eff !important;
-    border: 4px solid #864eff !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: var(--gcell) !important;
+    border: 4px solid var(--gcell) !important;
 }
 
 .g:hover {
-    color: #864eff !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .g {
-    background-color: #b492ff !important;
-    border: 4px solid #b492ff !important;
-}
-
-:host-context(body.soft) .g:hover {
-    color: #b492ff !important;
-    background-color: var(--bgc) !important;
+    color: var(--gcell) !important;
 }
 
 .t {
-    background-color: #00ffaa !important;
-    border: 4px solid #00ffaa !important;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: var(--tcell) !important;
+    border: 4px solid var(--tcell) !important;
 }
 
 .t:hover {
-    color: #00ffaa !important;
-    background-color: var(--bgc) !important;
-}
-
-:host-context(body.soft) .t {
-    background-color: #7effd4 !important;
-    border: 4px solid #7effd4 !important;
-}
-
-:host-context(body.soft) .t:hover {
-    color: #7effd4 !important;
-    background-color: var(--bgc) !important;
+    color: var(--tcell) !important;
 }
 
 .vacation-cell {
-    background-color: #88ff00 !important;
-    border: 3px solid #88ff00 !important;
-}
-
-:host-context(body.soft) .vacation-cell {
-    background-color: #c6ff84 !important;
-    border: 3px solid #c6ff84 !important;
+    background-color: var(--ucell) !important;
+    border: 3px solid var(--ucell) !important;
 }
 
 .home-cell {
-    background-color: #00aeff !important;
-    border: 3px solid #00aeff !important;
-}
-
-:host-context(body.soft) .home-cell {
-    background-color: #74d3ff !important;
-    border: 3px solid #74d3ff !important;
+    background-color: var(--hcell) !important;
+    border: 3px solid var(--hcell) !important;
 }
 
 .sick-cell {
-    background-color: #ff00bf !important;
-    border: 3px solid #ff00bf !important;
-}
-
-:host-context(body.soft) .sick-cell {
-    background-color: #ff91e3 !important;
-    border: 3px solid #ff91e3 !important;
+    background-color: var(--kcell) !important;
+    border: 3px solid var(--kcell) !important;
 }
 
 .training-cell {
-    background-color: #ffa318 !important;
-    border: 3px solid #ffa318 !important;
-}
-
-:host-context(body.soft) .training-cell {
-    background-color: #ffd595 !important;
-    border: 3px solid #ffd595 !important;
+    background-color: var(--lcell) !important;
+    border: 3px solid var(--lcell) !important;
 }
 
 .flextime-cell {
-    background-color: #864eff !important;
-    border: 3px solid #864eff !important;
-}
-
-:host-context(body.soft) .flextime-cell {
-    background-color: #b492ff !important;
-    border: 3px solid #b492ff !important;
+    background-color: var(--gcell) !important;
+    border: 3px solid var(--gcell) !important;
 }
 
 .appointment-cell {
-    background-color: #00ffaa !important;
-    border: 3px solid #00ffaa !important;
+    background-color: var(--tcell) !important;
+    border: 3px solid var(--tcell) !important;
 }
 
-:host-context(body.soft) .appointment-cell {
-    background-color: #7effd4 !important;
-    border: 3px solid #7effd4 !important;
+.other-cell {
+    background-color: var(--tc) !important;
+    border: 3px solid var(--tc) !important;
+    color: var(--bgc);
+}
+
+.other-cell.selected {
+    color: var(--tc);
+}
+
+:host-context(body.soft) .other-cell {
+    color: var(--bgc) !important;
+}
+
+:host-context(body.soft) .other-cell.selected {
+    color: var(--tc) !important;
 }
 
 .selected {
@@ -375,68 +306,119 @@ thead th.holiday {
 }
 
 .plan-table td.has-note {
-  position: relative;
+    position: relative;
 }
 
 .note-indicator {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--tc);
-  pointer-events: none;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--tc);
+    pointer-events: none;
+}
+
+:host-context(body.soft) .note-indicator,
+:host-context(body.dim) .note-indicator,
+:host-context(body.neon) .note-indicator {
+    background-color: var(--black);
+}
+
+.has-note.other-cell .note-indicator {
+    background-color: var(--bgc);
+}
+
+.has-note.other-cell.selected .note-indicator {
+    background-color: var(--tc);
 }
 
 .table-container-like {
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 10px;
-  border-radius: 10px;
-  overflow-x: auto;
-  box-shadow: 0px 0px 30px var(--bsc);
-  background-color: var(--bgc);
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 10px;
+    overflow-x: auto;
+    box-shadow: 0px 0px 30px var(--bsc);
+    background-color: var(--bgc);
 }
 
 :host-context(body.outlines) .table-container-like {
-  outline: 3px solid var(--olc);
+    outline: 3px solid var(--olc);
 }
 
 .vacation-table-like {
-  display: block;
-  width: 100%;
-  overflow-x: auto;
-  white-space: nowrap;
-  font-size: 1.5em;
-  text-align: center;
-  border-radius: 10px;
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 1.5em;
+    text-align: center;
+    border-radius: 10px;
 }
 
 .vacation-table-like .sticky {
-  position: sticky;
-  left: 2px;
-  z-index: 2;
-  outline: 2px solid var(--bgc);
+    position: sticky;
+    left: 2px;
+    z-index: 2;
+    outline: 2px solid var(--bgc);
 }
 
 .plan-table th:not(.sticky),
 .plan-table td:not(.sticky) {
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
-  padding: 10px 0;
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+    padding: 10px 0;
 }
 
 .plan-table.compressed th,
 .plan-table.compressed td {
-  padding-top: 0;
-  padding-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .vacation-table-like.compressed th,
 .vacation-table-like.compressed td {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+
+.plan-table.hide-letters .cell.selected {
+    color: var(--tc);
+}
+
+.plan-table.hide-letters .vacation-cell {
+    color: var(--ucell);
+}
+
+.plan-table.hide-letters .home-cell {
+    color: var(--hcell);
+}
+
+.plan-table.hide-letters .sick-cell {
+    color: var(--kcell);
+}
+
+.plan-table.hide-letters .training-cell {
+    color: var(--lcell);
+}
+
+.plan-table.hide-letters .flextime-cell {
+    color: var(--gcell);
+}
+
+.plan-table.hide-letters .appointment-cell {
+    color: var(--tcell);
+}
+
+.plan-table.hide-letters .other-cell {
+    color: var(--tc) !important;
+}
+
+:host-context(body.soft) .action:hover {
+    color: var(--black) !important;
 }

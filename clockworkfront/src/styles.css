@@ -2,6 +2,14 @@
     --red: #ff1342;
     --green: #77ff00;
     --blue: #00D5F4;
+    --black: #000000;
+
+    --ucell: #88ff00;
+    --hcell: #00aeff;
+    --kcell: #ff00bf;
+    --lcell: #ffa318;
+    --gcell: #864eff;
+    --tcell: #00ffaa;
 }
 
 *::selection {
@@ -75,6 +83,13 @@ body.soft .hint {
     --red: #ff8282;
     --green: #95ff87;
     --blue: #a4f3ff;
+
+    --ucell: #c6ff84;
+    --hcell: #74d3ff;
+    --kcell: #ff91e3;
+    --lcell: #ffd595;
+    --gcell: #b492ff;
+    --tcell: #00ffaa;
 }
 
 body {
@@ -140,6 +155,26 @@ a:hover {
     text-decoration: none;
     color: var(--tc);
     background-color: var(--bgc);
+    box-shadow: 0px 0px 30px var(--bsc);
+}
+
+.button-secondary {
+    text-decoration: none;
+    font-size: 2em;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 5px 10px;
+    box-shadow: 0px 0px 30px #00000000;
+    border: 4px solid var(--tc);
+    background-color: var(--bgc);
+    color: var(--tc);
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.button-secondary:hover {
+    text-decoration: none;
+    color: var(--bgc);
+    background-color: var(--tc);
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
