@@ -105,9 +105,15 @@ td {
     color: var(--black);
 }
 
-
-:host-context(body.soft) .action:hover {
+.cell {
     color: var(--black);
+}
+
+:host-context(body.soft) .action:hover,
+:host-context(body.soft.dim) .action:hover,
+:host-context(body.soft.neon) .action:hover {
+    color: var(--tc) !important;
+    border-color: var(--tc) !important;
 }
 
 :host-context(body.soft) .cell.other-cell {
@@ -232,6 +238,7 @@ td {
 .selected {
     background-color: var(--bgc) !important;
     border: 3px solid var(--olc) !important;
+    color: var(--tc) !important;
 }
 
 :host-context(body.soft) .selected {
@@ -324,6 +331,12 @@ thead th.holiday {
 :host-context(body.dim) .note-indicator,
 :host-context(body.neon) .note-indicator {
     background-color: var(--black);
+}
+
+:host-context(body.soft) .cell.selected .note-indicator,
+:host-context(body.dim) .cell.selected .note-indicator,
+:host-context(body.neon) .cell.selected .note-indicator {
+    background-color: var(--tc);
 }
 
 .has-note.other-cell .note-indicator {
