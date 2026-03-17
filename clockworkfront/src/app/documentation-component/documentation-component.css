@@ -15,7 +15,7 @@
 
 .doc-search input {
     width: 100%;
-    max-width: 650px;
+    max-width: 450px;
     margin: 0;
 }
 
@@ -38,13 +38,27 @@
     text-decoration: none !important;
 }
 
+:host-context(body.orange) .doc-tile {
+    background-color: #ff8446;
+    opacity: 1;
+    background-image: linear-gradient(45deg, #ed7337 50%, #ff8446 50%);
+    background-size: 29px 29px;
+}
+
 .doc-tile p {
-    margin: 10px 0 0px 0;
+    margin: 10px 0 0 0;
 }
 
 .doc-tile:hover {
     box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
+}
+
+.doc-tile hr {
+    border-color: var(--bgc);
+    box-shadow: 0 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .subtitle {
@@ -127,4 +141,12 @@ hr {
 
 .search-results li:nth-last-child(odd) {
     background-color: var(--bgca);
+}
+
+.search-results li:nth-last-child(even) {
+  background-color: var(--bgcaa);
+}
+
+#deletesearch {
+    margin-left: 20px;
 }

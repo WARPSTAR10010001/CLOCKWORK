@@ -11,37 +11,12 @@ input {
     margin: 6px 0 0 0;
 }
 
-.dept-list {
-    border-radius: 10px;
-    display: grid;
-    gap: 10px;
-    margin-top: 10px;
-}
-
 :host-context(body.outlines) .dept-list {
     outline: 4px solid var(--tc);
 }
 
-.dept-title {
-    font-size: 2em;
-}
-
-.dept-users {
-    font-size: 1.4em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid var(--tc);
-    border-radius: 999px;
-    padding: 2px 10px;
-    font-size: 1em;
-    background-color: var(--bgc);
+.subtitle {
+    margin-top: 20px;
 }
 
 .form-row {
@@ -63,23 +38,58 @@ details summary {
     margin-top: -20px;
 }
 
+.dept-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .dept-card {
     border-radius: 10px;
-    padding: 15px 12px;
-    display: flex;
-    gap: 30px;
+    padding: 20px;
 }
 
 .dept-card:nth-child(odd) {
     background: var(--bgca);
 }
 
-.subtitle {
-    margin-top: 20px;
+.dept-card:nth-child(even) {
+    background: var(--bgcaa);
 }
 
-.dept-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
+ul {
+    font-size: 1.75em;
+}
+
+.header {
+    margin-top: -30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.search {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search input {
+    width: 100%;
+    max-width: 450px;
+    margin: 0;
+}
+
+.dept-card hr {
+    margin: 20px 0;
+}
+
+.dept-card h1 {
+    margin: 0 0 -10px 0;
+    font-size: 3em;
+}
+
+#deletesearch {
+    margin-left: 20px;
 }

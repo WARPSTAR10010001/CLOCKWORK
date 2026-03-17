@@ -1,13 +1,12 @@
-// src/app/admin/admin-component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
 import { AdminService } from '../admin-service';
 import { OverlayService } from '../overlay-service';
+import { Department } from '../departments-service';
 
 @Component({
-  selector: 'app-admin',
-  standalone: true,
+  selector: 'app-admin-component',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-component.html',
   styleUrl: './admin-component.css'
@@ -16,6 +15,9 @@ export class AdminComponent implements OnInit {
   form: FormGroup;
   submitting = false;
   departments: any[] = [];
+
+  searchTerm = '';
+  searchResults: Department[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -35,7 +37,10 @@ export class AdminComponent implements OnInit {
 
   reload(): void {
     this.admin.listDepartments().subscribe({
-      next: (deps) => (this.departments = deps || []),
+      next: (deps) => {
+        this.departments = deps || [];
+        this.searchResults = [...this.departments];
+      },
       error: () =>
         this.overlay.showOverlay('error', 'Fachbereiche konnten nicht geladen werden.')
     });
@@ -147,5 +152,30 @@ export class AdminComponent implements OnInit {
     const mm = String(d.getMinutes()).padStart(2, '0');
 
     return `${datePart}, ${hh}:${mm}`;
+  }
+
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.searchTerm = target?.value ?? '';
+    this.runSearch();
+  }
+
+  private runSearch(): void {
+    const q = this.searchTerm.trim().toLowerCase();
+
+    if (!q) {
+      this.searchResults = [...this.departments];
+      return;
+    }
+
+    this.searchResults = this.departments.filter((dep: Department) =>
+      dep.name?.toLowerCase().includes(q)
+    );
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.searchResults = [];
+    this.reload();
   }
 }

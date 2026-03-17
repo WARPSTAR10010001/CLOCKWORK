@@ -5,6 +5,7 @@ import { AuthService } from './auth-service';
 import { OverlayComponent } from './overlay-component/overlay-component';
 import { OverlayService } from './overlay-service';
 import { VersionService } from './version-service';
+import { ThemeService } from './theme-service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,8 @@ export class App {
   constructor(
     public authService: AuthService,
     private overlayService: OverlayService,
-    public versionService: VersionService
+    public versionService: VersionService,
+    public theme: ThemeService
   ) {}
 
   logout() {

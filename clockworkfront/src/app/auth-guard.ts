@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from './auth-service';
@@ -41,7 +40,7 @@ export const LoginGuard: CanActivateFn = (): Observable<boolean> => {
                 if (authService.isAdmin()) {
                     router.navigate(['/admin']);
                 } else {
-                    router.navigate(['/years']);
+                    router.navigate(['/']);
                 }
                 return false;
             } else {

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'
 import { OverlayService } from '../overlay-service';
+import { ThemeService } from '../theme-service';
+import { LandingPageService } from '../landing-page-service';
 
 @Component({
   selector: 'app-auth-component',
@@ -19,7 +21,9 @@ export class AuthComponent {
   constructor(
     private authService: AuthService,
     private overlayService: OverlayService,
-    private router: Router
+    private router: Router,
+    private landingPage: LandingPageService,
+    public theme: ThemeService
   ) { }
 
   login() {
@@ -36,7 +40,7 @@ export class AuthComponent {
           this.router.navigate(["/admin"]);
           this.isSubmitting = false;
         } else {
-          this.router.navigate(["/years"]);
+          this.router.navigate([`/${this.landingPage.getComponentPage()}`]);
           this.isSubmitting = false;
         }
       },

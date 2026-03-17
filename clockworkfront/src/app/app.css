@@ -43,10 +43,23 @@
     text-decoration: none;
 }
 
+#labels {
+    display: flex;
+    flex-direction: column-reverse;
+    font-size: 0.45em;
+}
+
 #edition {
-    font-size: 0.5em;
     color: var(--tc);
-    margin-top: 17px;
+}
+
+#edition-single {
+    margin-top: 22px;
+}
+
+#orange-single {
+    margin-bottom: 22px;
+    color: var(--orange);
 }
 
 #header {

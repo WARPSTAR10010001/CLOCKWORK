@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { OverlayService } from './overlay-service';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { VersionService } from './version-service';
 
 type Role = 'admin' | 'mod' | 'user';
 interface User {
@@ -27,7 +28,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private overlay: OverlayService
+    private overlay: OverlayService,
+    private version: VersionService
   ) {
     this.restoreSession();
     this.ensurePasswordResetGate();
@@ -116,13 +118,13 @@ export class AuthService {
     ).pipe(
       tap((res) => {
         this.setSession(res.token, username);
+        this.checkVersionUpdate();
         this.refreshStatus().pipe(take(1)).subscribe((st) => {
           const mustReset = !!st.user?.passwordReset;
           if (mustReset) {
             this.overlay.lockToPasswordReset();
           } else {
             this.overlay.unlockPasswordReset();
-            this.overlay.showOverlay('success', `Willkommen, ${username}!`);
           }
         });
       }),
@@ -145,6 +147,12 @@ export class AuthService {
     this.overlay.showOverlay('success', 'Erfolgreich abgemeldet.');
     this.router.navigate(['/auth']);
   }
+
+  private checkVersionUpdate() {
+  if (this.version.shouldShowUpdateOverlay()) {
+    this.overlay.showOverlay('update', this.version.getUpdateSummary());
+  }
+}
 
   get token(): string | null { return localStorage.getItem(this.tokenKey); }
   get currentUserRole(): Role | null { return this.authStatusSubject.value.user?.role ?? null; }

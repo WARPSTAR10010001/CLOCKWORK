@@ -3,7 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
-export interface Department { id: number; name: string; }
+export interface User {
+  id: number;
+  username: string;
+  role: string;
+  last_login_at?: string | null;
+}
+
+export interface Department {
+  id: number;
+  name: string;
+  users: User[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentsService {

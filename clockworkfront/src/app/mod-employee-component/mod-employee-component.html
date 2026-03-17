@@ -13,7 +13,7 @@
         <input type="date" formControlName="start_date" placeholder="YYYY-MM-DD">
       </div>
       <div class="cell">
-        <label>Enddatum</label>
+        <label>Enddatum (optional)</label>
         <input type="date" formControlName="end_date" placeholder="YYYY-MM-DD">
       </div>
       <div class="cell actions">
@@ -23,6 +23,7 @@
   </div>
   <hr>
   <h1 class="subtitle">Aktive Mitarbeiter</h1>
+  @if (activeEmployees.length !== 0) {
   <div class="active-employees">
     <div class="employee-header-row">
       <div>Name</div>
@@ -42,13 +43,14 @@
         </div>
       </div>
       }
-      @if (activeRows.length === 0) {
-      <p class="hint">Kein aktiver Mitarbeiter.</p>
-      }
     </div>
   </div>
+} @else {
+  <h1>Es gibt keine aktiven Mitarbeiter. Mitarbeiter können über das Formular oben erstellt werden.</h1>
+}
   <hr>
   <h1 class="subtitle">Ehemalige / Deaktiviert</h1>
+  @if (inactiveEmployees.length !== 0) {
   <div class="inactive-employees">
     <div class="employee-header-row">
       <div>Name</div>
@@ -68,9 +70,9 @@
         </div>
       </div>
       }
-      @if (inactiveRows.length === 0) {
-      <p class="hint">Keine ehemaligen Mitarbeiter.</p>
-      }
     </div>
   </div>
+} @else {
+  <h1>Es gibt keine ehemaligen/deaktivierten Mitarbeiter.</h1>
+}
 </div>

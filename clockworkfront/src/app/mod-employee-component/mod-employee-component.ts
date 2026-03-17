@@ -126,7 +126,6 @@ export class ModEmployeeComponent implements OnInit {
     return { actives, inactives };
   }
 
-  // String-only Date Utils
   private toInputDate(s?: string | null): string | null {
     return s ?? null;
   }
@@ -226,7 +225,7 @@ export class ModEmployeeComponent implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.overlay.showOverlay('success', 'Mitarbeiter angelegt.');
+          this.overlay.showOverlay('success', 'Mitarbeiter wurde erfolgreich angelegt.');
           this.newEmployeeForm.reset({ name: '', start_date: null, end_date: null });
           this.loadAll();
         },

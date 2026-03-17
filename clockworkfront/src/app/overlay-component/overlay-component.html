@@ -2,7 +2,7 @@
 <div class="overlay-backdrop">
   @if (overlayState.type === "style") {
   <div id="style-overlay" class="overlay">
-    <h1 class="emp page-header">Ansicht</h1>
+    <h1 class="emp page-header">Ansichtseinstellungen</h1>
     <div id="theme-selection" class="selection">
       <h1>Anzeigemodus:</h1>
       <div class="options">
@@ -32,8 +32,8 @@
           Standard
         </label>
         <label>
-          <input type="radio" name="color" [checked]="selectedColor === 'alt'" (change)="changeColor('alt')">
-          Alternative
+          <input type="radio" name="color" [checked]="selectedColor === 'orange'" (change)="changeColor('orange')">
+          Orange
         </label>
         <label>
           <input type="radio" name="color" [checked]="selectedColor === 'soft'" (change)="changeColor('soft')">
@@ -74,9 +74,23 @@
     <br>
     <a (click)="close()" class="button-primary">Schließen</a>
   </div>
-  } @else if (overlayState.type === "planOptions") {
+  } @else if (overlayState.type === "landingPage") {
+  <div id="landingPage-overlay" class="overlay">
+    <h1 class="emp page-header">Startseite</h1>
+    <div id="landingPage-selection" class="selection">
+      <select [(ngModel)]="selectedLandingPage" (ngModelChange)="onLandingPageChange($event)">
+        <option value="dashboard">Dashboard</option>
+        <option value="years">Jahresübersicht</option>
+        <option value="current">Aktueller Plan</option>
+      </select>
+    </div>
+    <hr>
+    <h1>Die hier ausgewählte Seite wird geöffnet, sobald Sie sich erfolgreich angemeldet haben.</h1>
+    <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "planOptions1" || overlayState.type === "planOptions2") {
   <div id="planOptions-overlay" class="overlay">
-    <h1 class="emp page-header">Optionen</h1>
+    <h1 class="emp page-header">Planoptionen</h1>
     <div id="showWeekends-selection" class="selection">
       <h1>Wochenende:</h1>
       <div class="options">
@@ -142,8 +156,12 @@
     </div>
     <br>
     <div class="button-row">
+      @if (overlayState.type === "planOptions2") {
       <a (click)="openShortcuts()" class="button-primary">Tastenkürzel anzeigen</a>
       <a (click)="close()" class="button-secondary">Schließen</a>
+      } @else {
+      <a (click)="close()" class="button-primary">Schließen</a>
+      }
     </div>
   </div>
   } @else if (overlayState.type === "planShortcuts") {
@@ -297,6 +315,15 @@
     <h1 class="emp page-header">Info</h1>
     <h1>{{ overlayState.message }}</h1>
     <a (click)="close()" class="button-primary">Schließen</a>
+  </div>
+  } @else if (overlayState.type === "update") {
+  <div id="update-overlay" class="overlay">
+    <h1 class="emp page-header">Update {{ version.getVersion() }}</h1>
+    <h1>{{ overlayState.message }}</h1>
+    <div class="button-row">
+      <a (click)="closeUpdate()" class="button-primary">Schließen</a>
+      <a (click)="navigateChangelog()" class="button-secondary">Zum Changelog</a>
+    </div>
   </div>
   }
 </div>

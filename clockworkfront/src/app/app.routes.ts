@@ -15,12 +15,19 @@ import { ModEditPlanComponent } from "./mod-edit-plan-component/mod-edit-plan-co
 import { AdminDeptGuard } from "./admin-dept-guard";
 import { FeedbackComponent } from "./feedback-component/feedback-component";
 import { LogComponent } from "./log-component/log-component";
+import { DashboardComponent } from "./dashboard-component/dashboard-component";
 
 export const routes: Routes = [
     {
         path: "",
-        redirectTo: "years",
+        redirectTo: "dashboard",
         pathMatch: "full"
+    },
+    {
+        path: "dashboard",
+        component: DashboardComponent,
+        title: "Dashboard - CLOCKWORK",
+        canActivate: [AuthGuard]
     },
     {
         path: "years",
@@ -46,7 +53,7 @@ export const routes: Routes = [
     {
         path: "credit",
         component: CreditComponent,
-        title: "Mitwirkende - CLOCKWORK"
+        title: "Credits - CLOCKWORK"
     },
     {
         path: "changelog",
@@ -104,7 +111,7 @@ export const routes: Routes = [
     {
         path: "plan/:year/:month",
         component: PlanComponent,
-        title: "Dienstplan - CLOCKWORK",
+        title: "Planviewer - CLOCKWORK",
         canActivate: [AuthGuard]
     },
     {
@@ -115,6 +122,6 @@ export const routes: Routes = [
     },
     {
         path: "**",
-        redirectTo: "years"
+        redirectTo: "dashboard"
     }
 ];

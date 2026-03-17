@@ -7,7 +7,7 @@
 
 .fb-list {
     display: grid;
-    gap: 20px;
+    gap: 15px;
 }
 
 .fb-card {
@@ -17,8 +17,12 @@
     gap: 10px;
 }
 
-.fb-card {
+.fb-card:nth-child(odd) {
     background: var(--bgca);
+}
+
+.fb-card:nth-child(even) {
+    background: var(--bgcaa);
 }
 
 :host-context(body.outlines) .fb-card {
@@ -37,6 +41,7 @@
     border-radius: 999px;
     padding: 0 20px;
     background: var(--bgc);
+    font-size: 0.7em;
 }
 
 .fb-content {

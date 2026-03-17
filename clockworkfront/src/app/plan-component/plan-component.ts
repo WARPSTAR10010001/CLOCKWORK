@@ -535,6 +535,13 @@ export class PlanComponent implements OnInit {
     this.anchorCell = null;
   }
 
+  deselectBtn(): void {
+    if (this.selectedCells.length === 0) {
+      this.overlay.showOverlay("error", "Es müssen zuerst Zellen ausgewählt werden.");
+    }
+    this.deselect();
+  }
+
   private mapUiTypeToStatus(type: string): PlanEntryStatus | null {
     switch ((type || "").trim().toUpperCase()) {
       case "U": return "VACATION";
@@ -900,7 +907,7 @@ export class PlanComponent implements OnInit {
   }
 
   openPlanOptions(): void {
-    this.overlay.showOverlay("planOptions");
+    this.overlay.showOverlay("planOptions2");
   }
 
   openShortcuts(): void {

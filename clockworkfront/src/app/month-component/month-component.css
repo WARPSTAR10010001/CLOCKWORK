@@ -20,71 +20,42 @@
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
-:host-context(body.outlines) .month-card {
-    outline: 3px solid var(--olc);
-}
-
 .month-card:hover {
     box-shadow: 0px 0px 30px var(--bsc);
     transform: translateY(-5px);
 }
 
+:host-context(body.outlines) .month-card {
+    outline: 3px solid var(--olc);
+}
+
 .gradient-1 {
-    background: linear-gradient(120deg, #00f5d1 0%, #00d5f4 100%);
-}
-
-:host-context(body.soft) .gradient-1 {
-    background: linear-gradient(120deg, #72ffea 0%, #75edff 100%) !important;
-}
-
-:host-context(body.alt) .gradient-1 {
-    background: linear-gradient(120deg, #ff279e 0%, #ff8800 100%) !important;
+    background: var(--g1);
 }
 
 .gradient-2 {
-    background: radial-gradient(circle at top left, #00f5d1 0%, #00b3e6 70%, #00d5f4 100%);
-}
-
-:host-context(body.soft) .gradient-2 {
-    background: radial-gradient(circle at top left, #64ffe8 0%, #6cdfff 70%, #75edff 100%) !important;
-}
-
-:host-context(body.alt) .gradient-2 {
-    background: radial-gradient(circle at top left, #ff279e 0%, #ff8800 70%, #ff279e 100%) !important;
+    background: var(--g2);
 }
 
 .gradient-3 {
-    background: linear-gradient(200deg, #00c8a0 0%, #00f5d1 50%, #00d5f4 100%);
-}
-
-:host-context(body.soft) .gradient-3 {
-    background: linear-gradient(200deg, #73ffe3 0%, #6effe9 50%, #6bebff 100%) !important;
-}
-
-:host-context(body.alt) .gradient-3 {
-    background: linear-gradient(200deg, #ff279e 0%, #ff27db 50%, #ff8800 100%) !important;
+    background: var(--g3);
 }
 
 .gradient-4 {
-    background: radial-gradient(circle at bottom right, #00e0b0 0%, #00d5f4 60%, #0099cc 100%);
-}
-
-:host-context(body.soft) .gradient-4 {
-    background: radial-gradient(circle at bottom right, #70ffe0 0%, #70ecff 60%, #6cdaff 100%) !important;
+    background: var(--g4);
 }
 
 .gradient-5 {
-    background: linear-gradient(245deg, #00b3cc 0%, #00f5d1 40%, #00d5f4 80%);
-}
-
-:host-context(body.soft) .gradient-5 {
-    background: linear-gradient(245deg, #68edff 0%, #69ffe8 40%, #6decff 80%) !important;
+    background: var(--g5);
 }
 
 .gradient-6 {
-    background: radial-gradient(circle at center, #00d5f4 0%, #00f5d1 50%, #00a3b3 100%);
+    background: var(--g6);
 }
 
-:host-context(body.soft) .gradient-6 {
-    background: radial-gradient(circle at center, #5be9ff 0%, #6effe9 50%, #72f3ff 100%) !important;
+:host-context(body.orange) .month-card {
+    background-color: #ff8446;
+    opacity: 1;
+    background-image: linear-gradient(45deg, #ed7337 50%, #ff8446 50%);
+    background-size: 29px 29px;
 }

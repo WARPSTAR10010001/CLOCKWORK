@@ -1,0 +1,50 @@
+<div class="comp-wrap">
+    <h1 class="emp page-header">Willkommen in CLOCKWORK!</h1>
+    <div>
+        <h1 class="subtitle">Schnellstart</h1>
+        <div class="card-entries">
+            @if (auth.isLoggedIn() && !auth.isMod() && !auth.isAdmin()) {
+            <div class="card" [routerLink]="['/plan', year, month]">
+                <h1>Aktueller Plan</h1>
+            </div>
+            <div class="card" [routerLink]="['/years']">
+                <h1>Jahresübersicht</h1>
+            </div>
+            }
+            @if (auth.isLoggedIn() && auth.isMod() && !auth.isAdmin()) {
+            <div class="card" [routerLink]="['/plan', year, month]">
+                <h1>Aktueller Plan</h1>
+            </div>
+            <div class="card" [routerLink]="['/mod']">
+                <h1>Modpanel</h1>
+            </div>
+            <div class="card" [routerLink]="['/years']">
+                <h1>Jahresübersicht</h1>
+            </div>
+            }
+            @if (auth.isLoggedIn() && !auth.isMod() && auth.isAdmin()) {
+            <div class="card" [routerLink]="['/admin']">
+                <h1>Adminpanel</h1>
+            </div>
+            <div class="card" [routerLink]="['/mod']">
+                <h1>Modpanel</h1>
+            </div>
+            }
+        </div>
+    </div>
+    <hr>
+    <div>
+        <h1 class="subtitle">Einstellungen & Optionen</h1>
+        <div class="card-entries">
+            <div class="card" (click)="overlay.showOverlay('style')">
+                <h1>Ansicht anpassen</h1>
+            </div>
+            <div class="card" (click)="overlay.showOverlay('planOptions1')">
+                <h1>Planviewer einstellen</h1>
+            </div>
+            <div class="card" (click)="overlay.showOverlay('landingPage')">
+                <h1>Startseite auswählen</h1>
+            </div>
+        </div>
+    </div>
+</div>

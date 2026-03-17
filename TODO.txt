@@ -3,12 +3,9 @@ Replace browser default "confirm" overlay with custom overlay (delete feedback, 
 Employee management css for halfscreen
 
 
-V1.6.1:
-Fix routerlink and articlelink not working in documentation
-
-
 V1.7.0:
 Fix error with vacation counter
+Fix routerlink and articlelink not working in documentation
 
 
 V2.0.0:

@@ -1,4 +1,5 @@
 import { Component, OnInit, Renderer2, HostListener } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { OverlayService, OverlayState } from '../overlay-service';
 import { ThemeService, Theme, Outline, Color, Material } from '../theme-service';
 import { AuthService } from '../auth-service';
@@ -8,10 +9,13 @@ import { VersionService } from '../version-service';
 import { PlanService } from '../plan-service';
 import { LogService } from '../log-service';
 import { PlanOptionsService, ShowWeekend, VacationTable, CompressedRows, ShowLetters } from '../plan-options-service';
+import { Page, LandingPageService } from '../landing-page-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-overlay-component',
   templateUrl: './overlay-component.html',
+  imports: [FormsModule],
   styleUrl: './overlay-component.css',
 })
 export class OverlayComponent implements OnInit {
@@ -20,12 +24,14 @@ export class OverlayComponent implements OnInit {
     private theme: ThemeService,
     private renderer: Renderer2,
     private feedback: FeedbackService,
-    private version: VersionService,
+    public version: VersionService,
     private plan: PlanService,
     private log: LogService,
     private planOptions: PlanOptionsService,
-    public auth: AuthService
-  ) {}
+    public auth: AuthService,
+    private landingPage: LandingPageService,
+    private router: Router
+  ) { }
 
   overlayState: OverlayState = { show: false, type: 'info' };
 
@@ -38,6 +44,8 @@ export class OverlayComponent implements OnInit {
   selectedVacationTable: VacationTable = "show-vacationTable";
   selectedCompressedRows: CompressedRows = "standard-rows";
   selectedShowLetters: ShowLetters = "show-letters";
+
+  selectedLandingPage = 'dashboard';
 
   pw1 = '';
   pw2 = '';
@@ -82,6 +90,10 @@ export class OverlayComponent implements OnInit {
     this.planOptions.currentVacationTable$.subscribe(v => this.selectedVacationTable = v);
     this.planOptions.currentCompressedRows$.subscribe(v => this.selectedCompressedRows = v);
     this.planOptions.currentShowLetters$.subscribe(v => this.selectedShowLetters = v);
+
+    this.selectedLandingPage = this.landingPage.getPage();
+
+    this.landingPage.currentPage$.subscribe(v => this.selectedLandingPage = v);
 
     this.auth.authStatus$.subscribe(status => {
       const mustReset = !!status?.user?.passwordReset;
@@ -228,18 +240,25 @@ export class OverlayComponent implements OnInit {
     this.overlay.hideOverlay();
   }
 
+  closeUpdate() {
+    this.close();
+    this.version.acknowledgeCurrentVersion();
+  }
+
   openShortcuts() {
     this.overlay.showOverlay("planShortcuts");
   }
 
   openOptions() {
-    this.overlay.showOverlay("planOptions");
+    this.overlay.showOverlay("planOptions2");
   }
 
   @HostListener('document:keydown.escape')
   onEscHandler() {
-    if (this.overlayState.show && this.overlayState.type !== 'passwordReset') {
+    if (this.overlayState.show && this.overlayState.type !== 'passwordReset' && this.overlayState.type !== 'update') {
       this.close();
+    } else if (this.overlayState.type === "update") {
+      this.closeUpdate();
     }
   }
 
@@ -252,6 +271,10 @@ export class OverlayComponent implements OnInit {
   changeVacationTable(vacationTable: VacationTable) { this.planOptions.setVacationTable(vacationTable); }
   changeCompressedRows(compressedRows: CompressedRows) { this.planOptions.setCompressedRows(compressedRows); }
   changeShowLetters(showLetters: ShowLetters) { this.planOptions.setShowLetters(showLetters); }
+
+  onLandingPageChange(newPage: Page) {
+    this.landingPage.setPage(newPage);
+  }
 
   get remainingFeedbackChars(): number {
     return this.FEEDBACK_MAX - this.feedbackContent.length;
@@ -306,5 +329,10 @@ export class OverlayComponent implements OnInit {
         }
       }
     });
+  }
+
+  navigateChangelog() {
+    this.closeUpdate();
+    this.router.navigate(["changelog"]);
   }
 }

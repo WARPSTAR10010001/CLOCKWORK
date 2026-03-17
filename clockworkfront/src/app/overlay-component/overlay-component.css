@@ -17,7 +17,7 @@ input[type="password"] {
 }
 
 .overlay {
-  padding: 40px 50px;
+  padding: 40px;
   border-radius: 10px;
   width: min(800px, 92vw);
   max-height: 92vh;
@@ -50,16 +50,13 @@ input[type="password"] {
 }
 
 .page-header {
-  margin-bottom: -30px;
+  margin-top: -10px;
+  margin-bottom: -50px;
 }
 
 hr {
   margin-bottom: 0;
   margin-top: 0;
-}
-
-h1 {
-  padding-bottom: 20px;
 }
 
 :host-context(body.outlines) .overlay {
@@ -182,23 +179,23 @@ td {
 }
 
 :host-context(body.dim) th {
-    background-color: #2a2a2a;
-    border: 3px solid #2a2a2a;
+  background-color: #2a2a2a;
+  border: 3px solid #2a2a2a;
 }
 
 :host-context(body.dim) td {
-    background-color: #242424;
-    border: 3px solid #242424;
+  background-color: #242424;
+  border: 3px solid #242424;
 }
 
 :host-context(body.neon) th {
-    background-color: #100044;
-    border: 3px solid #100044;
+  background-color: #100044;
+  border: 3px solid #100044;
 }
 
 :host-context(body.neon) td {
-    background-color: #0d0038;
-    border: 3px solid #0d0038;
+  background-color: #0d0038;
+  border: 3px solid #0d0038;
 }
 
 .table {

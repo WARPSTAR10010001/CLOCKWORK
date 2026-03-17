@@ -1,5 +1,5 @@
 .logs {
-    margin-top: -15px;
+  margin-top: -15px;
   display: grid;
   border-radius: 10px;
 }
@@ -19,6 +19,10 @@
 
 .log:nth-child(odd) {
   background: var(--bgca);
+}
+
+.log:nth-child(even) {
+  background: var(--bgcaa);
 }
 
 .meta {
@@ -50,7 +54,7 @@
 }
 
 hr {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
 .log-toolbar {
@@ -62,13 +66,13 @@ hr {
 }
 
 .log-toolbar select {
-    text-align: center;
+  text-align: center;
 }
 
 #fltr-emp {
-    width: 400px;
+  width: 400px;
 }
 
 #fltr-act {
-    width: 400px;
+  width: 400px;
 }

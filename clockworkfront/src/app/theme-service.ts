@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export type Theme = 'light' | 'dim' | 'neon';
-export type Color = "standard" | "soft" | "alt";
+export type Color = "standard" | "soft" | "orange";
 export type Material = "solid" | "glass";
 export type Outline = "no-outlines" | "outlines";
 
@@ -44,7 +44,7 @@ export class ThemeService {
   }
 
   private sanitizeTheme(raw: string | null): Theme {
-    if (raw === 'light' || raw === 'neon' || raw === 'dim') return raw;
+    if (raw === 'light'|| raw === 'dim' || raw === 'neon') return raw;
     if (raw) localStorage.setItem(this.themeKey, 'light');
     return 'light';
   }
@@ -56,7 +56,7 @@ export class ThemeService {
   }
 
   private sanitizeColor(raw: string | null): Color {
-    if (raw === 'standard' || raw === 'soft') return raw;
+    if (raw === 'standard' || raw === 'soft' || raw === 'orange') return raw;
     if (raw) localStorage.setItem(this.colorKey, 'standard');
     return 'standard';
   }
@@ -98,7 +98,7 @@ export class ThemeService {
   }
 
   setColor(color: Color, save = true) {
-    document.body.classList.remove("standard", "soft", "alt");
+    document.body.classList.remove("standard", "soft", "orange");
     document.body.classList.add(color);
 
     this.currentColorSubject.next(color);

@@ -11,8 +11,11 @@ export type OverlayType =
   | 'info'
   | 'planNote'
   | 'planNoteEdit'
-  | 'planOptions'
-  | 'planShortcuts';
+  | 'planOptions1'
+  | 'planOptions2'
+  | 'planShortcuts'
+  | 'landingPage'
+  | 'update';
 
 export interface OverlayState {
   show: boolean;

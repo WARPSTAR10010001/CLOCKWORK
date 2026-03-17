@@ -1,90 +1,88 @@
 <div class="comp-wrap">
   <div class="doc-header">
     <h1 class="emp page-header">Dokumentation</h1>
-
     <div class="doc-search">
-      <input
-        type="text"
-        [value]="searchTerm"
-        (input)="onSearchInput($event)"
-        placeholder="Suche nach Begriffen oder Stichwörtern...">
+      <input type="text" [value]="searchTerm" (input)="onSearchInput($event)" placeholder="Suche nach Stichwörtern...">
+      @if (searchTerm.trim().length > 0) {
+      <a class="button-action" id="deletesearch" (click)="clearSearch()">Suche löschen</a>
+      }
     </div>
   </div>
   @if (isSearching && searchResults.length > 0) {
-    <div class="search-results">
-      <h2>Suchergebnisse ({{ searchResults.length }})</h2>
-      <ul>
-        @for (result of searchResults; track result.article.id) {
-          <li>
-            <a
-              [routerLink]="['/docs', result.section.id, result.page.id]"
-              [fragment]="result.article.id"
-              (click)="onResultClick()"
-            >
-            @if (result.section.title.length + result.page.title.length + result.article.title.length >= 100) {
-              <span>... - {{ result.article.title }}</span>
-            } @else if (result.section.title.length + result.page.title.length >= 50) {
-              <span>... / {{ result.page.title }} - {{ result.article.title }}</span>
-            } @else {
-              <span>{{ result.section.title }} / {{ result.page.title }} - {{ result.article.title }}</span>
-            }
-            </a>
-          </li>
-        }
-      </ul>
-    </div>
+  <div class="search-results">
+    <h2>Suchergebnisse ({{ searchResults.length }})</h2>
+    <ul>
+      @for (result of searchResults; track result.article.id) {
+      <li>
+        <a [routerLink]="['/docs', result.section.id, result.page.id]" [fragment]="result.article.id"
+          (click)="onResultClick()">
+          @if (result.section.title.length + result.page.title.length + result.article.title.length >= 100) {
+          <span>... - {{ result.article.title }}</span>
+          } @else if (result.section.title.length + result.page.title.length >= 50) {
+          <span>... / {{ result.page.title }} - {{ result.article.title }}</span>
+          } @else {
+          <span>{{ result.section.title }} / {{ result.page.title }} - {{ result.article.title }}</span>
+          }
+        </a>
+      </li>
+      }
+    </ul>
+  </div>
   }
   @if (isSearching && searchResults.length === 0) {
-    <h1>Keine Treffer für "{{ searchTerm }}" gefunden. <span class="hint" style="cursor: pointer;" (click)="clearSearch()">Zurück zur Übersicht</span></h1>
+  <h1>Keine Treffer für "{{ searchTerm }}" gefunden. <span class="emp clickable" (click)="clearSearch()">Andere Suche
+      versuchen</span>.</h1>
   }
   @if (!isSearching && viewMode === 'overview') {
-    <div class="tile-grid">
-      @for (section of sections; track section.id) {
-        <a class="doc-tile" [routerLink]="['/docs', section.id]">
-          <h2>{{ section.title }}</h2>
-          @if (section.description) {
-            <p>{{ section.description }}</p>
-          }
-        </a>
+  <div class="tile-grid">
+    @for (section of sections; track section.id) {
+    <a class="doc-tile" [routerLink]="['/docs', section.id]">
+      <h2>{{ section.title }}</h2>
+      @if (section.description) {
+        <hr>
+      <p>{{ section.description }}</p>
       }
-    </div>
+    </a>
+    }
+  </div>
   }
   @if (!isSearching && viewMode === 'section' && currentSection) {
-    <div class="breadcrumbs">
-      <a [routerLink]="['/docs']">Dokumentation</a> /
-      <span>{{ currentSection.title }}</span>
-    </div>
-    <h2 class="subtitle">{{ currentSection.title }}</h2>
-    <div class="tile-grid subtiles">
-      @for (page of currentSection.pages; track page.id) {
-        <a class="doc-tile" [routerLink]="['/docs', currentSection.id, page.id]">
-          <h3>{{ page.title }}</h3>
-          @if (page.description) {
-            <p>{{ page.description }}</p>
-          }
-        </a>
+  <div class="breadcrumbs">
+    <a [routerLink]="['/docs']">Dokumentation</a> /
+    <span>{{ currentSection.title }}</span>
+  </div>
+  <h2 class="subtitle">{{ currentSection.title }}</h2>
+  <div class="tile-grid subtiles">
+    @for (page of currentSection.pages; track page.id) {
+    <a class="doc-tile" [routerLink]="['/docs', currentSection.id, page.id]">
+      <h3>{{ page.title }}</h3>
+      @if (page.description) {
+        <hr>
+      <p>{{ page.description }}</p>
       }
-    </div>
+    </a>
+    }
+  </div>
   }
   @if (!isSearching && viewMode === 'page' && currentSection && currentPage) {
-    <div class="breadcrumbs">
-      <a [routerLink]="['/docs']">Dokumentation</a> /
-      <a [routerLink]="['/docs', currentSection.id]">
-        {{ currentSection.title }}
-      </a> /
-      <span>{{ currentPage.title }}</span>
-    </div>
-    <h2 class="subtitle">{{ currentPage.title }}</h2>
-    <div class="doc-page">
-      @for (article of currentPage.articles; track article.id; let isFirst = $first) {
-        @if (!isFirst) {
-          <hr>
-        }
-        <section class="doc-article" [id]="article.id">
-          <h3>{{ article.title }}</h3>
-          <div class="doc-article-content" [innerHTML]="article.html"></div>
-        </section>
-      }
-    </div>
+  <div class="breadcrumbs">
+    <a [routerLink]="['/docs']">Dokumentation</a> /
+    <a [routerLink]="['/docs', currentSection.id]">
+      {{ currentSection.title }}
+    </a> /
+    <span>{{ currentPage.title }}</span>
+  </div>
+  <h2 class="subtitle">{{ currentPage.title }}</h2>
+  <div class="doc-page">
+    @for (article of currentPage.articles; track article.id; let isFirst = $first) {
+    @if (!isFirst) {
+    <hr>
+    }
+    <section class="doc-article" [id]="article.id">
+      <h3>{{ article.title }}</h3>
+      <div class="doc-article-content" [innerHTML]="article.html"></div>
+    </section>
+    }
+  </div>
   }
 </div>

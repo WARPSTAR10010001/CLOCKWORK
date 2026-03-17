@@ -1,15 +1,16 @@
 <div class="comp-wrap">
-<h1 class="emp page-header">Jahresübersicht</h1>
-<div id="content">
-  <div id="result-container">
-    @for (year of years; track year.value) {
-    <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
-      <span>{{ year.value }}</span>
-      @if (auth.isMod() || auth.isAdmin()) {
-      <a class="button-primary incard" [routerLink]="['/plan', 'edit', year.value]">Bearbeiten</a>
+  <h1 class="emp page-header">Jahresübersicht</h1>
+  <div id="content">
+    <div id="result-container">
+      @for (year of years; track year.value) {
+      <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
+        <span>{{ year.value }}</span>
+        @if (auth.isMod() || auth.isAdmin()) {
+        <hr class="vertical">
+        <a class="button-primary incard" [routerLink]="['/plan', 'edit', year.value]">Bearbeiten</a>
+        }
+      </a>
       }
-    </a>
-    }
+    </div>
   </div>
-</div>
 </div>

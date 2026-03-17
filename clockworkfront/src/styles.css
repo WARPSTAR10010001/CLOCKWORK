@@ -3,6 +3,7 @@
     --green: #77ff00;
     --blue: #00D5F4;
     --black: #000000;
+    --orange: #ed7337;
 
     --ucell: #88ff00;
     --hcell: #00aeff;
@@ -13,10 +14,13 @@
 
     --gradientbase: #00D5F4;
     --gradientaccent: #00F5D1;
-}
 
-*::selection {
-    background: var(--blue);
+    --g1: linear-gradient(120deg, #00f5d1 0%, #00d5f4 100%);
+    --g2: radial-gradient(circle at top left, #00f5d1 0%, #00b3e6 70%, #00d5f4 100%);
+    --g3: linear-gradient(200deg, #00c8a0 0%, #00f5d1 50%, #00d5f4 100%);
+    --g4: radial-gradient(circle at bottom right, #00e0b0 0%, #00d5f4 60%, #0099cc 100%);
+    --g5: linear-gradient(245deg, #00b3cc 0%, #00f5d1 40%, #00d5f4 80%);
+    --g6: radial-gradient(circle at center, #00d5f4 0%, #00f5d1 50%, #00a3b3 100%);
 }
 
 :root body.soft {
@@ -33,23 +37,32 @@
 
     --gradientbase: #76edff;
     --gradientaccent: #72ffea;
+
+    --g1: linear-gradient(120deg, #72ffea 0%, #75edff 100%);
+    --g2: radial-gradient(circle at top left, #64ffe8 0%, #6cdfff 70%, #75edff 100%);
+    --g3: linear-gradient(200deg, #73ffe3 0%, #6effe9 50%, #6bebff 100%);
+    --g4: radial-gradient(circle at bottom right, #70ffe0 0%, #70ecff 60%, #6cdaff 100%);
+    --g5: linear-gradient(245deg, #68edff 0%, #69ffe8 40%, #6decff 80%);
+    --g6: radial-gradient(circle at center, #5be9ff 0%, #6effe9 50%, #72f3ff 100%);
+
 }
 
-:root body.alt {
-    --ucell: #4deeea;
-    --hcell: #74ee15;
-    --kcell: #ffe700;
-    --lcell: #b300ff;
-    --gcell: #006aff;
-    --tcell: #ff279e;
+:root body.orange {
+    --ucell: #81f100;
+    --hcell: #21b9ff;
+    --kcell: #e900af;
+    --lcell: #ed7337;
+    --gcell: #661fff;
+    --tcell: #00df94;
 
-    --gradientbase: #ff279e;
-    --gradientaccent: #ff8800;
+    --gradientbase: #ed7337;
+    --gradientaccent: #ff8446;
 }
 
 body.light {
     --bgc: #fff;
     --bgca: #f0f0f5;
+    --bgcaa: #e1e1eb;
     --tc: #000;
     --olc: #000;
     --bsc: #0000003f;
@@ -61,6 +74,7 @@ body.light {
 body.dim {
     --bgc: #1e1e1e;
     --bgca: #252525;
+    --bgcaa: #2c2c2c;
     --tc: #fff;
     --olc: #fff;
     --bsc: #00000080;
@@ -72,12 +86,17 @@ body.dim {
 body.neon {
     --bgc: #080022;
     --bgca: #0b002e;
+    --bgcaa: #0d0038;
     --tc: #fff;
     --olc: #fff;
     --bsc: #3dc2ff30;
     --bc: #0a002b;
     --gbgc: #0800224b;
     --gbgb: #007bb473;
+}
+
+*::selection {
+    background: var(--blue);
 }
 
 .emp,
@@ -241,6 +260,14 @@ hr {
     box-shadow: 0px 0px 30px var(--bsc);
 }
 
+hr.vertical {
+    border-radius: 5px;
+    margin: 50px 40px;
+    border: 3px solid var(--tc);
+    box-shadow: 0px 0px 0px var(--bsc);
+    height: 100px;
+}
+
 #page-content {
     margin-top: -30px;
 }
@@ -274,7 +301,7 @@ label {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 5px;
     cursor: pointer;
     font-size: 2em;
 }
@@ -361,4 +388,9 @@ body.dim .doc-role-table tbody tr:nth-child(odd) td {
 
 body.neon .doc-role-table tbody tr:nth-child(odd) td {
     background-color: var(--bgca);
+}
+
+.clickable:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }

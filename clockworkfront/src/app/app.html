@@ -4,18 +4,37 @@
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
-      <span id="edition">Moderator</span>
+      <div id="labels">
+        @if (theme.getColor() === "orange") {
+        <span id="edition">Mod</span>
+        <span class="emp">ORANGE</span>
+        } @else {
+          <span id="edition-single">Mod</span>
+        }
+      </div>
     </a>
     } @else if (authService.isAdmin()) {
-    <a id="root-link" [routerLink]="['/admin']">
+    <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
-      <span id="edition">Admin</span>
+      <div id="labels">
+        @if (theme.getColor() === "orange") {
+        <span id="edition">Admin</span>
+        <span class="emp">ORANGE</span>
+        } @else {
+          <span id="edition-single">Admin</span>
+        }
+      </div>
     </a>
     } @else {
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
+      <div id="labels">
+        @if (theme.getColor() === "orange") {
+        <span id="orange-single">ORANGE</span>
+        }
+      </div>
     </a>
     }
     @if (authService.isLoggedIn()) {
@@ -25,9 +44,9 @@
       <a [routerLink]="['/mod']">Modpanel</a>
       } @else if (authService.isMod()) {
       <a [routerLink]="['/mod']">Modpanel</a>
-      <a [routerLink]="['/']">Jahresübersicht</a>
+      <a [routerLink]="['/years']">Jahresübersicht</a>
       } @else {
-      <a [routerLink]="['/']">Jahresübersicht</a>
+      <a [routerLink]="['/years']">Jahresübersicht</a>
       }
       <a (click)="logout()">Abmelden</a>
     </div>
@@ -50,12 +69,11 @@
       } @else if (authService.isLoggedIn()) {
       <a (click)="openFeedbackOverlay()">Feedback</a>
       } @else {
-        <a (click)="openFeedbackOverlayInfo()">Feedback</a>
+      <a (click)="openFeedbackOverlayInfo()">Feedback</a>
       }
       <a [routerLink]="['/docs']">Dokumentation</a>
-      <a (click)="openStyleOverlay()">Ansicht</a>
     </div>
-    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a> // <a id="credit"
-        [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a> // <a
+        id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

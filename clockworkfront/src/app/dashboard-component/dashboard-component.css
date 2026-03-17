@@ -1,5 +1,4 @@
 .card {
-    font-size: 3em;
     color: var(--bgc);
     background: linear-gradient(110deg, var(--gradientbase), var(--gradientaccent), var(--gradientbase));
     max-width: 100vw;
@@ -8,8 +7,16 @@
     border: 5px solid var(--bc);
     border-radius: 10px;
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-    margin-bottom: 25px;
     text-decoration: none !important;
+    width: 28%;
+    cursor: pointer;
+    text-align: center;
+}
+
+.card h1 {
+    font-size: 2.5em;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 :host-context(body.orange) .card {
@@ -28,18 +35,10 @@
     transform: translateY(-5px);
 }
 
-select {
-    margin-bottom: 50px;
-    text-align: center;
-    width: 500px;
-}
-
-.systemuser-management-btns {
+.card-entries {
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 20px;
-}
-
-#idx {
-    margin-top: 0px;
 }
