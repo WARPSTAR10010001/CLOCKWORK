@@ -154,7 +154,6 @@
         </label>
       </div>
     </div>
-    <br>
     <div class="button-row">
       @if (overlayState.type === "planOptions2") {
       <a (click)="openShortcuts()" class="button-primary">Tastenkürzel anzeigen</a>
@@ -318,8 +317,10 @@
   </div>
   } @else if (overlayState.type === "update") {
   <div id="update-overlay" class="overlay">
-    <h1 class="emp page-header">Update {{ version.getVersion() }}</h1>
+    <h1 class="emp page-header">Update {{ version.getDisplayVersion() }}</h1>
     <h1>{{ overlayState.message }}</h1>
+    <hr>
+    <h1>Alle Änderungen von Version {{version.getDisplayVersion() }} können im Changelog nachgelesen werden.</h1>
     <div class="button-row">
       <a (click)="closeUpdate()" class="button-primary">Schließen</a>
       <a (click)="navigateChangelog()" class="button-secondary">Zum Changelog</a>

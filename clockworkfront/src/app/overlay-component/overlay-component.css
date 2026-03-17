@@ -63,6 +63,14 @@ hr {
   outline: 3px solid var(--olc);
 }
 
+h1 {
+  margin-bottom: 40px;
+}
+
+.selection h1 {
+  margin-bottom: 20px !important;
+}
+
 .selection {
   display: flex;
   flex-direction: column;

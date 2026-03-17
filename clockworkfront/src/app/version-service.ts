@@ -2,12 +2,18 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private version: string = "2.0.0";
+  private version: string = "2.0.1";
   private summary: string = "CLOCKWORK hat nun eine neue zentrale Startseite! Zusätzlich dazu wurde die gesamte Infrastruktur erneuert.";
   private versionKey = 'last_logged_version';
 
   getVersion(): string {
     return this.version;
+  }
+
+  getDisplayVersion(): string {
+    const parts = this.version.split('.');
+    if (parts.length < 2) return this.version; 
+    return `${parts[0]}.${parts[1]}.0`;
   }
 
   getUpdateSummary(): string {
@@ -16,7 +22,20 @@ export class VersionService {
 
   shouldShowUpdateOverlay(): boolean {
     const lastVersion = localStorage.getItem(this.versionKey);
-    return lastVersion !== this.version;
+    if (!lastVersion) return true;
+
+    const currentParts = this.version.split('.');
+    const lastParts = lastVersion.split('.');
+
+    if (currentParts[0] !== lastParts[0]) {
+      return true;
+    }
+
+    if (currentParts[1] !== lastParts[1]) {
+      return true;
+    }
+
+    return false;
   }
 
   acknowledgeCurrentVersion(): void {
