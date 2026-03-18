@@ -220,13 +220,12 @@ export class OverlayComponent implements OnInit {
   saveNewPassword() {
     if (!this.canSubmit) return;
     this.submitting = true;
+
     this.auth.changePasswordSelf(this.pw1).subscribe({
       next: () => {
-        this.auth.refreshStatus().pipe(take(1)).subscribe(() => {
-          this.pw1 = this.pw2 = '';
-          this.submitting = false;
-          if (!this.passwordResetRequired) this.overlay.hideOverlay();
-        });
+        this.pw1 = this.pw2 = '';
+        this.submitting = false;
+
       },
       error: (err) => {
         this.submitting = false;
@@ -334,5 +333,83 @@ export class OverlayComponent implements OnInit {
   navigateChangelog() {
     this.closeUpdate();
     this.router.navigate(["changelog"]);
+  }
+
+  clearData() {
+    if (confirm("Sollen alle Daten gelöscht werden? Bitte diese Aktion nur durchführen wenn Sie durch einen Systemadmin dazu aufgefordert wurden!")) {
+      this.theme.setTheme("light", false);
+      this.theme.setOutline("no-outlines", false);
+      this.theme.setColor("standard", false);
+      this.theme.setMaterial("solid", false);
+
+      this.planOptions.setCompressedRows("standard-rows", false);
+      this.planOptions.setShowLetters("show-letters", false);
+      this.planOptions.setShowWeekend("hide-weekend", false);
+      this.planOptions.setVacationTable("show-vacationTable", false);
+
+      this.landingPage.setPage("dashboard", false);
+
+      localStorage.clear();
+
+      this.auth.logout();
+
+      this.close();
+
+      if (this.auth.isLoggedIn()) {
+        this.overlay.showOverlay("info", "Alle Browserdaten wurden erfolgreich gelöscht und Sie wurden abgemeldet.");
+      } else {
+        this.overlay.showOverlay("info", "Alle Browserdaten wurden erfolgreich gelöscht.");
+      }
+    }
+  }
+
+  getDebugInfo() {
+    const ua = navigator.userAgent;
+
+    const os = this.detectOS(ua);
+    const browser = this.detectBrowser(ua);
+
+    return {
+      os,
+      browser: browser.name,
+      version: browser.version,
+      userAgent: ua
+    };
+  }
+
+  private detectOS(ua: string): string {
+    if (ua.includes('Windows NT 10.0')) return 'Windows 10/11';
+    if (ua.includes('Windows NT 6.3')) return 'Windows 8.1';
+    if (ua.includes('Windows NT 6.2')) return 'Windows 8';
+    if (ua.includes('Windows NT 6.1')) return 'Windows 7';
+
+    if (ua.includes('Mac OS X')) return 'macOS';
+    if (ua.includes('Android')) return 'Android';
+    if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS / iPadOS';
+    if (ua.includes('Linux')) return 'Linux';
+
+    return 'Unknown OS';
+  }
+
+  private detectBrowser(ua: string): { name: string; version: string } {
+    let match;
+
+    if ((match = ua.match(/Edg\/([\d.]+)/))) {
+      return { name: 'Edge', version: match[1] };
+    }
+
+    if ((match = ua.match(/Chrome\/([\d.]+)/))) {
+      return { name: 'Chrome', version: match[1] };
+    }
+
+    if ((match = ua.match(/Firefox\/([\d.]+)/))) {
+      return { name: 'Firefox', version: match[1] };
+    }
+
+    if ((match = ua.match(/Version\/([\d.]+).*Safari/))) {
+      return { name: 'Safari', version: match[1] };
+    }
+
+    return { name: 'Unknown', version: '0' };
   }
 }

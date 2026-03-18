@@ -688,8 +688,10 @@ export class PlanComponent implements OnInit {
       targetEmployeeId = employeeId;
       targetDay = day;
     } else {
-      if (this.selectedCells.length !== 1) {
-        this.overlay.showOverlay("error", "Bitte genau eine Zelle auswählen, um die Notiz zu bearbeiten.");
+      if (this.selectedCells.length === 0) {
+        this.overlay.showOverlay("error", "Es muss zuerst eine Zelle ausgewählt werden.")
+      } else if (this.selectedCells.length > 1) {
+        this.overlay.showOverlay("error", "Bitte nur eine Zelle auswählen.");
         return;
       }
       const sel = this.selectedCells[0];

@@ -15,7 +15,8 @@ export type OverlayType =
   | 'planOptions2'
   | 'planShortcuts'
   | 'landingPage'
-  | 'update';
+  | 'update'
+  | 'debug';
 
 export interface OverlayState {
   show: boolean;

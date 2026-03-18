@@ -326,6 +326,17 @@
       <a (click)="navigateChangelog()" class="button-secondary">Zum Changelog</a>
     </div>
   </div>
+  } @else if (overlayState.type === "debug") {
+    <div id="debug-overlay" class="overlay">
+      <h1 class="emp page-header">Debug</h1>
+      <h1>Browser: {{ getDebugInfo().browser + " " + getDebugInfo().version }}<br>OS: {{ getDebugInfo().os }}<br>User-Agent: {{ getDebugInfo().userAgent }}</h1>
+      <hr>
+      <h1>Alle Browserdaten (localStorage) können durch den Knopf unten gelöscht werden. Dadurch werden alle Personalisierungen und der Session-Token gelöscht.</h1>
+      <div class="button-row">
+        <a (click)="close()" class="button-primary">Schließen</a>
+        <a (click)="clearData()" class="button-action">Daten löschen</a>
+      </div>
+    </div>
   }
 </div>
 }

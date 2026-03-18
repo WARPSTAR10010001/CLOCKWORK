@@ -138,21 +138,30 @@ export class AuthService {
   }
 
   changePasswordSelf(newPassword: string, oldPassword?: string) {
-    const body: any = { newPassword }; if (oldPassword) body.oldPassword = oldPassword;
-    return this.http.patch(`${this.baseUrl}/users/password`, body);
+    const body: any = { newPassword };
+    if (oldPassword) body.oldPassword = oldPassword;
+
+    return this.http.patch(`${this.baseUrl}/users/password`, body).pipe(
+      tap(() => {
+        this.refreshStatus().pipe(take(1)).subscribe((status) => {
+          if (status.user && !status.user.passwordReset) {
+            this.overlay.unlockPasswordReset();
+          }
+        });
+      })
+    );
   }
 
   logout(): void {
     this.clearSession();
-    this.overlay.showOverlay('success', 'Erfolgreich abgemeldet.');
     this.router.navigate(['/auth']);
   }
 
   private checkVersionUpdate() {
-  if (this.version.shouldShowUpdateOverlay()) {
-    this.overlay.showOverlay('update', this.version.getUpdateSummary());
+    if (this.version.shouldShowUpdateOverlay()) {
+      this.overlay.showOverlay('update', this.version.getUpdateSummary());
+    }
   }
-}
 
   get token(): string | null { return localStorage.getItem(this.tokenKey); }
   get currentUserRole(): Role | null { return this.authStatusSubject.value.user?.role ?? null; }

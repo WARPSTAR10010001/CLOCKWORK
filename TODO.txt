@@ -3,11 +3,16 @@ Replace browser default "confirm" overlay with custom overlay (delete feedback, 
 Employee management css for halfscreen
 
 
-V1.7.0:
+V2.0.2:
+Fix bug with overlay not working after password was set
+Introduce debug overlay (alt + .)
+
+
+V2.2.0:
 Fix error with vacation counter
 Fix routerlink and articlelink not working in documentation
 
 
-V2.0.0:
+V3.0.0:
 Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans
 Show and edit status for plans

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private version: string = "2.0.1";
+  private version: string = "2.0.2";
   private summary: string = "CLOCKWORK hat nun eine neue zentrale Startseite! Zusätzlich dazu wurde die gesamte Infrastruktur erneuert.";
   private versionKey = 'last_logged_version';
 

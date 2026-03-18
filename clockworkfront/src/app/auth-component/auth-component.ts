@@ -48,7 +48,6 @@ export class AuthComponent {
         this.isSubmitting = false;
         const message = err.error?.error || "Login fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben.";
         this.overlayService.showOverlay("error", message);
-        this.password = "";
       }
     });
   }

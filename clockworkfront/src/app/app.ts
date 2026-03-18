@@ -19,9 +19,10 @@ export class App {
     private overlayService: OverlayService,
     public versionService: VersionService,
     public theme: ThemeService
-  ) {}
+  ) { }
 
   logout() {
+    this.overlayService.showOverlay('success', 'Erfolgreich abgemeldet.');
     this.authService.logout();
   }
 
@@ -37,8 +38,20 @@ export class App {
     this.overlayService.showOverlay("info", "Um Feedback versenden zu können müssen Sie eingeloggt sein.");
   }
 
+  openDebugOverlay() {
+    this.overlayService.showOverlay("debug");
+  }
+
   @HostListener("document:keydown.shift.q", ["$event"])
   onShiftQHandler(event: Event) {
     this.openStyleOverlay();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKey(event: KeyboardEvent) {
+    if (event.altKey && event.code === 'Period') {
+      event.preventDefault();
+      this.openDebugOverlay();
+    }
   }
 }
