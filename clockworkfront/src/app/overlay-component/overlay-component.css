@@ -112,10 +112,12 @@ textarea {
 
 .ok {
   color: var(--green);
+  margin-bottom: -20px !important;
 }
 
 .bad {
   color: var(--red);
+  margin-bottom: -20px !important;
 }
 
 #remaining {

@@ -1,18 +1,17 @@
-QOL:
-Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
-Employee management css for halfscreen
-
-
-V2.0.2:
-Fix bug with overlay not working after password was set
-Introduce debug overlay (alt + .)
-
-
-V2.2.0:
+V2.0.3:
 Fix error with vacation counter
+
+
+V2.1.0:
+Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Fix routerlink and articlelink not working in documentation
+Extend dashboard with data, documentation articles, etc.
+
+
+V2.1.0:
+Ability to delete plans
+Show and edit status for plans
 
 
 V3.0.0:
-Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans
-Show and edit status for plans
+Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans (similar to admin impersonation-mode)

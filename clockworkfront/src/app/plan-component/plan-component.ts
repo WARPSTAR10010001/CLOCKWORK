@@ -260,8 +260,8 @@ export class PlanComponent implements OnInit {
       const usedBefore = this.vacationUsedBeforeMonthByEmployee.get(emp.id) ?? 0;
       const usedThis = this.countVacationInEntries(this.monthEntries, emp.id);
 
-      const remainingPrev = Math.max(0, startTotal - usedBefore);
-      const remainingAfter = Math.max(0, remainingPrev - usedThis);
+      const remainingPrev = startTotal - usedBefore;
+      const remainingAfter = remainingPrev - usedThis;
 
       return {
         name: pe?.name ?? emp.name,
