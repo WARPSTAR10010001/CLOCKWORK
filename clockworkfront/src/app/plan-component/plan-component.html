@@ -25,18 +25,22 @@
           @if (selectedCells.length === 0) {
           <th class="sticky"></th>
           } @else {
-          <th class="sticky">{{ selectedCells.length }} 
+          <th class="sticky">{{ selectedCells.length }}
             @if (selectedCells.length > 1) {
-              Zellen
+            Zellen
             } @else {
-              Zelle
+            Zelle
             }
-            <br> ausgewählt</th>
+            <br> ausgewählt
+          </th>
           }
           @for (day of daysForMonth; let colIndex = $index; track day) {
-          <th (click)="selectColumn(colIndex)" [ngClass]="getHeaderClasses(day)" style="cursor: pointer;">
-            {{ day.getDate() }}<br>
-            {{ weekdays[day.getDay()] }}
+          <th (click)="selectColumn(colIndex)" [ngClass]="getHeaderClasses(day)"
+            [class.col-selected]="isColumnSelected(day)" style="cursor: pointer;">
+            <span [class.emp]="isToday(day)">
+              {{ day.getDate() }}<br>
+              {{ weekdays[day.getDay()] }}
+            </span>
           </th>
           }
         </tr>
@@ -44,7 +48,8 @@
       <tbody>
         @for (employee of employees; let rowIndex = $index; track employee.id) {
         <tr>
-          <td class="sticky" (click)="selectRow(rowIndex)" style="cursor: pointer;">
+          <td class="sticky" (click)="selectRow(rowIndex)" [class.row-selected]="isRowSelected(employee.id)"
+            style="cursor: pointer;">
             {{ employee.name }}
           </td>
           @for (day of daysForMonth; let colIndex = $index; track day) {
@@ -87,6 +92,7 @@
     }
   </div>
   }
+  <!--
   @if (vacationTable === "show-vacationTable") {
   <hr>
   <div id="vacation-container">
@@ -116,8 +122,9 @@
   </div>
   }
 </div>
-<div class="comp-wrap">
-  @if (planId === null) {
-  <h1 class="page-header">Lade Dienstplan...</h1>
-  }
-</div>
+-->
+  <div class="comp-wrap">
+    @if (planId === null) {
+    <h1 class="page-header">Lade Dienstplan...</h1>
+    }
+  </div>

@@ -32,22 +32,10 @@ td {
     transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
 }
 
-:host-context(body.light) th,
-:host-context(body.light) td {
-    background-color: #f3f3f3;
-    border: 3px solid #f3f3f3;
-}
-
-:host-context(body.dim) th,
-:host-context(body.dim) td {
-    background-color: #242424;
-    border: 3px solid #242424;
-}
-
-:host-context(body.neon) th,
-:host-context(body.neon) td {
-    background-color: #0d0038;
-    border: 3px solid #0d0038;
+th,
+td {
+    background-color: var(--bgca);
+    border: 3px solid var(--bgca);
 }
 
 .sticky {
@@ -57,19 +45,9 @@ td {
     outline: 2px solid var(--bgc);
 }
 
-:host-context(body.light) tbody tr:nth-child(odd) td {
-    background-color: #e9e9e9;
-    border: 3px solid #e9e9e9;
-}
-
-:host-context(body.dim) tbody tr:nth-child(odd) td {
-    background-color: #2a2a2a;
-    border: 3px solid #2a2a2a;
-}
-
-:host-context(body.neon) tbody tr:nth-child(odd) td {
-    background-color: #100044;
-    border: 3px solid #100044;
+tbody tr:nth-child(odd) td {
+    background-color: var(--bgcaa);
+    border: 3px solid var(--bgcaa);
 }
 
 #entry-buttons {
@@ -247,6 +225,11 @@ td {
     border: 3px solid var(--olc) !important;
 }
 
+.row-selected,
+.col-selected {
+    border: 3px solid var(--tc) !important;
+}
+
 .plan-nav-btn {
     display: inline-flex;
     align-items: center;
@@ -269,20 +252,21 @@ td {
     color: var(--tc);
 }
 
+thead th.weekend-header {
+    cursor: default !important;
+}
+
 :host-context(body.light) thead th.weekend-header:not(.holiday) {
-    cursor: default;
     background-color: #dddddd !important;
     border-color: #dddddd !important;
 }
 
 :host-context(body.dim) thead th.weekend-header:not(.holiday) {
-    cursor: default;
     background-color: #303030 !important;
     border-color: #303030 !important;
 }
 
 :host-context(body.neon) thead th.weekend-header:not(.holiday) {
-    cursor: default;
     background-color: #12004e !important;
     border-color: #12004e !important;
 }
@@ -292,16 +276,19 @@ tbody td.weekend-col {
 }
 
 :host-context(body.light) tbody td.weekend-col {
+    cursor: default !important;
     background-color: #dddddd !important;
     border-color: #dddddd !important;
 }
 
 :host-context(body.dim) tbody td.weekend-col {
+    cursor: default !important;
     background-color: #303030 !important;
     border-color: #303030 !important;
 }
 
 :host-context(body.neon) tbody td.weekend-col {
+    cursor: default !important;
     background-color: #12004e !important;
     border-color: #12004e !important;
 }
@@ -327,15 +314,12 @@ thead th.holiday {
     pointer-events: none;
 }
 
-:host-context(body.soft) .note-indicator,
-:host-context(body.dim) .note-indicator,
-:host-context(body.neon) .note-indicator {
+.note-indicator {
     background-color: var(--black);
 }
 
-:host-context(body.soft) .cell.selected .note-indicator,
-:host-context(body.dim) .cell.selected .note-indicator,
-:host-context(body.neon) .cell.selected .note-indicator {
+.cell.selected .note-indicator
+{
     background-color: var(--tc);
 }
 

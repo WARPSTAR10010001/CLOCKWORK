@@ -59,6 +59,10 @@ hr {
   margin-top: 0;
 }
 
+#update-hr {
+  margin-top: -15px;
+}
+
 :host-context(body.outlines) .overlay {
   outline: 3px solid var(--olc);
 }

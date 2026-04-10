@@ -61,8 +61,8 @@
 
 body.light {
     --bgc: #fff;
-    --bgca: #f0f0f5;
-    --bgcaa: #e1e1eb;
+    --bgca: #f3f3f3;
+    --bgcaa: #e9e9e9;
     --tc: #000;
     --olc: #000;
     --bsc: #0000003f;
@@ -73,8 +73,8 @@ body.light {
 
 body.dim {
     --bgc: #1e1e1e;
-    --bgca: #252525;
-    --bgcaa: #2c2c2c;
+    --bgca: #242424;
+    --bgcaa: #2a2a2a;
     --tc: #fff;
     --olc: #fff;
     --bsc: #00000080;
@@ -85,8 +85,8 @@ body.dim {
 
 body.neon {
     --bgc: #080022;
-    --bgca: #0b002e;
-    --bgcaa: #0d0038;
+    --bgca: #0d0038;
+    --bgcaa: #100044;
     --tc: #fff;
     --olc: #fff;
     --bsc: #3dc2ff30;

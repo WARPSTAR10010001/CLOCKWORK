@@ -2,36 +2,74 @@
     <h1 class="emp page-header">Changelog</h1>
     <div id="page-content" class="text">
         <h1 class="emp" id="major2">Vollversion 2.x.y</h1>
+        <div id="2-1-0">
+            <h2>V2.1.0 - 10.04.2026 - Planviewer Zellenauswahl & Konsistenz Update</h2>
+            <ul>
+                <li>Erweiterte Auswahlvisualisierung im Plan: Beim Auswählen von Zellen werden nun zusätzlich die
+                    zugehörigen
+                    Mitarbeiternamen sowie die entsprechenden Datumsheader hervorgehoben, um Zusammenhänge klarer
+                    darzustellen.</li>
+                <li>Verbessertes Header-Verhalten bei Wochenenden & Feiertagen: Header-Zellen, die sowohl Wochenende als
+                    auch
+                    Feiertag sind, bleiben nun konsistent nicht anklickbar, ohne die bestehende Farbgebung zu
+                    beeinflussen.</li>
+                <li>Hervorhebung des aktuellen Tages: Im aktuellen Monat wird der heutige Tag im Datumsheader nun
+                    visuell
+                    hervorgehoben, um eine bessere Orientierung im Plan zu ermöglichen.</li>
+                <li>Visuelle Konsistenz weiter verbessert: Farben, Abstände und Interaktionen wurden systemweit
+                    feinjustiert,
+                    um ein noch harmonischeres Gesamtbild zu schaffen.</li>
+                <li>CSS-Optimierung der Plan-Component: Die Stylestruktur wurde weiter bereinigt und optimiert, wodurch
+                    Wartbarkeit, Lesbarkeit und Erweiterbarkeit verbessert wurden.</li>
+                <li>Farbliche Vereinheitlichung von CLOCKWORK: Alle Auflistungen im System wurden an das Farbschema der
+                    Planviewers angepasst, wodurch ein konsistentes visuelles Erscheinungsbild über alle Bereiche
+                    hinweg
+                    sichergestellt wird.</li>
+                <li>Temporäre Deaktivierung der Urlaubstagelogik: Die Berechnung und Darstellung der
+                    Urlaubstabelle im Planviewer ist
+                    aktuell
+                    vorübergehend deaktiviert und wird in einem späteren Update wieder eingeführt.</li>
+            </ul>
+            <p>V2.0.1 baut auf der neuen Struktur des Systems auf und konzentriert sich gezielt auf Detailverbesserungen
+                in der
+                Benutzerführung und Darstellung. Durch die präzisere Visualisierung von Auswahlzuständen und die
+                konsequente
+                Vereinheitlichung der Designs wird die tägliche Arbeit im Plan deutlich intuitiver und übersichtlicher.
+            </p>
+        </div>
+        <hr>
         <div id="2-0-0">
             <h2>V2.0.0 - 17.03.2026 - Das Dashboard-Update & Infrastruktur-Overhaul</h2>
             <ul>
-                <li>Einführung des CLOCKWORK-Dashboards: Eine neue, zentrale Anlaufstelle bündelt alle rollenrelevanten 
-                    Funktionen und Navigationslinks. Nutzer können nun direkt zum aktuellen Plan, zur Jahresübersicht 
+                <li>Einführung des CLOCKWORK-Dashboards: Eine neue, zentrale Anlaufstelle bündelt alle rollenrelevanten
+                    Funktionen und Navigationslinks. Nutzer können nun direkt zum aktuellen Plan, zur Jahresübersicht
                     oder in die Admin-/Mod-Panels springen.</li>
-                <li>Individuelle Landingpage: Die Startseite ist nun personalisierbar. Nutzer können wählen, ob sie nach 
-                    dem Login direkt im Dashboard, der Jahresübersicht oder im aktuellen Monatsplan starten möchten.</li>
-                <li>Zentralisierte Einstellungen: Die Anpassung des Designs (Themes, Farben, Materialien) sowie alle 
+                <li>Individuelle Landingpage: Die Startseite ist nun personalisierbar. Nutzer können wählen, ob sie nach
+                    dem Login direkt im Dashboard, der Jahresübersicht oder im aktuellen Monatsplan starten möchten.
+                </li>
+                <li>Zentralisierte Einstellungen: Die Anpassung des Designs (Themes, Farben, Materialien) sowie alle
                     Planoptionen wurden aus dem Footer in das Dashboard verschoben, um die Usability zu erhöhen.</li>
-                <li>Überarbeitung der Farbinfrastruktur: Das gesamte System der globalen Variablen und Werte wurde 
-                    erneuert. Dies umfasst optimierte Verläufe für Karten in der Jahres- und Monatsansicht sowie eine 
+                <li>Überarbeitung der Farbinfrastruktur: Das gesamte System der globalen Variablen und Werte wurde
+                    erneuert. Dies umfasst optimierte Verläufe für Karten in der Jahres- und Monatsansicht sowie eine
                     sauberere CSS-Architektur.</li>
-                <li>Neues Farbpaket "Orange": Als Hommage an den Stanley-Kubrick-Klassiker wurde das Farbschema "Orange" 
+                <li>Neues Farbpaket "Orange": Als Hommage an den Stanley-Kubrick-Klassiker wurde das Farbschema "Orange"
                     hinzugefügt, das dem System einen markanten, neuen Look verleiht.</li>
-                <li>Modpanel-Revisions: Das Panel für Administratoren wurde logisch neu strukturiert. Um Fehler zu 
-                    vermeiden und die Übersicht zu wahren, müssen Fachbereiche nun explizit ausgewählt werden, bevor 
+                <li>Modpanel-Revisions: Das Panel für Administratoren wurde logisch neu strukturiert. Um Fehler zu
+                    vermeiden und die Übersicht zu wahren, müssen Fachbereiche nun explizit ausgewählt werden, bevor
                     Funktionsbuttons eingeblendet werden.</li>
-                <li>Optimierte Suchfunktionen: Das Adminpanel verfügt nun über eine Suchleiste für Fachbereiche. Zudem 
-                    erhalten alle Suchfelder (Dokumentation & Admin) einen Button zum schnellen Löschen des Suchbegriffs.</li>
-                <li>Update-Overlay: Bei bedeutenden Versionssprüngen (Major & Minor) werden Nutzer nun automatisch über 
-                    ein neues Overlay-System über Neuerungen informiert, um die kontinuierliche Entwicklung des Systems 
+                <li>Optimierte Suchfunktionen: Das Adminpanel verfügt nun über eine Suchleiste für Fachbereiche. Zudem
+                    erhalten alle Suchfelder (Dokumentation & Admin) einen Button zum schnellen Löschen des
+                    Suchbegriffs.</li>
+                <li>Update-Overlay: Bei bedeutenden Versionssprüngen (Major & Minor) werden Nutzer nun automatisch über
+                    ein neues Overlay-System über Neuerungen informiert, um die kontinuierliche Entwicklung des Systems
                     transparent zu machen.</li>
-                <li>Visual & Code Refinement: HTML-Strukturen wurden für bessere Performance umgeschrieben. Listen (z.B. 
-                    Logs) nutzen nun alternierende Hintergrundfarben zur besseren Lesbarkeit, und Padding-Differenzen in 
+                <li>Visual & Code Refinement: HTML-Strukturen wurden für bessere Performance umgeschrieben. Listen (z.B.
+                    Logs) nutzen nun alternierende Hintergrundfarben zur besseren Lesbarkeit, und Padding-Differenzen in
                     Overlays wurden harmonisiert.</li>
             </ul>
-            <p>V2.0.0 markiert einen Meilenstein in der Entwicklung von CLOCKWORK. Mit dem Dashboard und der frei 
-                wählbaren Landingpage rückt die individuelle Arbeitsweise der Nutzer in den Fokus. Die tiefgreifenden 
-                Änderungen an der technischen Infrastruktur und die neue visuelle Klarheit schaffen eine solide Basis 
+            <p>V2.0.0 markiert einen Meilenstein in der Entwicklung von CLOCKWORK. Mit dem Dashboard und der frei
+                wählbaren Landingpage rückt die individuelle Arbeitsweise der Nutzer in den Fokus. Die tiefgreifenden
+                Änderungen an der technischen Infrastruktur und die neue visuelle Klarheit schaffen eine solide Basis
                 für die Zukunft des Systems.</p>
         </div>
         <hr>
@@ -325,13 +363,12 @@
             <h2>V0.2.2 - 23.10.2025 - Neue Overlays & erweiterte Mod-Logik</h2>
             <ul>
                 <li>Zwei neue Overlay-Arten hinzugefügt:
-                    <ul>
+                    <ul id="ul-ul">
                         <li>Feedback-Overlay: Grundlage für zukünftiges Feedback-System, das später das Einsenden und
                             Abrufen von Rückmeldungen ermöglichen wird.</li>
                         <li>Quickaction-Overlay: Konzept für Maus-loses Arbeiten mittels Tastenkürzeln; vollständige
                             Implementierung folgt nach der ersten Vollversion.</li>
                     </ul>
-                </li>
                 <li>Neuer Button in der Jahresübersicht hinzugefügt, um Jahrespläne bearbeiten zu können (Logik folgt in
                     einem späteren Update).</li>
                 <li>Mod-Aktionslogik vervollständigt: Nutzer können nun erstellt, bearbeitet und Pläne verwaltet werden.

@@ -452,6 +452,18 @@ export class PlanComponent implements OnInit {
     };
   }
 
+  isToday(day: Date): boolean {
+    const today = new Date();
+
+    return (
+      day.getFullYear() === today.getFullYear() &&
+      day.getMonth() === today.getMonth() &&
+      day.getDate() === today.getDate() &&
+      this.year === today.getFullYear() &&
+      this.month === (today.getMonth() + 1)
+    );
+  }
+
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
     const classes: { [key: string]: boolean } = {
@@ -524,6 +536,14 @@ export class PlanComponent implements OnInit {
 
   isSelected(employeeId: number, day: Date): boolean {
     return this.selectedCells.some(c => this.isSameCell(c, { employeeId, day }));
+  }
+
+  isRowSelected(employeeId: number): boolean {
+    return this.selectedCells.some(c => c.employeeId === employeeId);
+  }
+
+  isColumnSelected(day: Date): boolean {
+    return this.selectedCells.some(c => c.day.getTime() === day.getTime());
   }
 
   private isSameCell(a: SelectedCell, b: SelectedCell): boolean {

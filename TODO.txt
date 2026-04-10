@@ -1,14 +1,14 @@
-V2.0.3:
+V2.2.0:
 Fix error with vacation counter
 
 
-V2.1.0:
+V2.3.0:
 Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Fix routerlink and articlelink not working in documentation
 Extend dashboard with data, documentation articles, etc.
 
 
-V2.1.0:
+V2.4.0:
 Ability to delete plans
 Show and edit status for plans
 

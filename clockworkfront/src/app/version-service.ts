@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private version: string = "2.0.2";
-  private summary: string = "CLOCKWORK hat nun eine neue zentrale Startseite! Zusätzlich dazu wurde die gesamte Infrastruktur erneuert.";
+  private version: string = "2.1.0";
+  private summary: string = "Der Planviewer wurde erweitert: Auswahlfunktionen und visuelle Hervorhebungen wurden verbessert bzw. eingeführt. Hinweis: Die Urlaubstagelogik ist aktuell deaktiviert und wird in einem späteren Update wieder eingeführt.";
   private versionKey = 'last_logged_version';
 
   getVersion(): string {
@@ -12,7 +12,7 @@ export class VersionService {
 
   getDisplayVersion(): string {
     const parts = this.version.split('.');
-    if (parts.length < 2) return this.version; 
+    if (parts.length < 2) return this.version;
     return `${parts[0]}.${parts[1]}.0`;
   }
 
