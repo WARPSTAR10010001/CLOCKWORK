@@ -464,6 +464,14 @@ export class PlanComponent implements OnInit {
     );
   }
 
+  isCurrentMonth(): boolean {
+    const today = new Date();
+    return (
+      this.year === today.getFullYear() &&
+      this.month === (today.getMonth() + 1)
+    );
+  }
+
   getCellClasses(employeeId: number, day: Date): any {
     const type = this.getCellType(employeeId, day);
     const classes: { [key: string]: boolean } = {
