@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private version: string = "2.1.0";
+  private version: string = "2.1.1";
   private summary: string = "Der Planviewer wurde erweitert: Auswahlfunktionen und visuelle Hervorhebungen wurden verbessert bzw. eingeführt. Hinweis: Die Urlaubstagelogik ist aktuell deaktiviert und wird in einem späteren Update wieder eingeführt.";
   private versionKey = 'last_logged_version';
 

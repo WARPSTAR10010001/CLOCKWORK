@@ -219,15 +219,10 @@ tbody tr:nth-child(odd) td {
     color: var(--tc) !important;
 }
 
-:host-context(body.soft) .selected {
-    color: var(--tc);
-    background-color: var(--bgc) !important;
-    border: 3px solid var(--olc) !important;
-}
-
 .row-selected,
 .col-selected {
     border: 3px solid var(--tc) !important;
+    background-color: var(--bgc) !important;
 }
 
 .plan-nav-btn {
