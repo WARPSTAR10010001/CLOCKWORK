@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, canAccessDepartment } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -30,13 +30,17 @@ router.post('/plans/:planId/logs', requireAuth, async (req, res) => {
     !Array.isArray(dates)
   ) {
     return res.status(400).json({
-      error: 'planId, departmentId, employeeId, actionType, dateFrom, dateTo, dayCount, dates benötigt'
+      error: 'planId, departmentId, employeeId, actionType, dateFrom, dateTo, dayCount, dates benoetigt'
     });
+  }
+
+  if (!canAccessDepartment(req.user, departmentId)) {
+    return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
   }
 
   const allowedTypes = ['SET', 'DELETE', 'NOTE_SET', 'NOTE_UPDATE', 'NOTE_DELETE'];
   if (!allowedTypes.includes(actionType)) {
-    return res.status(400).json({ error: 'Ungültiger actionType' });
+    return res.status(400).json({ error: 'Ungueltiger actionType' });
   }
 
   try {
@@ -99,7 +103,15 @@ router.get('/plans/:planId/logs', requireAuth, async (req, res) => {
   const month = Number(req.query.month);
 
   if (!planId || !year || !month) {
-    return res.status(400).json({ error: 'planId, year, month benötigt' });
+    return res.status(400).json({ error: 'planId, year, month benoetigt' });
+  }
+
+  const planRes = await pool.query('SELECT department_id FROM plans WHERE id = $1', [planId]);
+  if (planRes.rowCount === 0) {
+    return res.status(404).json({ error: 'Plan nicht gefunden' });
+  }
+  if (!canAccessDepartment(req.user, planRes.rows[0].department_id)) {
+    return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
   }
 
   const mStr = String(month).padStart(2, '0');

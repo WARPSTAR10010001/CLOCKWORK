@@ -79,6 +79,7 @@ ul {
     width: 100%;
     max-width: 450px;
     margin: 0;
+    text-align: left;
 }
 
 .dept-card hr {
@@ -93,3 +94,68 @@ ul {
 #deletesearch {
     margin-left: 20px;
 }
+
+.manager-department-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.manager-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--bgc);
+    cursor: pointer;
+    font-size: 1.4em;
+    user-select: none;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 50px;
+    height: 30px;
+    border-radius: 20px;
+    border: 5px solid var(--tc);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-width 0.2s ease-in-out;
+    background-color: transparent;
+}
+
+input[type="checkbox"]:hover {
+    border-width: 7px;
+}
+
+input[type="checkbox"]:checked {
+    border-width: 10px;
+    box-shadow: 0px 0px 30px var(--bsc);
+}
+
+.manager-check.create {
+    background-color: var(--bgca);
+}
+
+.manager-check span {
+    font-size: 1.3em;
+}
+
+.card-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.dept-card > button.button-primary {
+    margin-top: 0;
+}
+

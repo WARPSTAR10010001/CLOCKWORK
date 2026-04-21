@@ -1,4 +1,3 @@
-// src/app/mod-overview-component/mod-overview-component.ts
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth-service';
@@ -28,9 +27,12 @@ export class ModOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.isAdmin()) {
+    if (this.authService.isAdmin() || this.authService.isAreaManager()) {
       this.deps.getAllDepartments().subscribe({
-        next: (d) => (this.departments = d || []),
+        next: (d) => {
+          this.departments = d || [];
+          this.selectedDeptId = this.imp.getEffectiveDepartmentId();
+        },
         error: () => {}
       });
       this.selectedDeptId = this.imp.getEffectiveDepartmentId();
@@ -44,12 +46,15 @@ export class ModOverviewComponent implements OnInit {
     this.imp.setDepartmentId(id);
   }
 
+  get needsDepartmentSelection(): boolean {
+    return this.authService.isAdmin() || this.authService.isAreaManager();
+  }
+
   get canNavigate(): boolean {
-    return this.authService.isAdmin() ? this.selectedDeptId != null : true;
+    return this.needsDepartmentSelection ? this.selectedDeptId != null : true;
   }
 
   private requireDept(): number | null {
-    if (this.authService.isAdmin()) return this.selectedDeptId ?? null;
     return this.selectedDeptId ?? null;
   }
 

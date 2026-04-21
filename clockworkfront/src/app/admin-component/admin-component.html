@@ -6,7 +6,8 @@
       <label for="depName">Fachbereichsname:</label>
       <input id="depName" type="text" formControlName="name" placeholder="z.B. IT, Finanzen" />
     </div>
-    <h1>Das initiale Passwort des gesamten Fachbereiches lautet <span class="emp">init</span>. Dieses muss direkt bei der ersten Anmeldung geändert werden.</h1>
+    <h1>Das initiale Passwort des gesamten Fachbereiches lautet <span class="emp">init</span>. Dieses muss direkt bei
+      der ersten Anmeldung geändert werden.</h1>
     <details class="details">
       <summary class="subtitle">Optionale Benutzernamen festlegen</summary>
       <div id="optional">
@@ -22,20 +23,84 @@
     </details>
     <div class="button-row">
       <button class="button-primary" type="submit" [disabled]="form.invalid || submitting">
-        Fachbereich &amp; Nutzer anlegen
+        Fachbereich anlegen
+      </button>
+    </div>
+  </form>
+  <hr>
+  <h1 class="subtitle">Neuen Fachbereichsleiter anlegen</h1>
+  <form [formGroup]="managerForm" (ngSubmit)="createAreaManager()">
+    <div class="form-row">
+      <label for="managerUsername">Benutzername:</label>
+      <input id="managerUsername" type="text" formControlName="username" placeholder="z.B. fb10-leitung" />
+    </div>
+    <div class="manager-department-grid">
+      @for (d of departments; track d.id) {
+      <label class="manager-check create">
+        <input type="checkbox" [checked]="isDepartmentSelectedForCreate(d.id)"
+          (change)="onCreateManagerDepartmentToggle(d.id, $event)" />
+        <span>{{ d.name }}</span>
+      </label>
+      }
+    </div>
+    <h1>Auch hier lautet das initiale Passwort <span class="emp">init</span>. Der Fachbereichsleiter sieht später nur
+      die hier ausgewählten Fachbereiche.</h1>
+    <div class="button-row">
+      <button class="button-primary" type="submit" [disabled]="managerForm.invalid || managerSubmitting">
+        Fachbereichsleiter anlegen
       </button>
     </div>
   </form>
   <hr>
   <div class="header">
-    <h1 class="subtitle">Bestehende Fachbereiche</h1>
+    <h1 class="subtitle">Bestehende Fachbereichsleiter</h1>
 
     <div class="search">
-      <input type="text" [value]="searchTerm" (input)="onSearchInput($event)"
-        placeholder="Suche nach Fachbereichen...">
+      <input type="text" [value]="managerSearchTerm" (input)="onManagerSearchInput($event)"
+        placeholder="Fachbereichsleiter suchen...">
+    </div>
+    @if (managerSearchTerm.trim().length > 0) {
+    <a class="button-action" id="deletesearch" (click)="clearManagerSearch()">Suche löschen</a>
+    }
+  </div>
+  <div class="dept-list">
+    @for (m of managerSearchResults; track m.id) {
+    <div class="dept-card">
+      <div class="card-topline">
+        <h1>{{ m.username }} ({{ m.last_login_at ? formatDateTimeShort(m.last_login_at): 'noch nie angemeldet'}})</h1>
+      </div>
+      <hr>
+      <div class="manager-department-grid">
+        @for (d of departments; track d.id) {
+        <label class="manager-check">
+          <input type="checkbox" [checked]="isDepartmentSelectedForManager(m.id, d.id)"
+            (change)="onManagerDepartmentToggle(m.id, d.id, $event)" />
+          <span>{{ d.name }}</span>
+        </label>
+        }
+      </div>
+      <hr>
+      <button type="button" class="button-primary" (click)="saveAreaManagerDepartments(m)"
+        [disabled]="savingManagerId === m.id">
+        Zuweisungen speichern
+      </button>
+    </div>
+    }
+    @if (managerSearchResults.length === 0 && managerSearchTerm.trim().length > 0) {
+    <h1>Keine Fachbereichsleiter mit "{{ managerSearchTerm }}" gefunden. <span class="emp clickable"
+        (click)="clearManagerSearch()">Andere Suche versuchen</span>.</h1>
+    } @else if (managerSearchResults.length === 0) {
+    <h1>Es sind aktuell keine Fachbereichsleiter angelegt.</h1>
+    }
+  </div>
+  <hr>
+  <div class="header">
+    <h1 class="subtitle">Bestehende Fachbereiche</h1>
+    <div class="search">
+      <input type="text" [value]="searchTerm" (input)="onSearchInput($event)" placeholder="Fachbereich suchen...">
     </div>
     @if (searchTerm.trim().length > 0) {
-      <a class="button-action" id="deletesearch" (click)="clearSearch()">Suche löschen</a>
+    <a class="button-action" id="deletesearch" (click)="clearSearch()">Suche löschen</a>
     }
   </div>
   <div class="dept-list">
@@ -58,9 +123,10 @@
     </div>
     }
     @if (searchResults.length === 0 && searchTerm.trim().length > 0) {
-      <h1>Keine Fachbereiche mit "{{ searchTerm }}" gefunden. <span class="emp clickable" (click)="clearSearch()">Andere Suche versuchen</span>.</h1>
+    <h1>Keine Fachbereiche mit "{{ searchTerm }}" gefunden. <span class="emp clickable" (click)="clearSearch()">Andere
+        Suche versuchen</span>.</h1>
     } @else if (searchResults.length === 0 && searchTerm.trim().length === 0) {
-      <h1>Fachbereiche konnten nicht geladen werden.</h1>
+    <h1>Fachbereiche konnten nicht geladen werden.</h1>
     }
   </div>
 </div>

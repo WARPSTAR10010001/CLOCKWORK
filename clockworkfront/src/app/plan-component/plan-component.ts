@@ -293,13 +293,13 @@ export class PlanComponent implements OnInit {
       map(status => {
         const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
-        const depId = this.auth.isAdmin() ? (impDep ?? null) : fromJwt ?? null;
+        const depId = this.auth.isAdmin() || this.auth.isAreaManager() ? (impDep ?? null) : fromJwt ?? null;
         this.departmentId = depId;
         return depId;
       }),
       switchMap(depId => {
         if (!depId) {
-          if (this.auth.isAdmin()) {
+          if (this.auth.isAdmin() || this.auth.isAreaManager()) {
             this.overlay.showOverlay("info", "Bitte zuerst einen Fachbereich im Modpanel auswählen.");
             this.router.navigate(["/mod"]);
             return of(null);

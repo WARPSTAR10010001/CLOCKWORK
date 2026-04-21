@@ -35,7 +35,7 @@ export class ModEditPlanComponent implements OnInit {
     private imp: ImpersonationService,
     private overlay: OverlayService,
     public auth: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.year = Number(this.route.snapshot.paramMap.get('year'));
@@ -62,12 +62,12 @@ export class ModEditPlanComponent implements OnInit {
         const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
 
-        const depId = this.auth.isAdmin()
+        const depId = this.auth.isAdmin() || this.auth.isAreaManager()
           ? (impDep ?? null)
           : (fromJwt ?? null);
 
         if (!depId) {
-          if (this.auth.isAdmin()) {
+          if (this.auth.isAdmin() || this.auth.isAreaManager()) {
             this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
             this.router.navigate(['/mod']);
           } else {
@@ -106,15 +106,16 @@ export class ModEditPlanComponent implements OnInit {
         if (!bundle) return;
 
         const active = (bundle.employees || []).filter(e => e.is_active !== false);
-
         this.employees = active.filter(e => this.employeeOverlapsYear(e, this.year));
 
-        this.inPlanIds = new Set((bundle.links.items || []).map(x => x.employee_id));
+        const linksByEmployeeId = new Map((bundle.links.items || []).map(link => [link.employee_id, link]));
+        this.inPlanIds = new Set((bundle.links.items || []).map(link => link.employee_id));
 
         this.employees.forEach(e => {
+          const link = linksByEmployeeId.get(e.id);
           this.edits[e.id] = {
-            annual: e.annual_leave_days ?? 30,
-            carry: e.carryover_days ?? 0
+            annual: link?.annual_leave_days ?? e.annual_leave_days ?? 30,
+            carry: link?.carryover_days ?? e.carryover_days ?? 0
           };
         });
       },
@@ -162,7 +163,14 @@ export class ModEditPlanComponent implements OnInit {
       end = clampedEnd;
     }
 
-    this.plan.addEmployeeToPlan(this.planId, e.id, start, end).pipe(take(1)).subscribe({
+    this.plan.addEmployeeToPlan(
+      this.planId,
+      e.id,
+      start,
+      end,
+      Number(this.edits[e.id]?.annual ?? e.annual_leave_days ?? 30),
+      Number(this.edits[e.id]?.carry ?? e.carryover_days ?? 0)
+    ).pipe(take(1)).subscribe({
       next: () => {
         this.inPlanIds.add(e.id);
         this.overlay.showOverlay('success', `${e.name} in den Plan aufgenommen.`);
@@ -172,15 +180,19 @@ export class ModEditPlanComponent implements OnInit {
   }
 
   saveEmployee(e: Employee): void {
-    const payload = {
-      annualLeaveDays: Number(this.edits[e.id].annual),
-      carryoverDays: Number(this.edits[e.id].carry)
-    };
-    this.empService.updateEmployee(e.id, payload).pipe(take(1)).subscribe({
-      next: (updated) => {
-        e.annual_leave_days = updated.annual_leave_days;
-        e.carryover_days = updated.carryover_days;
-        this.overlay.showOverlay('success', 'Die gewünschten Änderungen wurden gespeichert.');
+    if (!this.isInPlan(e)) {
+      this.overlay.showOverlay('info', 'Bitte fügen Sie den Mitarbeiter zuerst zum Plan hinzu.');
+      return;
+    }
+
+    this.plan.updatePlanEmployeeValues(
+      this.planId,
+      e.id,
+      Number(this.edits[e.id].annual),
+      Number(this.edits[e.id].carry)
+    ).pipe(take(1)).subscribe({
+      next: () => {
+        this.overlay.showOverlay('success', 'Die gewünschten Änderungen wurden für diesen Plan gespeichert.');
       },
       error: () => this.overlay.showOverlay('error', 'Speichern fehlgeschlagen.')
     });

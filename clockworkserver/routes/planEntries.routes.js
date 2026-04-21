@@ -1,8 +1,9 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth, requireRole, enforceDepartmentScope } = require('../middleware/auth');
+const { requireAuth, requireRole, enforceDepartmentScope, canAccessDepartment } = require('../middleware/auth');
 
 const router = express.Router();
+const MANAGER_ROLE = 'AREA_MANAGER';
 
 const VALID_STATUS = new Set([
   'PRESENCE',
@@ -18,6 +19,7 @@ const VALID_STATUS = new Set([
 function isIsoDate(s) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
 }
+
 function isYearMonth(s) {
   return /^\d{4}-\d{2}$/.test(s);
 }
@@ -25,16 +27,16 @@ function isYearMonth(s) {
 router.post(
   '/plan-entries',
   requireAuth,
-  requireRole('USER', 'MOD'),
+  requireRole('USER', 'MOD', MANAGER_ROLE),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const { planId, departmentId, employeeId, date, status, notes } = req.body || {};
 
     if (!planId || !departmentId || !employeeId || !date || !status) {
-      return res.status(400).json({ error: 'planId, departmentId, employeeId, date, status benötigt' });
+      return res.status(400).json({ error: 'planId, departmentId, employeeId, date, status benoetigt' });
     }
     if (!isIsoDate(date)) return res.status(400).json({ error: 'Datum muss im Format YYYY-MM-DD sein' });
-    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungültiger Status' });
+    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungueltiger Status' });
 
     let cleanNotes = null;
     if (typeof notes === 'string') {
@@ -63,7 +65,7 @@ router.post(
       const dowQ = await client.query('SELECT EXTRACT(ISODOW FROM $1::date) AS dow', [date]);
       if (Number(dowQ.rows[0].dow) >= 6) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Einträge am Wochenende nicht zugelassen' });
+        return res.status(400).json({ error: 'Eintraege am Wochenende nicht zugelassen' });
       }
 
       const empQ = await client.query(
@@ -72,7 +74,7 @@ router.post(
       );
       if (empQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Mitarbeiter gehört nicht zum Fachbereich' });
+        return res.status(400).json({ error: 'Mitarbeiter gehoert nicht zum Fachbereich' });
       }
 
       const peQ = await client.query(
@@ -87,7 +89,7 @@ router.post(
       );
       if (peQ.rowCount === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Mitarbeiter gehört nicht zum Plan' });
+        return res.status(400).json({ error: 'Mitarbeiter gehoert nicht zum Plan' });
       }
       const { start_m, end_m } = peQ.rows[0];
 
@@ -95,11 +97,11 @@ router.post(
         'SELECT date_trunc(\'month\', $1::date)::date AS entry_month',
         [date]
       );
-      const entry_month = entryMonthQ.rows[0].entry_month;
+      const entryMonth = entryMonthQ.rows[0].entry_month;
 
-      if (entry_month < start_m || (end_m && entry_month > end_m)) {
+      if (entryMonth < start_m || (end_m && entryMonth > end_m)) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Datum liegt außerhalb der aktiven Monate des Mitarbeiters' });
+        return res.status(400).json({ error: 'Datum liegt ausserhalb der aktiven Monate des Mitarbeiters' });
       }
 
       const upsert = await client.query(
@@ -137,14 +139,14 @@ router.post(
 router.post(
   '/plan-entries/batch',
   requireAuth,
-  requireRole('USER', 'MOD'),
+  requireRole('USER', 'MOD', MANAGER_ROLE),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const { planId, departmentId, employeeId, status, dates, notes } = req.body || {};
     if (!planId || !departmentId || !employeeId || !status || !Array.isArray(dates) || dates.length === 0) {
-      return res.status(400).json({ error: 'planId, departmentId, employeeId, status und dates[] benötigt' });
+      return res.status(400).json({ error: 'planId, departmentId, employeeId, status und dates[] benoetigt' });
     }
-    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungültiger Status' });
+    if (!VALID_STATUS.has(status)) return res.status(400).json({ error: 'Ungueltiger Status' });
 
     let cleanNotes = null;
     if (typeof notes === 'string') {
@@ -194,7 +196,6 @@ router.post(
 
       for (const d of dates) {
         if (!isIsoDate(d)) { skipped.invalid++; continue; }
-
         if (parseInt(d.slice(0, 4), 10) !== plan.year) { skipped.outOfYear++; continue; }
 
         const { rows: [r] } = await client.query(
@@ -205,7 +206,8 @@ router.post(
         if (Number(r.dow) >= 6) { skipped.weekend++; continue; }
 
         if (r.entry_month < start_m || (end_m && r.entry_month > end_m)) {
-          skipped.outOfWindow++; continue;
+          skipped.outOfWindow++;
+          continue;
         }
 
         eligible.push(d);
@@ -273,7 +275,7 @@ router.get(
   requireAuth,
   async (req, res) => {
     const { planId, month } = req.query || {};
-    if (!planId || !month) return res.status(400).json({ error: 'planId und month=YYYY-MM benötigt' });
+    if (!planId || !month) return res.status(400).json({ error: 'planId und month=YYYY-MM benoetigt' });
     if (!isYearMonth(month)) return res.status(400).json({ error: 'month muss im Format YYYY-MM sein' });
 
     const client = await pool.connect();
@@ -282,27 +284,27 @@ router.get(
       if (plan.rowCount === 0) return res.status(404).json({ error: 'Plan wurde nicht gefunden' });
 
       const departmentId = plan.rows[0].department_id;
-      if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+      if (!canAccessDepartment(req.user, departmentId)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       const start = `${month}-01`;
       const query = `
-  SELECT 
-    pe.id,
-    pe.employee_id,
-    e.display_name,
-    to_char(pe.entry_date, 'YYYY-MM-DD') AS entry_date,
-    pe.status,
-    pe.notes,
-    pe.created_at
-  FROM plan_entries pe
-  JOIN employees e ON e.id = pe.employee_id
-  WHERE pe.plan_id = $1
-    AND pe.entry_date >= $2::date
-    AND pe.entry_date < (date_trunc('month', $2::date) + INTERVAL '1 month')
-  ORDER BY pe.entry_date ASC, e.display_name ASC
-`;
+        SELECT 
+          pe.id,
+          pe.employee_id,
+          e.display_name,
+          to_char(pe.entry_date, 'YYYY-MM-DD') AS entry_date,
+          pe.status,
+          pe.notes,
+          pe.created_at
+        FROM plan_entries pe
+        JOIN employees e ON e.id = pe.employee_id
+        WHERE pe.plan_id = $1
+          AND pe.entry_date >= $2::date
+          AND pe.entry_date < (date_trunc('month', $2::date) + INTERVAL '1 month')
+        ORDER BY pe.entry_date ASC, e.display_name ASC
+      `;
       const { rows } = await client.query(query, [planId, start]);
       return res.json({ entries: rows, departmentId });
     } catch (err) {
@@ -317,16 +319,16 @@ router.get(
 router.patch(
   '/plan-entries/:id',
   requireAuth,
-  requireRole('USER', 'MOD'),
+  requireRole('USER', 'MOD', MANAGER_ROLE),
   async (req, res) => {
     const { id } = req.params;
     const { status, notes } = req.body || {};
 
     if (!status && typeof notes === 'undefined') {
-      return res.status(400).json({ error: 'Status oder Notes benötigt' });
+      return res.status(400).json({ error: 'Status oder Notes benoetigt' });
     }
     if (status && !VALID_STATUS.has(status)) {
-      return res.status(400).json({ error: 'Ungültiger Status' });
+      return res.status(400).json({ error: 'Ungueltiger Status' });
     }
 
     let cleanNotes;
@@ -350,8 +352,8 @@ router.patch(
       if (q.rowCount === 0) return res.status(404).json({ error: 'Eintrag wurde nicht gefunden' });
 
       const departmentId = q.rows[0].department_id;
-      if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+      if (!canAccessDepartment(req.user, departmentId)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       const fields = [];
@@ -389,7 +391,7 @@ router.patch(
 router.delete(
   '/plan-entries/:id',
   requireAuth,
-  requireRole('USER', 'MOD'),
+  requireRole('USER', 'MOD', MANAGER_ROLE),
   async (req, res) => {
     const { id } = req.params;
 
@@ -398,8 +400,8 @@ router.delete(
       const q = await client.query('SELECT department_id FROM plan_entries WHERE id=$1', [id]);
       if (q.rowCount === 0) return res.status(404).json({ error: 'Entry wurde nicht gefunden' });
       const departmentId = q.rows[0].department_id;
-      if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+      if (!canAccessDepartment(req.user, departmentId)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       await client.query('DELETE FROM plan_entries WHERE id=$1', [id]);
@@ -416,12 +418,12 @@ router.delete(
 router.post(
   '/plan-entries/delete-batch',
   requireAuth,
-  requireRole('USER', 'MOD'),
+  requireRole('USER', 'MOD', MANAGER_ROLE),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const { planId, departmentId, employeeId, dates } = req.body || {};
     if (!planId || !departmentId || !employeeId || !Array.isArray(dates) || dates.length === 0) {
-      return res.status(400).json({ error: 'planId, departmentId, employeeId und dates[] benötigt' });
+      return res.status(400).json({ error: 'planId, departmentId, employeeId und dates[] benoetigt' });
     }
 
     const client = await pool.connect();
@@ -449,7 +451,7 @@ router.post(
       const filtered = dates.filter(isIsoDate);
       if (filtered.length === 0) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'Keine gültigen Daten' });
+        return res.status(400).json({ error: 'Keine gueltigen Daten' });
       }
 
       const del = await client.query(

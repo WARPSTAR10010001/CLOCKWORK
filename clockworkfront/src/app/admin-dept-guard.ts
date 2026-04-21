@@ -8,7 +8,7 @@ export class AdminDeptGuard  {
   constructor(private auth: AuthService, private imp: ImpersonationService, private router: Router) {}
 
   canActivate(): boolean {
-    if (!this.auth.isAdmin()) return true;
+    if (!this.auth.isAdmin() && !this.auth.isAreaManager()) return true;
     if (this.imp.getEffectiveDepartmentId() == null) {
       this.router.navigate(['/mod']);
       return false;

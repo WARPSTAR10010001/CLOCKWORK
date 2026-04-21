@@ -5,7 +5,7 @@
       @for (year of years; track year.value) {
       <a [routerLink]="['/plan', year.value]" class="year-card" [ngClass]="year.colorClass">
         <span>{{ year.value }}</span>
-        @if (auth.isMod() || auth.isAdmin()) {
+        @if (auth.isMod() || auth.isAdmin() || auth.isAreaManager()) {
         <hr class="vertical">
         <a class="button-primary incard" [routerLink]="['/plan', 'edit', year.value]">Bearbeiten</a>
         }

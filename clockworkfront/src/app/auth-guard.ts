@@ -59,7 +59,7 @@ export const ModGuard: CanActivateFn = (): Observable<boolean> => {
         take(1),
         map(authStatus => {
             const role = authStatus?.user?.role;
-            if (role === 'mod' || role === 'admin') {
+            if (role === 'mod' || role === 'admin' || role === 'areaManager') {
                 return true;
             } else {
                 router.navigate(['/auth']);

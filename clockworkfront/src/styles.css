@@ -63,10 +63,10 @@ body.light {
     --bgc: #fff;
     --bgca: #f3f3f3;
     --bgcaa: #e9e9e9;
-    --tc: #000;
-    --olc: #000;
+    --tc: #000000;
+    --olc: #000000;
     --bsc: #0000003f;
-    --bc: #fff;
+    --bc: #ffffff;
     --gbgc: #ffffff4b;
     --gbgb: #ffffffb4;
 }
@@ -75,20 +75,32 @@ body.dim {
     --bgc: #1e1e1e;
     --bgca: #242424;
     --bgcaa: #2a2a2a;
-    --tc: #fff;
-    --olc: #fff;
+    --tc: #ffffff;
+    --olc: #ffffff;
     --bsc: #00000080;
     --bc: #1e1e1e;
     --gbgc: #1e1e1e4b;
-    --gbgb: #3d3d3d46;
+    --gbgb: #76767672;
+}
+
+body.dark {
+    --bgc: #000000;
+    --bgca: #1e1e1e;
+    --bgcaa: #242424;
+    --tc: #ffffff;
+    --olc: #ffffff;
+    --bsc: #424242;
+    --bc: #fffffff;
+    --gbgc: #0000005e;
+    --gbgb: #ffffff46;
 }
 
 body.neon {
     --bgc: #080022;
     --bgca: #0d0038;
     --bgcaa: #100044;
-    --tc: #fff;
-    --olc: #fff;
+    --tc: #ffffff;
+    --olc: #ffffff;
     --bsc: #3dc2ff30;
     --bc: #0a002b;
     --gbgc: #0800224b;
@@ -139,6 +151,11 @@ body.light {
 }
 
 body.dim {
+    background-color: var(--bgc);
+    color: var(--tc);
+}
+
+body.dark {
     background-color: var(--bgc);
     color: var(--tc);
 }

@@ -222,7 +222,9 @@ CREATE TABLE public.plan_employees (
     employee_id integer,
     start_month date NOT NULL,
     end_month date,
-    initial_balance integer DEFAULT 0 NOT NULL
+    initial_balance integer DEFAULT 0 NOT NULL,
+    annual_leave_days integer DEFAULT 30 NOT NULL,
+    carryover_days integer DEFAULT 0 NOT NULL
 );
 
 
@@ -405,7 +407,7 @@ CREATE TABLE public.system_users (
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     password_reset boolean DEFAULT true NOT NULL,
     last_login_at timestamp with time zone,
-    CONSTRAINT system_users_role_check CHECK ((role = ANY (ARRAY['ADMIN'::text, 'MOD'::text, 'USER'::text])))
+    CONSTRAINT system_users_role_check CHECK ((role = ANY (ARRAY['ADMIN'::text, 'MOD'::text, 'USER'::text, 'AREA_MANAGER'::text])))
 );
 
 
@@ -660,6 +662,19 @@ ALTER TABLE ONLY public.system_users
 
 
 --
+-- TOC entry 2380 (class 1259 OID 20001)
+-- Name: user_department_access; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_department_access (
+    user_id integer NOT NULL,
+    department_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_department_access_pkey PRIMARY KEY (user_id, department_id)
+);
+
+
+--
 -- TOC entry 4954 (class 2606 OID 16539)
 -- Name: plan_entries uq_plan_entries_employee_date; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
@@ -848,6 +863,24 @@ ALTER TABLE ONLY public.plans
 
 ALTER TABLE ONLY public.system_users
     ADD CONSTRAINT system_users_department_id_fkey FOREIGN KEY (department_id) REFERENCES public.departments(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4981 (class 2606 OID 20002)
+-- Name: user_department_access user_department_access_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_department_access
+    ADD CONSTRAINT user_department_access_department_id_fkey FOREIGN KEY (department_id) REFERENCES public.departments(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4982 (class 2606 OID 20003)
+-- Name: user_department_access user_department_access_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_department_access
+    ADD CONSTRAINT user_department_access_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.system_users(id) ON DELETE CASCADE;
 
 
 -- Completed on 2026-03-18 17:05:28

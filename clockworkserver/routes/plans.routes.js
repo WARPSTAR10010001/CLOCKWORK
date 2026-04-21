@@ -1,8 +1,9 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth, requireRole, enforceDepartmentScope } = require('../middleware/auth');
+const { requireAuth, requireRole, enforceDepartmentScope, canAccessDepartment } = require('../middleware/auth');
 
 const router = express.Router();
+const MANAGER_ROLE = 'AREA_MANAGER';
 
 function isIsoDate(s) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -13,8 +14,14 @@ router.get('/plans/:id/plan-employees', requireAuth, async (req, res) => {
   if (!planId) return res.status(400).json({ error: 'planId fehlt' });
 
   try {
+    const planRes = await pool.query('SELECT department_id FROM plans WHERE id = $1', [planId]);
+    if (planRes.rowCount === 0) return res.status(404).json({ error: 'Plan nicht gefunden' });
+    if (!canAccessDepartment(req.user, planRes.rows[0].department_id)) {
+      return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
+    }
+
     const { rows } = await pool.query(
-      `SELECT pe.employee_id, pe.start_month, pe.end_month
+      `SELECT pe.employee_id, pe.start_month, pe.end_month, pe.annual_leave_days, pe.carryover_days
          FROM plan_employees pe
         WHERE pe.plan_id = $1
         ORDER BY pe.employee_id`,
@@ -30,10 +37,10 @@ router.get('/plans/:id/plan-employees', requireAuth, async (req, res) => {
 router.post(
   '/plans/:id/plan-employees',
   requireAuth,
-  requireRole('MOD', 'ADMIN'),
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
   async (req, res) => {
     const planId = Number(req.params.id);
-    const { employeeId, startMonth, endMonth = null } = req.body || {};
+    const { employeeId, startMonth, endMonth = null, annualLeaveDays, carryoverDays } = req.body || {};
 
     if (!planId || !employeeId || !startMonth) {
       return res.status(400).json({ error: 'planId, employeeId, startMonth erforderlich' });
@@ -41,20 +48,35 @@ router.post(
 
     const client = await pool.connect();
     try {
+      const planRes = await client.query('SELECT department_id FROM plans WHERE id = $1', [planId]);
+      if (planRes.rowCount === 0) {
+        return res.status(404).json({ error: 'Plan nicht gefunden' });
+      }
+      const departmentId = planRes.rows[0].department_id;
+      if (!canAccessDepartment(req.user, departmentId)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
+      }
+
       const emp = await client.query(
-        `SELECT carryover_days
+        `SELECT carryover_days, annual_leave_days
            FROM employees
-          WHERE id = $1`,
-        [employeeId]
+          WHERE id = $1 AND department_id = $2`,
+        [employeeId, departmentId]
       );
-      const initialBalance = emp.rows[0]?.carryover_days ?? 0;
+      if (emp.rowCount === 0) {
+        return res.status(400).json({ error: 'Mitarbeiter gehoert nicht zum Fachbereich des Plans' });
+      }
+
+      const initialBalance = carryoverDays ?? emp.rows[0]?.carryover_days ?? 0;
+      const planAnnualLeaveDays = annualLeaveDays ?? emp.rows[0]?.annual_leave_days ?? 30;
+      const planCarryoverDays = carryoverDays ?? emp.rows[0]?.carryover_days ?? 0;
 
       const ins = await client.query(
-        `INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance, annual_leave_days, carryover_days)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (plan_id, employee_id) DO NOTHING
          RETURNING plan_id, employee_id`,
-        [planId, employeeId, startMonth, endMonth, initialBalance]
+        [planId, employeeId, startMonth, endMonth, initialBalance, planAnnualLeaveDays, planCarryoverDays]
       );
 
       return res.status(201).json({ added: ins.rowCount > 0 });
@@ -68,13 +90,66 @@ router.post(
 );
 
 router.post(
+  '/plans/:id/plan-employees/:employeeId',
+  requireAuth,
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
+  async (req, res) => {
+    const planId = Number(req.params.id);
+    const employeeId = Number(req.params.employeeId);
+    const { annualLeaveDays, carryoverDays } = req.body || {};
+
+    if (!Number.isFinite(planId) || !Number.isFinite(employeeId)) {
+      return res.status(400).json({ error: 'Ungültige Plan- oder Mitarbeiter-ID' });
+    }
+    if (!Number.isFinite(Number(annualLeaveDays)) || !Number.isFinite(Number(carryoverDays))) {
+      return res.status(400).json({ error: 'annualLeaveDays und carryoverDays müssen Zahlen sein' });
+    }
+
+    const client = await pool.connect();
+    try {
+      const planRes = await client.query(
+        'SELECT department_id FROM plans WHERE id = $1',
+        [planId]
+      );
+      if (planRes.rowCount === 0) {
+        return res.status(404).json({ error: 'Plan nicht gefunden' });
+      }
+      if (!canAccessDepartment(req.user, planRes.rows[0].department_id)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
+      }
+
+      const updateRes = await client.query(
+        `UPDATE plan_employees
+            SET annual_leave_days = $1,
+                carryover_days = $2,
+                initial_balance = $2
+          WHERE plan_id = $3 AND employee_id = $4
+          RETURNING plan_id, employee_id, annual_leave_days, carryover_days`,
+        [Number(annualLeaveDays), Number(carryoverDays), planId, employeeId]
+      );
+
+      if (updateRes.rowCount === 0) {
+        return res.status(404).json({ error: 'Mitarbeiter wurde im Plan nicht gefunden' });
+      }
+
+      return res.json(updateRes.rows[0]);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Interner Serverfehler' });
+    } finally {
+      client.release();
+    }
+  }
+);
+
+router.post(
   '/plans/:id/sync-employees',
   requireAuth,
-  requireRole('MOD', 'ADMIN'),
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
   async (req, res) => {
     const planId = Number(req.params.id);
     if (!Number.isFinite(planId)) {
-      return res.status(400).json({ error: 'Ungültige Plan-ID' });
+      return res.status(400).json({ error: 'Ungueltige Plan-ID' });
     }
 
     const client = await pool.connect();
@@ -91,12 +166,9 @@ router.post(
       }
       const plan = planRes.rows[0];
 
-      if (
-        req.user.role !== 'ADMIN' &&
-        String(req.user.departmentId) !== String(plan.department_id)
-      ) {
+      if (!canAccessDepartment(req.user, plan.department_id)) {
         await client.query('ROLLBACK');
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       const year = plan.year;
@@ -112,6 +184,7 @@ router.post(
         SELECT
           e.id AS employee_id,
           e.carryover_days,
+          e.annual_leave_days,
           GREATEST(e.start_month, y.year_start) AS start_in_year,
           CASE
             WHEN e.end_month IS NULL OR e.end_month > y.year_end
@@ -124,10 +197,8 @@ router.post(
           e.department_id = $2
           AND e.is_active = TRUE
           AND e.start_month IS NOT NULL
-          -- Overlap mit Planjahr
           AND e.start_month <= y.year_end
           AND (e.end_month IS NULL OR e.end_month >= y.year_start)
-          -- noch kein Eintrag in plan_employees für diesen Plan
           AND NOT EXISTS (
             SELECT 1
             FROM plan_employees pe
@@ -141,8 +212,8 @@ router.post(
       for (const row of toInsert) {
         await client.query(
           `
-          INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
-          VALUES ($1, $2, $3, $4, $5)
+          INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance, annual_leave_days, carryover_days)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
           ON CONFLICT (plan_id, employee_id) DO NOTHING
           `,
           [
@@ -150,6 +221,8 @@ router.post(
             row.employee_id,
             row.start_in_year,
             row.end_in_year,
+            row.carryover_days ?? 0,
+            row.annual_leave_days ?? 30,
             row.carryover_days ?? 0
           ]
         );
@@ -171,11 +244,11 @@ router.post(
 router.post(
   '/plans/:id/sync-employee-dates',
   requireAuth,
-  requireRole('MOD', 'ADMIN'),
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
   async (req, res) => {
     const planId = Number(req.params.id);
     if (!Number.isFinite(planId)) {
-      return res.status(400).json({ error: 'Ungültige Plan-ID' });
+      return res.status(400).json({ error: 'Ungueltige Plan-ID' });
     }
 
     const client = await pool.connect();
@@ -192,12 +265,9 @@ router.post(
       }
       const plan = planRes.rows[0];
 
-      if (
-        req.user.role !== 'ADMIN' &&
-        String(req.user.departmentId) !== String(plan.department_id)
-      ) {
+      if (!canAccessDepartment(req.user, plan.department_id)) {
         await client.query('ROLLBACK');
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       const year = plan.year;
@@ -258,16 +328,16 @@ router.get(
       if (planRes.rowCount === 0) return res.status(404).json({ error: 'Plan wurde nicht gefunden' });
 
       const plan = planRes.rows[0];
-      if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(plan.department_id)) {
-        return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+      if (!canAccessDepartment(req.user, plan.department_id)) {
+        return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       const peRes = await client.query(
         `SELECT pe.id AS plan_employee_id,
                 e.id AS employee_id,
                 e.display_name,
-                e.annual_leave_days,
-                e.carryover_days,
+                pe.annual_leave_days,
+                pe.carryover_days,
                 pe.start_month,
                 pe.end_month,
                 pe.initial_balance
@@ -284,11 +354,11 @@ router.get(
           WHERE plan_id = $1 AND year = $2`,
         [id, plan.year]
       );
-      const usedByEmp = new Map(vuRes.rows.map(r => [String(r.employee_id), Number(r.used_days)]));
+      const usedByEmp = new Map(vuRes.rows.map((r) => [String(r.employee_id), Number(r.used_days)]));
 
-      const employees = peRes.rows.map(r => {
+      const employees = peRes.rows.map((r) => {
         const used = usedByEmp.get(String(r.employee_id)) || 0;
-        const available = (r.initial_balance ?? 0) + (r.carryover_days ?? 0) + (r.annual_leave_days ?? 0);
+        const available = (r.carryover_days ?? 0) + (r.annual_leave_days ?? 0);
         const remaining = available - used;
         return {
           planEmployeeId: r.plan_employee_id,
@@ -326,10 +396,10 @@ router.get(
   requireAuth,
   async (req, res) => {
     const { departmentId } = req.query || {};
-    if (!departmentId) return res.status(400).json({ error: 'departmentId benötigt' });
+    if (!departmentId) return res.status(400).json({ error: 'departmentId benoetigt' });
 
-    if (req.user.role !== 'ADMIN' && String(req.user.departmentId) !== String(departmentId)) {
-      return res.status(403).json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+    if (!canAccessDepartment(req.user, departmentId)) {
+      return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
     }
 
     try {
@@ -351,20 +421,20 @@ router.get(
 router.post(
   '/plans',
   requireAuth,
-  requireRole('MOD'),
+  requireRole('MOD', MANAGER_ROLE),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const { departmentId, year, employees } = req.body || {};
 
     if (!departmentId || !year || !Array.isArray(employees) || employees.length === 0) {
-      return res.status(400).json({ error: 'departmentId, year und employees[] benötigt' });
+      return res.status(400).json({ error: 'departmentId, year und employees[] benoetigt' });
     }
     if (!Number.isInteger(year) || year < 2000 || year > 2100) {
-      return res.status(400).json({ error: 'Ungültiges Jahr' });
+      return res.status(400).json({ error: 'Ungueltiges Jahr' });
     }
     for (const e of employees) {
-      if (!e.employeeId || !e.startMonth || typeof e.initialBalance !== 'number') {
-        return res.status(400).json({ error: 'employees[].employeeId, startMonth und initialBalance benötigt' });
+      if (!e.employeeId || !e.startMonth || typeof e.annualLeaveDays !== 'number' || typeof e.carryoverDays !== 'number') {
+        return res.status(400).json({ error: 'employees[].employeeId, startMonth, annualLeaveDays und carryoverDays benoetigt' });
       }
       if (!isIsoDate(e.startMonth)) {
         return res.status(400).json({ error: 'employees[].startMonth muss im Format YYYY-MM-DD sein' });
@@ -372,8 +442,8 @@ router.post(
       if (e.endMonth && !isIsoDate(e.endMonth)) {
         return res.status(400).json({ error: 'employees[].endMonth muss im Format YYYY-MM-DD sein oder null sein' });
       }
-      if (e.initialBalance < 0) {
-        return res.status(400).json({ error: 'employees[].initialBalance muss >= 0 sein' });
+      if (e.annualLeaveDays < 0 || e.carryoverDays < 0) {
+        return res.status(400).json({ error: 'employees[].annualLeaveDays und employees[].carryoverDays muessen >= 0 sein' });
       }
     }
 
@@ -393,7 +463,7 @@ router.post(
       );
       if (existing.rowCount > 0) {
         await client.query('ROLLBACK');
-        return res.status(409).json({ error: 'Ein Plan existiert bereits für das ausgewählte Jahr' });
+        return res.status(409).json({ error: 'Ein Plan existiert bereits fuer das ausgewaehlte Jahr' });
       }
 
       const planInsert = await client.query(
@@ -404,22 +474,22 @@ router.post(
       );
       const plan = planInsert.rows[0];
 
-      const empIds = employees.map(e => e.employeeId);
+      const empIds = employees.map((e) => e.employeeId);
       const empCheck = await client.query(
         `SELECT id FROM employees WHERE department_id = $1 AND id = ANY($2::int[])`,
         [departmentId, empIds]
       );
-      const validIds = new Set(empCheck.rows.map(r => r.id));
+      const validIds = new Set(empCheck.rows.map((r) => r.id));
       for (const e of employees) {
         if (!validIds.has(e.employeeId)) {
           await client.query('ROLLBACK');
-          return res.status(400).json({ error: `Mitarbeiter ${e.employeeId} gehört nicht zum Fachbereich ${departmentId}` });
+          return res.status(400).json({ error: `Mitarbeiter ${e.employeeId} gehoert nicht zum Fachbereich ${departmentId}` });
         }
       }
 
       const insertPEText = `
-        INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO plan_employees (plan_id, employee_id, start_month, end_month, initial_balance, annual_leave_days, carryover_days)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
       `;
       for (const e of employees) {
@@ -428,7 +498,9 @@ router.post(
           e.employeeId,
           e.startMonth,
           e.endMonth || null,
-          e.initialBalance
+          e.carryoverDays,
+          e.annualLeaveDays,
+          e.carryoverDays
         ]);
       }
 

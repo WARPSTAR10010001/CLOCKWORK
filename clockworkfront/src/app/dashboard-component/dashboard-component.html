@@ -3,7 +3,7 @@
     <div>
         <h1 class="subtitle">Schnellstart</h1>
         <div class="card-entries">
-            @if (auth.isLoggedIn() && !auth.isMod() && !auth.isAdmin()) {
+            @if (auth.isLoggedIn() && !auth.isMod() && !auth.isAdmin() && !auth.isAreaManager()) {
             <div class="card" [routerLink]="['/plan', year, month]">
                 <h1>Aktueller Plan</h1>
             </div>
@@ -11,18 +11,22 @@
                 <h1>Jahresübersicht</h1>
             </div>
             }
-            @if (auth.isLoggedIn() && auth.isMod() && !auth.isAdmin()) {
+            @if (auth.isLoggedIn() && (auth.isMod() || auth.isAreaManager()) && !auth.isAdmin()) {
             <div class="card" [routerLink]="['/plan', year, month]">
                 <h1>Aktueller Plan</h1>
             </div>
             <div class="card" [routerLink]="['/mod']">
+                @if (auth.isAreaManager()) {
+                <h1>Leitungspanel</h1>
+                } @else {
                 <h1>Modpanel</h1>
+                }
             </div>
             <div class="card" [routerLink]="['/years']">
                 <h1>Jahresübersicht</h1>
             </div>
             }
-            @if (auth.isLoggedIn() && !auth.isMod() && auth.isAdmin()) {
+            @if (auth.isLoggedIn() && auth.isAdmin()) {
             <div class="card" [routerLink]="['/admin']">
                 <h1>Adminpanel</h1>
             </div>

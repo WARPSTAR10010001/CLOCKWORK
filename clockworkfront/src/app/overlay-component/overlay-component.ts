@@ -45,7 +45,7 @@ export class OverlayComponent implements OnInit {
   selectedCompressedRows: CompressedRows = "standard-rows";
   selectedShowLetters: ShowLetters = "show-letters";
 
-  selectedLandingPage = 'dashboard';
+  selectedLandingPage: Page = 'dashboard';
 
   pw1 = '';
   pw2 = '';

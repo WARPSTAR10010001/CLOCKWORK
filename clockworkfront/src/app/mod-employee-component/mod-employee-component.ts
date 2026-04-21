@@ -66,9 +66,9 @@ export class ModEmployeeComponent implements OnInit {
       const fromJwt = status?.user?.departmentId ?? null;
       const impDep = this.imp.getEffectiveDepartmentId?.() ?? null;
 
-      this.deptId = this.auth.isAdmin() ? impDep : fromJwt;
+      this.deptId = this.auth.isAdmin() || this.auth.isAreaManager() ? impDep : fromJwt;
 
-      if (this.auth.isAdmin() && !this.deptId) {
+      if ((this.auth.isAdmin() || this.auth.isAreaManager()) && !this.deptId) {
         this.overlay.showOverlay('info', 'Bitte zuerst einen Fachbereich im Modpanel auswählen.');
         this.loading = false;
         return;

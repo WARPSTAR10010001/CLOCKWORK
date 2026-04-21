@@ -58,7 +58,7 @@ export class LogComponent implements OnInit {
       map(status => {
         const impDep = this.imp.getEffectiveDepartmentId();
         const fromJwt = status?.user?.departmentId ?? null;
-        const depId = this.auth.isAdmin() ? (impDep ?? null) : fromJwt ?? null;
+        const depId = this.auth.isAdmin() || this.auth.isAreaManager() ? (impDep ?? null) : fromJwt ?? null;
         return depId;
       }),
       switchMap(depId => {

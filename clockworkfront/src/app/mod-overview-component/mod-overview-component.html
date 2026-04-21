@@ -1,7 +1,13 @@
 <div class="comp-wrap">
-  <h1 class="page-header emp">Modpanel</h1>
+  <h1 class="page-header emp">
+    @if (authService.isAreaManager()) {
+    Leitungspanel
+    } @else {
+    Modpanel
+    }
+  </h1>
   <div id="link-list">
-    @if (authService.isAdmin()) {
+    @if (needsDepartmentSelection) {
     <h1 class="subtitle">Fachbereich auswählen</h1>
     <select [ngModel]="selectedDeptId" (ngModelChange)="onSelectDept($event)">
       <option [ngValue]="null">-- Fachbereich --</option>
@@ -10,10 +16,10 @@
       }
     </select>
     }
-    @if (authService.isAdmin() && canNavigate) {
+    @if ((authService.isAdmin() || authService.isAreaManager()) && canNavigate) {
     <hr id="idx">
     <h1 class="subtitle">Plandaten verwalten</h1>
-    <a class="card" [routerLink]="canNavigate ? ['/years'] : null">Impersonationsmodus</a>
+    <a class="card" [routerLink]="canNavigate ? ['/years'] : null">Fachbereichsansicht</a>
     <a class="card" [routerLink]="canNavigate ? ['/mod/employees'] : null">Mitarbeiter bearbeiten & anlegen</a>
     <a class="card" [routerLink]="canNavigate ? ['/mod/plans'] : null">Dienstplan erstellen</a>
     <hr>
@@ -23,9 +29,11 @@
         <a class="button-primary" (click)="resetUserPassword()">
           Nutzerpasswort zurücksetzen
         </a>
+        @if (authService.isAdmin()) {
         <a class="button-primary" (click)="resetModPassword()">
           Moderatorpasswort zurücksetzen
         </a>
+        }
       </div>
       <h1>Passwörter werden beim Zurücksetzen immer auf <span class="emp">reset</span> gesetzt und müssen beim ersten Login geändert werden.
         Bitte daran denken, dass alle Nutzer eines Fachbereiches mit der gleichen Berechtigungsstufe nun das gleiche
@@ -49,3 +57,4 @@
     </div>
     }
   </div>
+</div>

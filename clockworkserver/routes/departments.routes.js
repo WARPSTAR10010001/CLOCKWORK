@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, getAccessibleDepartmentIds } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -17,15 +17,21 @@ router.get(
              ORDER BY name ASC`
         );
         return res.json(rows);
-      } else {
-        const { rows } = await client.query(
-          `SELECT id, name
-             FROM departments
-             WHERE id = $1`,
-          [req.user.departmentId]
-        );
-        return res.json(rows);
       }
+
+      const departmentIds = getAccessibleDepartmentIds(req.user).map(Number);
+      if (departmentIds.length === 0) {
+        return res.json([]);
+      }
+
+      const { rows } = await client.query(
+        `SELECT id, name
+           FROM departments
+          WHERE id = ANY($1::int[])
+          ORDER BY name ASC`,
+        [departmentIds]
+      );
+      return res.json(rows);
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: 'Interner Serverfehler' });

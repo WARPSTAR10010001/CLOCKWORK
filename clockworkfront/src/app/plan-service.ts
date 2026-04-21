@@ -60,7 +60,8 @@ export interface CreatePlanBody {
     employeeId: number;
     startMonth: string;
     endMonth?: string | null;
-    initialBalance: number;
+    annualLeaveDays: number;
+    carryoverDays: number;
   }>;
 }
 
@@ -71,15 +72,29 @@ export class PlanService {
   constructor(private http: HttpClient) { }
 
   getPlanEmployeeLinks(planId: number) {
-    return this.http.get<{ items: Array<{ employee_id: number; start_month: string; end_month: string | null }> }>(
+    return this.http.get<{ items: Array<{ employee_id: number; start_month: string; end_month: string | null; annual_leave_days: number; carryover_days: number }> }>(
       `${this.base}/plans/${planId}/plan-employees`
     );
   }
 
-  addEmployeeToPlan(planId: number, employeeId: number, startMonth: string, endMonth: string | null = null) {
+  addEmployeeToPlan(
+    planId: number,
+    employeeId: number,
+    startMonth: string,
+    endMonth: string | null = null,
+    annualLeaveDays?: number,
+    carryoverDays?: number
+  ) {
     return this.http.post<{ added: boolean }>(
       `${this.base}/plans/${planId}/plan-employees`,
-      { employeeId, startMonth, endMonth }
+      { employeeId, startMonth, endMonth, annualLeaveDays, carryoverDays }
+    );
+  }
+
+  updatePlanEmployeeValues(planId: number, employeeId: number, annualLeaveDays: number, carryoverDays: number) {
+    return this.http.post<{ plan_id: number; employee_id: number; annual_leave_days: number; carryover_days: number }>(
+      `${this.base}/plans/${planId}/plan-employees/${employeeId}`,
+      { annualLeaveDays, carryoverDays }
     );
   }
 

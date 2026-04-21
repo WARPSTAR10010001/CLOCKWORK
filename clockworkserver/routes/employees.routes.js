@@ -1,8 +1,9 @@
 const express = require('express');
 const pool = require('../db');
-const { requireAuth, requireRole, enforceDepartmentScope } = require('../middleware/auth');
+const { requireAuth, requireRole, enforceDepartmentScope, canAccessDepartment } = require('../middleware/auth');
 
 const router = express.Router();
+const MANAGER_ROLE = 'AREA_MANAGER';
 
 function isValidYmd(s) {
   return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -20,7 +21,7 @@ function toYmdLocal(d) {
 router.post(
   '/employees',
   requireAuth,
-  requireRole('MOD', 'ADMIN'),
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
   enforceDepartmentScope((req) => req.body?.departmentId),
   async (req, res) => {
     const {
@@ -35,7 +36,7 @@ router.post(
     if (!departmentId || !displayName || !startMonth) {
       return res
         .status(400)
-        .json({ error: 'departmentId, displayName und startMonth benötigt' });
+        .json({ error: 'departmentId, displayName und startMonth benoetigt' });
     }
     if (!isValidYmd(startMonth)) {
       return res
@@ -80,11 +81,16 @@ router.post(
 router.get('/employees', requireAuth, async (req, res) => {
   let { departmentId } = req.query || {};
 
-  if (req.user.role !== 'ADMIN') {
+  if (!departmentId) {
     departmentId = req.user.departmentId;
   }
+
   if (!departmentId) {
-    return res.status(400).json({ error: 'departmentId benötigt' });
+    return res.status(400).json({ error: 'departmentId benoetigt' });
+  }
+
+  if (!canAccessDepartment(req.user, departmentId)) {
+    return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
   }
 
   try {
@@ -124,7 +130,7 @@ router.get('/employees', requireAuth, async (req, res) => {
 router.patch(
   '/employees/:id',
   requireAuth,
-  requireRole('MOD', 'ADMIN'),
+  requireRole('MOD', MANAGER_ROLE, 'ADMIN'),
   async (req, res) => {
     const id = Number(req.params.id);
     const {
@@ -134,6 +140,14 @@ router.patch(
       annualLeaveDays,
       carryoverDays,
     } = req.body || {};
+
+    const existing = await pool.query('SELECT department_id FROM employees WHERE id = $1', [id]);
+    if (existing.rowCount === 0) {
+      return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
+    }
+    if (!canAccessDepartment(req.user, existing.rows[0].department_id)) {
+      return res.status(403).json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
+    }
 
     const fields = [];
     const values = [];
@@ -175,7 +189,7 @@ router.patch(
     }
 
     if (fields.length === 0) {
-      return res.status(400).json({ error: 'Keine Änderungen' });
+      return res.status(400).json({ error: 'Keine Aenderungen' });
     }
 
     values.push(id);
@@ -186,9 +200,6 @@ router.patch(
 
     try {
       const up = await pool.query(sql, values);
-      if (up.rowCount === 0) {
-        return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
-      }
       const r = up.rows[0];
       return res.json({
         id: r.id,
@@ -210,7 +221,7 @@ router.patch(
 router.delete(
   '/employees/:id',
   requireAuth,
-  requireRole('ADMIN', 'MOD'),
+  requireRole('ADMIN', 'MOD', MANAGER_ROLE),
   async (req, res) => {
     const { id } = req.params;
 
@@ -225,13 +236,10 @@ router.delete(
       }
       const depId = q.rows[0].department_id;
 
-      if (
-        req.user.role !== 'ADMIN' &&
-        String(req.user.departmentId) !== String(depId)
-      ) {
+      if (!canAccessDepartment(req.user, depId)) {
         return res
           .status(403)
-          .json({ error: 'Fachbereichübergreifender Zugriff verweigert' });
+          .json({ error: 'Fachbereichsuebergreifender Zugriff verweigert' });
       }
 
       try {
@@ -240,7 +248,7 @@ router.delete(
         if (e.code === '23503') {
           return res
             .status(409)
-            .json({ error: 'Mitarbeiter kann nicht gelöscht werden' });
+            .json({ error: 'Mitarbeiter kann nicht geloescht werden' });
         }
         throw e;
       }

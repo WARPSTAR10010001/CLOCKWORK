@@ -53,9 +53,9 @@ export class ModPlanComponent implements OnInit {
       const fromJwt = status?.user?.departmentId ?? null;
       const impDep = this.imp.getEffectiveDepartmentId?.() ?? null;
 
-      const depId = this.auth.isAdmin() ? impDep : fromJwt;
+      const depId = this.auth.isAdmin() || this.auth.isAreaManager() ? impDep : fromJwt;
 
-      if (this.auth.isAdmin() && !depId) {
+      if ((this.auth.isAdmin() || this.auth.isAreaManager()) && !depId) {
         this.overlay.showOverlay('info', 'Bitte im Modpanel einen Fachbereich auswählen.');
         this.router.navigate(['/mod']);
         return;
@@ -188,7 +188,8 @@ export class ModPlanComponent implements OnInit {
         employeeId: r.employeeId,
         startMonth,
         endMonth,
-        initialBalance: r.carryover
+        annualLeaveDays: r.annual,
+        carryoverDays: r.carryover
       };
     });
 

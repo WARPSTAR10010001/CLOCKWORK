@@ -25,6 +25,21 @@ export interface DeleteDepartmentResponse {
   department: { id: number; name: string };
 }
 
+export interface AreaManagerDepartment {
+  id: number;
+  name: string;
+}
+
+export interface AreaManager {
+  id: number;
+  username: string;
+  role: 'AREA_MANAGER';
+  department_id: number | null;
+  departmentIds: number[];
+  departments: AreaManagerDepartment[];
+  last_login_at: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private base = environment.apiBase;
@@ -46,6 +61,29 @@ export class AdminService {
   deleteDepartment(id: number): Observable<DeleteDepartmentResponse> {
     return this.http.delete<DeleteDepartmentResponse>(
       `${this.base}/admin/departments/${id}`,
+      { withCredentials: true }
+    );
+  }
+
+  listAreaManagers(): Observable<{ managers: AreaManager[] }> {
+    return this.http.get<{ managers: AreaManager[] }>(
+      `${this.base}/admin/area-managers`,
+      { withCredentials: true }
+    );
+  }
+
+  createAreaManager(payload: { username: string; departmentIds: number[] }): Observable<{ manager: AreaManager; initialPassword: string }> {
+    return this.http.post<{ manager: AreaManager; initialPassword: string }>(
+      `${this.base}/admin/area-managers`,
+      payload,
+      { withCredentials: true }
+    );
+  }
+
+  updateAreaManagerDepartments(id: number, departmentIds: number[]): Observable<{ manager: AreaManager }> {
+    return this.http.patch<{ manager: AreaManager }>(
+      `${this.base}/admin/area-managers/${id}/departments`,
+      { departmentIds },
       { withCredentials: true }
     );
   }

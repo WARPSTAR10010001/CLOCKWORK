@@ -1,6 +1,19 @@
 <div id="pagecontainer">
   <div id="header">
-    @if (authService.isMod()) {
+    @if (authService.isAreaManager()) {
+    <a id="root-link" [routerLink]="['/']">
+      <img src="cw-mono.png" height="100%" alt="logo">
+      <span id="root-header">CLOCKWORK</span>
+      <div id="labels">
+        @if (theme.getColor() === "orange") {
+        <span id="edition">Leitung</span>
+        <span class="emp">ORANGE</span>
+        } @else {
+          <span id="edition-single">Leitung</span>
+        }
+      </div>
+    </a>
+    } @else if (authService.isMod()) {
     <a id="root-link" [routerLink]="['/']">
       <img src="cw-mono.png" height="100%" alt="logo">
       <span id="root-header">CLOCKWORK</span>
@@ -42,6 +55,9 @@
       @if (authService.isAdmin()) {
       <a [routerLink]="['/admin']">Adminpanel</a>
       <a [routerLink]="['/mod']">Modpanel</a>
+      } @else if (authService.isAreaManager()) {
+      <a [routerLink]="['/mod']">Leitungspanel</a>
+      <a [routerLink]="['/years']">Jahresübersicht</a>
       } @else if (authService.isMod()) {
       <a [routerLink]="['/mod']">Modpanel</a>
       <a [routerLink]="['/years']">Jahresübersicht</a>
@@ -72,8 +88,8 @@
       <a (click)="openFeedbackOverlayInfo()">Feedback</a>
       }
       <a [routerLink]="['/docs']">Dokumentation</a>
+      <a [routerLink]="['/credit']">Credits</a>
     </div>
-    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a> // <a
-        id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
+    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a></p>
   </div>
 </div>

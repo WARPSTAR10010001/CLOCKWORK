@@ -4,7 +4,7 @@
   <div id="style-overlay" class="overlay">
     <h1 class="emp page-header">Ansichtseinstellungen</h1>
     <div id="theme-selection" class="selection">
-      <h1>Anzeigemodus:</h1>
+      <h1>Thema:</h1>
       <div class="options">
         <label>
           <input type="radio" name="theme" value="light" [checked]="selectedTheme === 'light'"
@@ -17,6 +17,11 @@
           Dim
         </label>
         <label>
+          <input type="radio" name="theme" value="dark" [checked]="selectedTheme === 'dark'"
+          (change)="changeTheme('dark')">
+          Dunkel
+        </label>
+        <label>
           <input type="radio" name="theme" value="neon" [checked]="selectedTheme === 'neon'"
             (change)="changeTheme('neon')">
           Neon
@@ -25,7 +30,7 @@
     </div>
     <hr>
     <div id="color-selection" class="selection">
-      <h1>Farbauswahl:</h1>
+      <h1>Farbschema:</h1>
       <div class="options">
         <label>
           <input type="radio" name="color" [checked]="selectedColor === 'standard'" (change)="changeColor('standard')">

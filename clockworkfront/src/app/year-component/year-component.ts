@@ -43,12 +43,12 @@ export class YearComponent implements OnInit {
         take(1),
         map(status => {
           const impDepId = this.imp.getEffectiveDepartmentId();
-          if (this.auth.isAdmin() && impDepId) return impDepId;
+          if ((this.auth.isAdmin() || this.auth.isAreaManager()) && impDepId) return impDepId;
 
           return status?.user?.departmentId ?? null;
         }),
         switchMap(depId => {
-          if (this.auth.isAdmin() && depId === null) {
+          if ((this.auth.isAdmin() || this.auth.isAreaManager()) && depId === null) {
             this.showDeptHint = true;
             return of<{ plans: PlanListItem[] }>({ plans: [] });
           }
@@ -76,7 +76,7 @@ export class YearComponent implements OnInit {
 
         this.years = cards;
 
-        if (this.years.length === 0 && !this.auth.isAdmin()) {
+        if (this.years.length === 0 && !this.auth.isAdmin() && !this.auth.isAreaManager()) {
           this.overlay.showOverlay('info', 'Es wurden noch keine Jahrespläne für Ihren Fachbereich erstellt.');
         }
       });

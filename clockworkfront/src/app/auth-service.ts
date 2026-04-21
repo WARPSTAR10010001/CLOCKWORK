@@ -7,12 +7,14 @@ import { catchError, map, take, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { VersionService } from './version-service';
 
-type Role = 'admin' | 'mod' | 'user';
+type Role = 'admin' | 'mod' | 'user' | 'areaManager';
 interface User {
   id: number;
   username?: string;
   role: Role;
   departmentId?: number | null;
+  departmentIds?: number[];
+  assignedDepartmentIds?: number[];
   passwordReset?: boolean;
 }
 interface AuthStatus { loggedIn: boolean; user: User | null; exp?: number | null; }
@@ -39,35 +41,62 @@ export class AuthService {
     try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); }
     catch { return null; }
   }
+
+  private normalizeDepartmentIds(input: unknown): number[] {
+    if (!Array.isArray(input)) return [];
+    return Array.from(
+      new Set(
+        input
+          .map((value) => Number(value))
+          .filter((value) => Number.isFinite(value))
+      )
+    );
+  }
+
   private toRole(apiRole?: string): Role | null {
     switch ((apiRole || '').toUpperCase()) {
       case 'ADMIN': return 'admin';
       case 'MOD': return 'mod';
       case 'USER': return 'user';
+      case 'AREA_MANAGER': return 'areaManager';
       default: return null;
     }
   }
+
   private setSession(token: string, usernameFromForm?: string) {
     localStorage.setItem(this.tokenKey, token);
     const dec = this.decodeJwt(token); if (!dec) return this.clearSession();
     const role = this.toRole(dec.role);
     const user: User | null = role ? {
-      id: Number(dec.sub), username: usernameFromForm, role, departmentId: dec.departmentId ?? null
+      id: Number(dec.sub),
+      username: usernameFromForm,
+      role,
+      departmentId: dec.departmentId ?? null,
+      departmentIds: this.normalizeDepartmentIds(dec.departmentIds),
+      assignedDepartmentIds: this.normalizeDepartmentIds(dec.departmentIds)
     } : null;
     const exp = typeof dec.exp === 'number' ? dec.exp : null;
     const loggedIn = !!(user && (!exp || Date.now() / 1000 < exp));
     this.authStatusSubject.next({ loggedIn, user, exp });
   }
+
   private clearSession() {
     localStorage.removeItem(this.tokenKey);
     this.authStatusSubject.next({ loggedIn: false, user: null, exp: null });
   }
+
   private restoreSession() {
     const t = localStorage.getItem(this.tokenKey); if (!t) return this.clearSession();
     const dec = this.decodeJwt(t); if (!dec) return this.clearSession();
     if (dec.exp && Date.now() / 1000 >= dec.exp) return this.clearSession();
     const role = this.toRole(dec.role);
-    const user: User | null = role ? { id: Number(dec.sub), role, departmentId: dec.departmentId ?? null } : null;
+    const user: User | null = role ? {
+      id: Number(dec.sub),
+      role,
+      departmentId: dec.departmentId ?? null,
+      departmentIds: this.normalizeDepartmentIds(dec.departmentIds),
+      assignedDepartmentIds: this.normalizeDepartmentIds(dec.departmentIds)
+    } : null;
     this.authStatusSubject.next({ loggedIn: !!user, user, exp: dec.exp ?? null });
   }
 
@@ -75,6 +104,7 @@ export class AuthService {
     return this.http.get<{ loggedIn: boolean; user: any | null }>(`${this.baseUrl}/auth/status`)
       .pipe(catchError(() => of({ loggedIn: false, user: null })));
   }
+
   refreshStatus(): Observable<AuthStatus> {
     return this.fetchServerStatus().pipe(
       tap((srv) => {
@@ -89,6 +119,8 @@ export class AuthService {
           username: srv.user.username,
           role,
           departmentId: srv.user.departmentId ?? srv.user.department_id ?? null,
+          departmentIds: this.normalizeDepartmentIds(srv.user.departmentIds ?? srv.user.assignedDepartmentIds),
+          assignedDepartmentIds: this.normalizeDepartmentIds(srv.user.assignedDepartmentIds ?? srv.user.departmentIds),
           passwordReset: !!srv.user.passwordReset
         } : null;
         this.authStatusSubject.next({ loggedIn: !!user, user, exp: curr.exp ?? null });
@@ -167,5 +199,7 @@ export class AuthService {
   get currentUserRole(): Role | null { return this.authStatusSubject.value.user?.role ?? null; }
   isAdmin(): boolean { return this.currentUserRole === 'admin'; }
   isMod(): boolean { return this.currentUserRole === 'mod'; }
+  isAreaManager(): boolean { return this.currentUserRole === 'areaManager'; }
+  isManagerLike(): boolean { return this.isAdmin() || this.isMod() || this.isAreaManager(); }
   isLoggedIn(): boolean { return !!this.authStatusSubject.value.loggedIn; }
 }
