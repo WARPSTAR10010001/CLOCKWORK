@@ -90,7 +90,7 @@ body.dark {
     --tc: #ffffff;
     --olc: #ffffff;
     --bsc: #424242;
-    --bc: #fffffff;
+    --bc: #000000;
     --gbgc: #0000005e;
     --gbgb: #ffffff46;
 }
@@ -383,27 +383,11 @@ body.outlines .doc-table-wrapper {
     border-radius: 10px;
 }
 
-body.light .doc-role-table thead th {
-    background-color: var(--bgca);
+.doc-role-table thead th {
+    background-color: var(--bgcaa);
 }
 
-body.dim .doc-role-table thead th {
-    background-color: var(--bgca);
-}
-
-body.neon .doc-role-table thead th {
-    background-color: var(--bgca);
-}
-
-body.light .doc-role-table tbody tr:nth-child(odd) td {
-    background-color: var(--bgca);
-}
-
-body.dim .doc-role-table tbody tr:nth-child(odd) td {
-    background-color: var(--bgca);
-}
-
-body.neon .doc-role-table tbody tr:nth-child(odd) td {
+.doc-role-table tbody tr:nth-child(odd) td {
     background-color: var(--bgca);
 }
 

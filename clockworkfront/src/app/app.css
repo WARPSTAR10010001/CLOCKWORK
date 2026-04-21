@@ -22,6 +22,10 @@
     filter: brightness(1) invert(0%);
 }
 
+:host-context(body.dark) #header img {
+    filter: brightness(1) invert(0%);
+}
+
 :host-context(body.neon) #header img {
     filter: brightness(1) invert(0%);
 }

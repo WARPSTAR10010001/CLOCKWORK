@@ -263,31 +263,33 @@ export const DOC_SECTIONS: DocSection[] = [
             title: "Ansichtseinstellungen aufrufen",
             html: `
             <p>Um die Ansichtseinstellungen in CLOCKWORK aufzurufen, navigieren Sie zur Fußzeile der Seite. Dort muss auf den Knopf "Anzeige" geklickt werden.</p>
-            <p><span class="hint">Hinweis:</span> Außerdem kann auch die Tastenkombination Shift + K gedrückt werden um die Ansichtseinstellungen zu öffnen.</p>
+            <p><span class="hint">Hinweis:</span> Außerdem kann auch die Tastenkombination Shift + Q gedrückt werden um die Ansichtseinstellungen zu öffnen.</p>
             <p>Im Menü können Sie verschiedene visuelle Anpassungen vornehmen, um die Anzeige des Programmes nach Ihren persönlichen Vorlieben und Bedürfnissen anzupassen.</p>
             <p>Alle Änderungen, die Sie in den Ansichtseinstellungen vornehmen, werden sofort übernommen und auf alle Seiten von CLOCKWORK angewendet. Dies ermöglicht es Ihnen, die Darstellung des Programmes in Echtzeit anzupassen und zu sehen, wie die Änderungen aussehen.</p>
             <p>Außerdem werden die gewählten Einstellungen in Ihrem Browser gespeichert. Dies bedeutet, dass Ihre Anpassungen auch nach dem Schließen und erneuten Öffnen des Browsers erhalten bleiben, sodass Sie CLOCKWORK immer in Ihrer bevorzugten Ansicht nutzen können.</p>
             `
           },
           {
-            id: "anzeigemodus-auswaehlen",
-            title: "Anzeigemodus auswählen",
+            id: "thema-auswaehlen",
+            title: "Thema auswählen",
             html: `
-            <p>Der Anzeigemodus bestimmt, wie CLOCKWORK dargestellt wird. Es gibt verschiedene Modi zur Auswahl, die jeweils unterschiedliche visuelle Stile bieten. Diese lauten:</p>
+            <p>Das Thema bestimmt, wie CLOCKWORK dargestellt wird. Es gibt verschiedene Themen zur Auswahl, die jeweils unterschiedliche visuelle Stile bieten. Diese lauten:</p>
             <ul>
             <li>Hell: Ein heller Modus mit einem weißen Hintergrund und dunkler Schrift. Gute Lesbarkeit, besonders bei Tageslicht, kann jedoch anstrengend für die Augen sein.</li>
             <li>Dim: Ein dunklerer Modus mit einem dunkelgrauen Hintergrund und heller Schrift. Reduziert die Belastung der Augen, sieht jedoch trotzdem modern und übersichtlich aus.</li>
+            <li>Dunkel: Ein dunkler Modus mit einem tiefschwarzen Hintergrund und heller Schrift, Reduziert ebenfalls die Belastung der Augen und hat visuell den stärksten Kontrast.</li>
             <li>Neon: Ein dunkel gehaltener Modus mit einem dunkelblauen Hintergrund und heller Schrift. Bietet eine schöne Optik, ist angenehm für die Augen. Eignet sich besonders gut für Menschen die ein wenig Farbe in ihren Arbeitsalltag bringen möchten.</li>
             </ul>
             `
           },
           {
-            id: "farbscheme-auswaehlen",
-            title: "Farbscheme auswählen",
+            id: "farbschema-auswaehlen",
+            title: "Farbschema auswählen",
             html: `
-            <p>Das Farbscheme bestimmt die Farbpalette, die in CLOCKWORK verwendet wird. Es gibt verschiedene Farbschemes zur Auswahl, die jeweils unterschiedliche Intensitäten bieten. Diese lauten:</p>
+            <p>Das Farbschema bestimmt die Farbpalette, die in CLOCKWORK verwendet wird. Es gibt verschiedene Farbschemas zur Auswahl, die jeweils unterschiedliche Intensitäten bieten. Diese lauten:</p>
             <ul>
             <li>Standard: Ein ausgewogenes Farbschema mit klarer und intensiver Farbgebung. Bietet gute Sichtbarkeit und Kontrast für alle Statusanzeigen.</li>
+            <li>Orange: Eine Hommage an den Stanley Kubrick-Klassiker "A Clockwork Orange (1971)". Ersetzt alle blauen Akzentfarben durch orangene.
             <li>Soft: Ein abgeschwächtes Farbschema mit sanfteren Farben. Reduziert die visuelle Belastung und sorgt für eine angenehmere Anzeige, besonders bei längerer Nutzung.</li>
             </ul>
             `
@@ -315,27 +317,36 @@ export const DOC_SECTIONS: DocSection[] = [
             id: "empfehlung",
             title: "Empfehlung",
             html: `
-            <p>Damit Ihnen die Wahl der Anzeigeeinstellungen etwas erleichtert wird, werden folgende Einstellungen empfohlen.</p>
+            <p>Damit Ihnen die Wahl der Anzeigeeinstellungen etwas erleichtert wird, werden folgende Einstellungen empfohlen:</p>
             <p>Standardausführung:</p>
             <ul>
-            <li>Anzeigemodus: Hell</li>
-            <li>Farbauswahl: Standard</li>
+            <li>Thema: Hell</li>
+            <li>Farbschema: Standard</li>
             <li>Material: Solide</li>
             <li>Konturen: Aus</li>
             </ul>
             <p>Beste Lesbarkeit:</p>
             <ul>
-            <li>Anzeigemodus: Dim</li>
-            <li>Farbauswahl: Soft</li>
+            <li>Thema: Dunkel</li>
+            <li>Farbschema: Soft</li>
             <li>Material: Solide</li>
             <li>Konturen: An</li>
             </ul>
-            <p>Dunkle Ästhetik:</p>
+            <p>Dunkelblaue Ästhetik:</p>
             <ul>
-            <li>Anzeigemodus: Neon</li>
-            <li>Farbauswahl: Standard</li>
+            <li>Thema: Neon</li>
+            <li>Farbschema: Standard</li>
             <li>Material: Glass</li>
             <li>Konturen: Aus</li>
+            </ul>
+            <p>Unser Favorit:</p>
+            <ul>
+            <li>Thema: Neon</li>
+            <li>Farbschema: Orange</li>
+            <li>Material: Solide</li>
+            <li>Kontur: Aus</li>
+            </ul>
+            <p>Sie sind jedoch auch herzlich dazu eingeladen selber mit den Einstellungen zu spielen und experimentieren.</p>
             `
           }
         ]

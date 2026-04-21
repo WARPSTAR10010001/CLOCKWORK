@@ -89,7 +89,8 @@ tbody tr:nth-child(odd) td {
 
 :host-context(body.soft) .action:hover,
 :host-context(body.soft.dim) .action:hover,
-:host-context(body.soft.neon) .action:hover {
+:host-context(body.soft.neon) .action:hover,
+:host-context(body.soft.dark) .action:hover {
     color: var(--tc) !important;
     border-color: var(--tc) !important;
 }
@@ -261,6 +262,11 @@ thead th.weekend-header {
     border-color: #303030 !important;
 }
 
+:host-context(body.dark) thead th.weekend-header:not(.holiday) {
+    background-color: #1b1b1b !important;
+    border-color: #1b1b1b !important;
+}
+
 :host-context(body.neon) thead th.weekend-header:not(.holiday) {
     background-color: #12004e !important;
     border-color: #12004e !important;
@@ -280,6 +286,12 @@ tbody td.weekend-col {
     cursor: default !important;
     background-color: #303030 !important;
     border-color: #303030 !important;
+}
+
+:host-context(body.dark) tbody td.weekend-col {
+    cursor: default !important;
+    background-color: #1b1b1b !important;
+    border-color: #1b1b1b !important;
 }
 
 :host-context(body.neon) tbody td.weekend-col {
