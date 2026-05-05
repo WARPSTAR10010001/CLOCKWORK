@@ -1,10 +1,13 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">
-    Logs
-    <a class="hidden-link" [routerLink]="['/plan', year, month]">
-      {{ toMonthName(month) }} {{ year }}
-    </a>
-  </h1>
+  <h1 class="page-header"><span class="emp">Planlogs </span>
+        <a id="back-button" [routerLink]="['/plan', year, month]">
+            @if (hovering) {
+            <span (mouseleave)="hovering = false">{{ toMonthName(month) }} {{ year }}</span>
+            } @else {
+            <span class="emp" (mouseenter)="hovering = true">{{ toMonthName(month) }} {{ year }}</span>
+            }
+        </a>
+    </h1>
   <div class="log-toolbar">
     <label>Aktion:</label>
     <select id="fltr-act" [(ngModel)]="actionFilter" (change)="onActionFilterChange()">

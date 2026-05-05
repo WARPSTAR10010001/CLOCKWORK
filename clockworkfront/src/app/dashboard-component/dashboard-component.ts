@@ -18,4 +18,9 @@ export class DashboardComponent {
 
   month = this.now.getMonth() + 1;
   year = this.now.getFullYear();
+
+  monthName(month: number) {
+    const months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    return months[month - 1];
+  }
 }

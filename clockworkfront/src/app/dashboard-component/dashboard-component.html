@@ -6,32 +6,48 @@
             @if (auth.isLoggedIn() && !auth.isMod() && !auth.isAdmin() && !auth.isAreaManager()) {
             <div class="card" [routerLink]="['/plan', year, month]">
                 <h1>Aktueller Plan</h1>
+                <hr class="hic">
+                <h2>In den Dienstplan vom {{ monthName(month) }} springen</h2>
             </div>
             <div class="card" [routerLink]="['/years']">
                 <h1>Jahresübersicht</h1>
+                <hr class="hic">
+                <h2>Alle verfügbaren Jahre anzeigen</h2>
             </div>
             }
             @if (auth.isLoggedIn() && (auth.isMod() || auth.isAreaManager()) && !auth.isAdmin()) {
             <div class="card" [routerLink]="['/plan', year, month]">
                 <h1>Aktueller Plan</h1>
+                <hr class="hic">
+                <h2>In den Dienstplan vom {{ monthName(month) }} springen</h2>
             </div>
             <div class="card" [routerLink]="['/mod']">
                 @if (auth.isAreaManager()) {
-                <h1>Leitungspanel</h1>
+                <h1>Modpanel</h1>
+                <hr class="hic">
+                <h2>Mitarbeiter verwalten / Dienstpläne erstellen / Passwörter zurücksetzen</h2>
                 } @else {
                 <h1>Modpanel</h1>
+                <hr class="hic">
+                <h2>Mitarbeiter verwalten / Dienstpläne erstellen / Passwörter zurücksetzen</h2>
                 }
             </div>
             <div class="card" [routerLink]="['/years']">
                 <h1>Jahresübersicht</h1>
+                <hr class="hic">
+                <h2>Alle verfügbaren Jahre anzeigen</h2>
             </div>
             }
             @if (auth.isLoggedIn() && auth.isAdmin()) {
             <div class="card" [routerLink]="['/admin']">
                 <h1>Adminpanel</h1>
+                <hr class="hic">
+                <h2>Fachbereiche verwalten / Fachbereichsleitungen verwalten</h2>
             </div>
             <div class="card" [routerLink]="['/mod']">
                 <h1>Modpanel</h1>
+                <hr class="hic">
+                <h2>Mitarbeiter verwalten / Dienstpläne erstellen / Passwörter zurücksetzen</h2>
             </div>
             }
         </div>
@@ -42,12 +58,39 @@
         <div class="card-entries">
             <div class="card" (click)="overlay.showOverlay('style')">
                 <h1>Ansicht anpassen</h1>
+                <hr class="hic">
+                <h2>Thema, Farbschema, Material & Konturen wählen</h2>
             </div>
             <div class="card" (click)="overlay.showOverlay('planOptions1')">
                 <h1>Planviewer einstellen</h1>
+                <hr class="hic">
+                <h2>Wochenende, Urlaubstabelle, Zellenbeschriftung & Zeilenbreite wählen</h2>
             </div>
             <div class="card" (click)="overlay.showOverlay('landingPage')">
                 <h1>Startseite auswählen</h1>
+                <hr class="hic">
+                <h2>Die Startseite beim Öffnen von CLOCKWORK wählen</h2>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <h1 class="subtitle">Ausgewählte Dokumentationsartikel</h1>
+        <div class="card-entries">
+            <div class="card" [routerLink]="['/docs/grundlagen-der-nutzung/dienstplaene-bedienen-und-navigieren']">
+                <h1>Bedienung & Navigation</h1>
+                <hr class="hic">
+                <h2>Wie bedient und navigiert man Dienstpläne?</h2>
+            </div>
+            <div class="card" [routerLink]="['/docs/haeufige-probleme-faq-und-sonstiges/status-und-eintraege']">
+                <h1>Status & Einträge</h1>
+                <hr class="hic">
+                <h2>Welche Arten von Einträgen gibt es und was bedeuten diese?</h2>
+            </div>
+            <div class="card" [routerLink]="['/docs/rollen-berechtigungen-und-anmeldung/ueberblick-der-rollen']">
+                <h1>Übersicht der Rollen</h1>
+                <hr class="hic">
+                <h2>Welche Rollen gibt es und welche Rolle hat welche Berechtigungen?</h2>
             </div>
         </div>
     </div>

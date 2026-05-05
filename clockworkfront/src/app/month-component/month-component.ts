@@ -19,6 +19,7 @@ export class MonthComponent implements OnInit {
   year!: number;
   errorMessage: string | null = null;
   months: MonthCard[] = [];
+  hovering: boolean = false;
 
   constructor(private activatedRoute: ActivatedRoute) {}
 

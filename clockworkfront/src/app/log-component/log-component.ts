@@ -26,6 +26,7 @@ export class LogComponent implements OnInit {
   logs: PlanLogDTO[] = [];
 
   loading = false;
+  hovering: boolean = false;
 
   actionFilter:
     | ''

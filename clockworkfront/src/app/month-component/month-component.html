@@ -1,6 +1,13 @@
 <div class="comp-wrap">
-    <h1 class="emp page-header">Monatsübersicht <a id="back" class="hidden-link"
-      [routerLink]="['/years']">{{ year }}</a></h1>
+    <h1 class="page-header"><span class="emp">Monatsübersicht </span>
+        <a id="back-button" [routerLink]="['/years']">
+            @if (hovering) {
+            <span (mouseleave)="hovering = false">{{ year }}</span>
+            } @else {
+            <span class="emp" (mouseenter)="hovering = true">{{ year }}</span>
+            }
+        </a>
+    </h1>
     <div id="result-container">
         @for (month of months; track month.value) {
         <a [routerLink]="['/plan', year, month.value]" class="month-card" [ngClass]="month.colorClass">

@@ -56,6 +56,7 @@ tbody tr:nth-child(odd) td {
     gap: 10px;
     margin-bottom: 25px;
     justify-content: center;
+    align-items: center;
 }
 
 #entry-buttons a {
@@ -69,10 +70,16 @@ tbody tr:nth-child(odd) td {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+    align-items: center;
 }
 
 #secondary-buttons a {
     font-size: 1.5em;
+}
+
+.vbb {
+    height: 20px;
+    margin: 0 5px;
 }
 
 .cell {
@@ -325,8 +332,7 @@ thead th.holiday {
     background-color: var(--black);
 }
 
-.cell.selected .note-indicator
-{
+.cell.selected .note-indicator {
     background-color: var(--tc);
 }
 

@@ -1,9 +1,14 @@
 <div class="comp-wrap">
-  <h1 class="emp page-header">
-    Planviewer {{ toMonthName(month) }}
-    <a id="back" class="hidden-link" [routerLink]="['/plan', year]">{{ year }}</a>
+  <h1 class="page-header"><span class="emp">Planviewer {{ toMonthName(month) }} </span>
+    <a id="back-button" [routerLink]="['/plan', year]">
+      @if (hovering) {
+      <span (mouseleave)="hovering = false">{{ year }}</span>
+      } @else {
+      <span class="emp" (mouseenter)="hovering = true">{{ year }}</span>
+      }
+    </a>
     @if (isCurrentMonth()) {
-    <span> (aktuell)</span>
+    <span class="emp"> (aktuell)</span>
     }
   </h1>
   @if (planId !== null) {
@@ -17,6 +22,7 @@
     <a class="button-primary t action" (click)="setEntry('T')">Termin</a>
     <a class="button-primary o action" (click)="setEntry('O')">Anderes</a>
     <a class="button-primary" (click)="editNote()">Notiz</a>
+    <hr class="vertical" class="vbb">
     <a class="button-action" (click)="setEntry('')">Löschen</a>
     <a class="button-secondary" (click)="deselectBtn()">Auswahl aufheben</a>
   </div>
@@ -79,13 +85,33 @@
           fill="currentColor" />
       </svg>
     </a>
+    <hr class="vbb">
+    } @else {
+    <a class="button-primary plan-nav-btn prev" style="cursor: not-allowed;">
+      <svg class="arrow-icon" viewBox="0 0 24 24">
+        <path
+          d="M20.492,7.969,10.954.975A5,5,0,0,0,3,5.005V19a4.994,4.994,0,0,0,7.954,4.03l9.538-6.994a5,5,0,0,0,0-8.062Z"
+          fill="currentColor" />
+      </svg>
+    </a>
+    <hr class="vbb">
     }
     <a class="button-primary" [routerLink]="['logs']">Logs anzeigen</a>
     <a class="button-primary" (click)="openPlanOptions()">
       Optionen & Tastenkürzel öffnen
     </a>
     @if (canGoNext) {
+    <hr class="vbb">
     <a class="button-primary plan-nav-btn next" (click)="loadNextPlan()">
+      <svg class="arrow-icon" viewBox="0 0 24 24">
+        <path
+          d="M20.492,7.969,10.954.975A5,5,0,0,0,3,5.005V19a4.994,4.994,0,0,0,7.954,4.03l9.538-6.994a5,5,0,0,0,0-8.062Z"
+          fill="currentColor" />
+      </svg>
+    </a>
+    } @else {
+    <hr class="vbb">
+    <a class="button-primary plan-nav-btn next" style="cursor: not-allowed;">
       <svg class="arrow-icon" viewBox="0 0 24 24">
         <path
           d="M20.492,7.969,10.954.975A5,5,0,0,0,3,5.005V19a4.994,4.994,0,0,0,7.954,4.03l9.538-6.994a5,5,0,0,0,0-8.062Z"
@@ -95,6 +121,7 @@
     }
   </div>
   }
+  <!--
   @if (vacationTable === "show-vacationTable") {
   <hr>
   <div id="vacation-container">
@@ -123,6 +150,7 @@
     </div>
   </div>
   }
+  -->
 </div>
 <div class="comp-wrap">
   @if (planId === null) {

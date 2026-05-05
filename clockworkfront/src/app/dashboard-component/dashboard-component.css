@@ -42,3 +42,14 @@
     flex-wrap: wrap;
     gap: 20px;
 }
+
+.hic {
+    margin: 15px;
+    border-color: var(--bgc);
+    box-shadow: none;
+}
+
+.card h2 {
+    margin-bottom: 5px;
+    font-size: 1.5em;
+}

@@ -88,8 +88,8 @@
       <a (click)="openFeedbackOverlayInfo()">Feedback</a>
       }
       <a [routerLink]="['/docs']">Dokumentation</a>
-      <a [routerLink]="['/credit']">Credits</a>
     </div>
-    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a></p>
+    <p class="emp"><a id="version" [routerLink]="['/changelog']">V{{ versionService.getVersion() }}</a> // <a
+        id="credit" [routerLink]="['/credit']">Rheinberger IT</a></p>
   </div>
 </div>

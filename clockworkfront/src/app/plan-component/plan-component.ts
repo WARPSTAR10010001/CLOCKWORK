@@ -63,6 +63,8 @@ export class PlanComponent implements OnInit {
   compressedRows: CompressedRows = "standard-rows";
   showLetters: ShowLetters = "show-letters";
 
+  hovering: boolean = false;
+
   constructor(
     private plan: PlanService,
     private employeeService: EmployeeService,
