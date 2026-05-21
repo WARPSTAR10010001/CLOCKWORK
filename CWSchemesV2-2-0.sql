@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict Bz3edrXnJmQklv1mHv7z1Gwwcstu3Yicv9cBMESxW5rrfHlbZJmDauvQzUgmSKi
+\restrict QUJT1iJ6CShGC6RcUFi5ZTg7VVbhJitgJlPLjg6A33oy0eJ0CeTLRlEcHpE1jJp
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-03-18 17:05:28
+-- Started on 2026-05-07 11:29:35
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,8 +22,8 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 238 (class 1255 OID 16385)
--- Name: set_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
+-- TOC entry 239 (class 1255 OID 16385)
+-- Name: set_updated_at(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.set_updated_at() RETURNS trigger
@@ -36,15 +36,13 @@ END;
 $$;
 
 
-ALTER FUNCTION public.set_updated_at() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
 -- TOC entry 219 (class 1259 OID 16386)
--- Name: departments; Type: TABLE; Schema: public; Owner: postgres
+-- Name: departments; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.departments (
@@ -54,11 +52,9 @@ CREATE TABLE public.departments (
 );
 
 
-ALTER TABLE public.departments OWNER TO postgres;
-
 --
 -- TOC entry 220 (class 1259 OID 16394)
--- Name: departments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: departments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.departments_id_seq
@@ -70,12 +66,10 @@ CREATE SEQUENCE public.departments_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.departments_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5135 (class 0 OID 0)
+-- TOC entry 5148 (class 0 OID 0)
 -- Dependencies: 220
--- Name: departments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: departments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.departments_id_seq OWNED BY public.departments.id;
@@ -83,7 +77,7 @@ ALTER SEQUENCE public.departments_id_seq OWNED BY public.departments.id;
 
 --
 -- TOC entry 221 (class 1259 OID 16395)
--- Name: employees; Type: TABLE; Schema: public; Owner: postgres
+-- Name: employees; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.employees (
@@ -98,11 +92,9 @@ CREATE TABLE public.employees (
 );
 
 
-ALTER TABLE public.employees OWNER TO postgres;
-
 --
 -- TOC entry 222 (class 1259 OID 16406)
--- Name: employees_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: employees_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.employees_id_seq
@@ -114,12 +106,10 @@ CREATE SEQUENCE public.employees_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.employees_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5136 (class 0 OID 0)
+-- TOC entry 5149 (class 0 OID 0)
 -- Dependencies: 222
--- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.employees_id_seq OWNED BY public.employees.id;
@@ -127,7 +117,7 @@ ALTER SEQUENCE public.employees_id_seq OWNED BY public.employees.id;
 
 --
 -- TOC entry 223 (class 1259 OID 16407)
--- Name: feedback; Type: TABLE; Schema: public; Owner: postgres
+-- Name: feedback; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.feedback (
@@ -144,11 +134,9 @@ CREATE TABLE public.feedback (
 );
 
 
-ALTER TABLE public.feedback OWNER TO postgres;
-
 --
 -- TOC entry 224 (class 1259 OID 16422)
--- Name: feedback_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: feedback_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.feedback_id_seq
@@ -159,12 +147,10 @@ CREATE SEQUENCE public.feedback_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.feedback_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5137 (class 0 OID 0)
+-- TOC entry 5150 (class 0 OID 0)
 -- Dependencies: 224
--- Name: feedback_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: feedback_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.feedback_id_seq OWNED BY public.feedback.id;
@@ -172,7 +158,7 @@ ALTER SEQUENCE public.feedback_id_seq OWNED BY public.feedback.id;
 
 --
 -- TOC entry 225 (class 1259 OID 16423)
--- Name: holidays; Type: TABLE; Schema: public; Owner: postgres
+-- Name: holidays; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.holidays (
@@ -184,11 +170,9 @@ CREATE TABLE public.holidays (
 );
 
 
-ALTER TABLE public.holidays OWNER TO postgres;
-
 --
 -- TOC entry 226 (class 1259 OID 16434)
--- Name: holidays_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: holidays_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.holidays_id_seq
@@ -200,12 +184,10 @@ CREATE SEQUENCE public.holidays_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.holidays_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5138 (class 0 OID 0)
+-- TOC entry 5151 (class 0 OID 0)
 -- Dependencies: 226
--- Name: holidays_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: holidays_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.holidays_id_seq OWNED BY public.holidays.id;
@@ -213,7 +195,7 @@ ALTER SEQUENCE public.holidays_id_seq OWNED BY public.holidays.id;
 
 --
 -- TOC entry 227 (class 1259 OID 16435)
--- Name: plan_employees; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plan_employees; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.plan_employees (
@@ -228,11 +210,9 @@ CREATE TABLE public.plan_employees (
 );
 
 
-ALTER TABLE public.plan_employees OWNER TO postgres;
-
 --
 -- TOC entry 228 (class 1259 OID 16442)
--- Name: plan_employees_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: plan_employees_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.plan_employees_id_seq
@@ -244,12 +224,10 @@ CREATE SEQUENCE public.plan_employees_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.plan_employees_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5139 (class 0 OID 0)
+-- TOC entry 5152 (class 0 OID 0)
 -- Dependencies: 228
--- Name: plan_employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: plan_employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.plan_employees_id_seq OWNED BY public.plan_employees.id;
@@ -257,7 +235,7 @@ ALTER SEQUENCE public.plan_employees_id_seq OWNED BY public.plan_employees.id;
 
 --
 -- TOC entry 229 (class 1259 OID 16443)
--- Name: plan_entries; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plan_entries; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.plan_entries (
@@ -275,11 +253,9 @@ CREATE TABLE public.plan_entries (
 );
 
 
-ALTER TABLE public.plan_entries OWNER TO postgres;
-
 --
 -- TOC entry 230 (class 1259 OID 16455)
--- Name: plan_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: plan_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.plan_entries_id_seq
@@ -291,12 +267,10 @@ CREATE SEQUENCE public.plan_entries_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.plan_entries_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5140 (class 0 OID 0)
+-- TOC entry 5153 (class 0 OID 0)
 -- Dependencies: 230
--- Name: plan_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: plan_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.plan_entries_id_seq OWNED BY public.plan_entries.id;
@@ -304,7 +278,7 @@ ALTER SEQUENCE public.plan_entries_id_seq OWNED BY public.plan_entries.id;
 
 --
 -- TOC entry 231 (class 1259 OID 16456)
--- Name: plan_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plan_logs; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.plan_logs (
@@ -324,11 +298,9 @@ CREATE TABLE public.plan_logs (
 );
 
 
-ALTER TABLE public.plan_logs OWNER TO postgres;
-
 --
 -- TOC entry 232 (class 1259 OID 16472)
--- Name: plan_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: plan_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.plan_logs_id_seq
@@ -340,12 +312,10 @@ CREATE SEQUENCE public.plan_logs_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.plan_logs_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5141 (class 0 OID 0)
+-- TOC entry 5154 (class 0 OID 0)
 -- Dependencies: 232
--- Name: plan_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: plan_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.plan_logs_id_seq OWNED BY public.plan_logs.id;
@@ -353,7 +323,7 @@ ALTER SEQUENCE public.plan_logs_id_seq OWNED BY public.plan_logs.id;
 
 --
 -- TOC entry 233 (class 1259 OID 16473)
--- Name: plans; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plans; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.plans (
@@ -365,11 +335,9 @@ CREATE TABLE public.plans (
 );
 
 
-ALTER TABLE public.plans OWNER TO postgres;
-
 --
 -- TOC entry 234 (class 1259 OID 16479)
--- Name: plans_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: plans_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.plans_id_seq
@@ -381,12 +349,10 @@ CREATE SEQUENCE public.plans_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.plans_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5142 (class 0 OID 0)
+-- TOC entry 5155 (class 0 OID 0)
 -- Dependencies: 234
--- Name: plans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: plans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.plans_id_seq OWNED BY public.plans.id;
@@ -394,7 +360,7 @@ ALTER SEQUENCE public.plans_id_seq OWNED BY public.plans.id;
 
 --
 -- TOC entry 235 (class 1259 OID 16480)
--- Name: system_users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: system_users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.system_users (
@@ -411,11 +377,9 @@ CREATE TABLE public.system_users (
 );
 
 
-ALTER TABLE public.system_users OWNER TO postgres;
-
 --
 -- TOC entry 236 (class 1259 OID 16494)
--- Name: system_users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: system_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.system_users_id_seq
@@ -427,20 +391,30 @@ CREATE SEQUENCE public.system_users_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.system_users_id_seq OWNER TO postgres;
-
 --
--- TOC entry 5143 (class 0 OID 0)
+-- TOC entry 5156 (class 0 OID 0)
 -- Dependencies: 236
--- Name: system_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: system_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.system_users_id_seq OWNED BY public.system_users.id;
 
 
 --
+-- TOC entry 238 (class 1259 OID 32801)
+-- Name: user_department_access; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_department_access (
+    user_id integer NOT NULL,
+    department_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+--
 -- TOC entry 237 (class 1259 OID 16495)
--- Name: v_vacation_usage; Type: VIEW; Schema: public; Owner: postgres
+-- Name: v_vacation_usage; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.v_vacation_usage AS
@@ -452,83 +426,81 @@ CREATE VIEW public.v_vacation_usage AS
   GROUP BY plan_id, employee_id, (EXTRACT(year FROM entry_date));
 
 
-ALTER VIEW public.v_vacation_usage OWNER TO postgres;
-
 --
--- TOC entry 4901 (class 2604 OID 16499)
--- Name: departments id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4905 (class 2604 OID 16499)
+-- Name: departments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.departments ALTER COLUMN id SET DEFAULT nextval('public.departments_id_seq'::regclass);
 
 
 --
--- TOC entry 4903 (class 2604 OID 16500)
--- Name: employees id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4907 (class 2604 OID 16500)
+-- Name: employees id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.employees ALTER COLUMN id SET DEFAULT nextval('public.employees_id_seq'::regclass);
 
 
 --
--- TOC entry 4907 (class 2604 OID 16501)
--- Name: feedback id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4911 (class 2604 OID 16501)
+-- Name: feedback id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.feedback ALTER COLUMN id SET DEFAULT nextval('public.feedback_id_seq'::regclass);
 
 
 --
--- TOC entry 4910 (class 2604 OID 16502)
--- Name: holidays id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4914 (class 2604 OID 16502)
+-- Name: holidays id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.holidays ALTER COLUMN id SET DEFAULT nextval('public.holidays_id_seq'::regclass);
 
 
 --
--- TOC entry 4912 (class 2604 OID 16503)
--- Name: plan_employees id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4916 (class 2604 OID 16503)
+-- Name: plan_employees id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_employees ALTER COLUMN id SET DEFAULT nextval('public.plan_employees_id_seq'::regclass);
 
 
 --
--- TOC entry 4914 (class 2604 OID 16504)
--- Name: plan_entries id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4920 (class 2604 OID 16504)
+-- Name: plan_entries id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries ALTER COLUMN id SET DEFAULT nextval('public.plan_entries_id_seq'::regclass);
 
 
 --
--- TOC entry 4917 (class 2604 OID 16505)
--- Name: plan_logs id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4923 (class 2604 OID 16505)
+-- Name: plan_logs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_logs ALTER COLUMN id SET DEFAULT nextval('public.plan_logs_id_seq'::regclass);
 
 
 --
--- TOC entry 4919 (class 2604 OID 16506)
--- Name: plans id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4925 (class 2604 OID 16506)
+-- Name: plans id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plans ALTER COLUMN id SET DEFAULT nextval('public.plans_id_seq'::regclass);
 
 
 --
--- TOC entry 4921 (class 2604 OID 16507)
--- Name: system_users id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4927 (class 2604 OID 16507)
+-- Name: system_users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.system_users ALTER COLUMN id SET DEFAULT nextval('public.system_users_id_seq'::regclass);
 
 
 --
--- TOC entry 4930 (class 2606 OID 16509)
--- Name: departments departments_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4937 (class 2606 OID 16509)
+-- Name: departments departments_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.departments
@@ -536,8 +508,8 @@ ALTER TABLE ONLY public.departments
 
 
 --
--- TOC entry 4932 (class 2606 OID 16511)
--- Name: departments departments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4939 (class 2606 OID 16511)
+-- Name: departments departments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.departments
@@ -545,8 +517,8 @@ ALTER TABLE ONLY public.departments
 
 
 --
--- TOC entry 4934 (class 2606 OID 16513)
--- Name: employees employees_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4941 (class 2606 OID 16513)
+-- Name: employees employees_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.employees
@@ -554,8 +526,8 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 4936 (class 2606 OID 16515)
--- Name: feedback feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4943 (class 2606 OID 16515)
+-- Name: feedback feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.feedback
@@ -563,8 +535,8 @@ ALTER TABLE ONLY public.feedback
 
 
 --
--- TOC entry 4940 (class 2606 OID 16517)
--- Name: holidays holidays_date_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4947 (class 2606 OID 16517)
+-- Name: holidays holidays_date_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.holidays
@@ -572,8 +544,8 @@ ALTER TABLE ONLY public.holidays
 
 
 --
--- TOC entry 4942 (class 2606 OID 16519)
--- Name: holidays holidays_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4949 (class 2606 OID 16519)
+-- Name: holidays holidays_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.holidays
@@ -581,8 +553,8 @@ ALTER TABLE ONLY public.holidays
 
 
 --
--- TOC entry 4945 (class 2606 OID 16521)
--- Name: plan_employees plan_employees_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4952 (class 2606 OID 16521)
+-- Name: plan_employees plan_employees_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_employees
@@ -590,8 +562,8 @@ ALTER TABLE ONLY public.plan_employees
 
 
 --
--- TOC entry 4947 (class 2606 OID 16523)
--- Name: plan_employees plan_employees_plan_id_employee_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4954 (class 2606 OID 16523)
+-- Name: plan_employees plan_employees_plan_id_employee_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_employees
@@ -599,8 +571,8 @@ ALTER TABLE ONLY public.plan_employees
 
 
 --
--- TOC entry 4950 (class 2606 OID 16525)
--- Name: plan_entries plan_entries_employee_id_entry_date_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4957 (class 2606 OID 16525)
+-- Name: plan_entries plan_entries_employee_id_entry_date_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -608,8 +580,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4952 (class 2606 OID 16527)
--- Name: plan_entries plan_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4959 (class 2606 OID 16527)
+-- Name: plan_entries plan_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -617,8 +589,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4956 (class 2606 OID 16529)
--- Name: plan_logs plan_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4963 (class 2606 OID 16529)
+-- Name: plan_logs plan_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_logs
@@ -626,8 +598,8 @@ ALTER TABLE ONLY public.plan_logs
 
 
 --
--- TOC entry 4959 (class 2606 OID 16531)
--- Name: plans plans_department_id_year_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4966 (class 2606 OID 16531)
+-- Name: plans plans_department_id_year_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plans
@@ -635,8 +607,8 @@ ALTER TABLE ONLY public.plans
 
 
 --
--- TOC entry 4961 (class 2606 OID 16533)
--- Name: plans plans_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4968 (class 2606 OID 16533)
+-- Name: plans plans_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plans
@@ -644,8 +616,8 @@ ALTER TABLE ONLY public.plans
 
 
 --
--- TOC entry 4964 (class 2606 OID 16535)
--- Name: system_users system_users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4971 (class 2606 OID 16535)
+-- Name: system_users system_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.system_users
@@ -653,8 +625,8 @@ ALTER TABLE ONLY public.system_users
 
 
 --
--- TOC entry 4966 (class 2606 OID 16537)
--- Name: system_users system_users_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4973 (class 2606 OID 16537)
+-- Name: system_users system_users_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.system_users
@@ -662,21 +634,8 @@ ALTER TABLE ONLY public.system_users
 
 
 --
--- TOC entry 2380 (class 1259 OID 20001)
--- Name: user_department_access; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.user_department_access (
-    user_id integer NOT NULL,
-    department_id integer NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT user_department_access_pkey PRIMARY KEY (user_id, department_id)
-);
-
-
---
--- TOC entry 4954 (class 2606 OID 16539)
--- Name: plan_entries uq_plan_entries_employee_date; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4961 (class 2606 OID 16539)
+-- Name: plan_entries uq_plan_entries_employee_date; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -684,64 +643,89 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4937 (class 1259 OID 16540)
--- Name: idx_feedback_author_created_at; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4977 (class 2606 OID 32808)
+-- Name: user_department_access user_department_access_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_department_access
+    ADD CONSTRAINT user_department_access_pkey PRIMARY KEY (user_id, department_id);
+
+
+--
+-- TOC entry 4944 (class 1259 OID 16540)
+-- Name: idx_feedback_author_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_feedback_author_created_at ON public.feedback USING btree (author_id, created_at DESC);
 
 
 --
--- TOC entry 4938 (class 1259 OID 16541)
--- Name: idx_feedback_status_created_at; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4945 (class 1259 OID 16541)
+-- Name: idx_feedback_status_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_feedback_status_created_at ON public.feedback USING btree (status, created_at DESC);
 
 
 --
--- TOC entry 4943 (class 1259 OID 16542)
--- Name: idx_holidays_year; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4950 (class 1259 OID 16542)
+-- Name: idx_holidays_year; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_holidays_year ON public.holidays USING btree (year);
 
 
 --
--- TOC entry 4948 (class 1259 OID 16543)
--- Name: idx_plan_entries_emp_date; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4955 (class 1259 OID 16543)
+-- Name: idx_plan_entries_emp_date; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_plan_entries_emp_date ON public.plan_entries USING btree (employee_id, entry_date);
 
 
 --
--- TOC entry 4962 (class 1259 OID 16544)
--- Name: idx_system_users_last_login_at; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4969 (class 1259 OID 16544)
+-- Name: idx_system_users_last_login_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_system_users_last_login_at ON public.system_users USING btree (last_login_at);
 
 
 --
--- TOC entry 4957 (class 1259 OID 16545)
--- Name: plan_logs_plan_id_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 4974 (class 1259 OID 32820)
+-- Name: idx_user_department_access_department_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_department_access_department_id ON public.user_department_access USING btree (department_id);
+
+
+--
+-- TOC entry 4975 (class 1259 OID 32819)
+-- Name: idx_user_department_access_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_department_access_user_id ON public.user_department_access USING btree (user_id);
+
+
+--
+-- TOC entry 4964 (class 1259 OID 16545)
+-- Name: plan_logs_plan_id_created_at_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX plan_logs_plan_id_created_at_idx ON public.plan_logs USING btree (plan_id, created_at DESC);
 
 
 --
--- TOC entry 4981 (class 2620 OID 16546)
--- Name: plan_entries trg_plan_entries_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 4994 (class 2620 OID 16546)
+-- Name: plan_entries trg_plan_entries_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_plan_entries_updated_at BEFORE UPDATE ON public.plan_entries FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 
 --
--- TOC entry 4967 (class 2606 OID 16547)
--- Name: employees employees_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4978 (class 2606 OID 16547)
+-- Name: employees employees_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.employees
@@ -749,8 +733,8 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 4968 (class 2606 OID 16552)
--- Name: feedback feedback_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4979 (class 2606 OID 16552)
+-- Name: feedback feedback_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.feedback
@@ -758,8 +742,8 @@ ALTER TABLE ONLY public.feedback
 
 
 --
--- TOC entry 4969 (class 2606 OID 16557)
--- Name: plan_employees plan_employees_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4980 (class 2606 OID 16557)
+-- Name: plan_employees plan_employees_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_employees
@@ -767,8 +751,8 @@ ALTER TABLE ONLY public.plan_employees
 
 
 --
--- TOC entry 4970 (class 2606 OID 16562)
--- Name: plan_employees plan_employees_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4981 (class 2606 OID 16562)
+-- Name: plan_employees plan_employees_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_employees
@@ -776,8 +760,8 @@ ALTER TABLE ONLY public.plan_employees
 
 
 --
--- TOC entry 4971 (class 2606 OID 16567)
--- Name: plan_entries plan_entries_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4982 (class 2606 OID 16567)
+-- Name: plan_entries plan_entries_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -785,8 +769,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4972 (class 2606 OID 16572)
--- Name: plan_entries plan_entries_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4983 (class 2606 OID 16572)
+-- Name: plan_entries plan_entries_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -794,8 +778,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4973 (class 2606 OID 16577)
--- Name: plan_entries plan_entries_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4984 (class 2606 OID 16577)
+-- Name: plan_entries plan_entries_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -803,8 +787,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4974 (class 2606 OID 16582)
--- Name: plan_entries plan_entries_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4985 (class 2606 OID 16582)
+-- Name: plan_entries plan_entries_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_entries
@@ -812,8 +796,8 @@ ALTER TABLE ONLY public.plan_entries
 
 
 --
--- TOC entry 4975 (class 2606 OID 16587)
--- Name: plan_logs plan_logs_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4986 (class 2606 OID 16587)
+-- Name: plan_logs plan_logs_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_logs
@@ -821,8 +805,8 @@ ALTER TABLE ONLY public.plan_logs
 
 
 --
--- TOC entry 4976 (class 2606 OID 16592)
--- Name: plan_logs plan_logs_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4987 (class 2606 OID 16592)
+-- Name: plan_logs plan_logs_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_logs
@@ -830,8 +814,8 @@ ALTER TABLE ONLY public.plan_logs
 
 
 --
--- TOC entry 4977 (class 2606 OID 16597)
--- Name: plan_logs plan_logs_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4988 (class 2606 OID 16597)
+-- Name: plan_logs plan_logs_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plan_logs
@@ -839,8 +823,8 @@ ALTER TABLE ONLY public.plan_logs
 
 
 --
--- TOC entry 4978 (class 2606 OID 16602)
--- Name: plans plans_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4989 (class 2606 OID 16602)
+-- Name: plans plans_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plans
@@ -848,8 +832,8 @@ ALTER TABLE ONLY public.plans
 
 
 --
--- TOC entry 4979 (class 2606 OID 16607)
--- Name: plans plans_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4990 (class 2606 OID 16607)
+-- Name: plans plans_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.plans
@@ -857,8 +841,8 @@ ALTER TABLE ONLY public.plans
 
 
 --
--- TOC entry 4980 (class 2606 OID 16612)
--- Name: system_users system_users_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4991 (class 2606 OID 16612)
+-- Name: system_users system_users_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.system_users
@@ -866,8 +850,8 @@ ALTER TABLE ONLY public.system_users
 
 
 --
--- TOC entry 4981 (class 2606 OID 20002)
--- Name: user_department_access user_department_access_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4992 (class 2606 OID 32814)
+-- Name: user_department_access user_department_access_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_department_access
@@ -875,19 +859,19 @@ ALTER TABLE ONLY public.user_department_access
 
 
 --
--- TOC entry 4982 (class 2606 OID 20003)
--- Name: user_department_access user_department_access_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4993 (class 2606 OID 32809)
+-- Name: user_department_access user_department_access_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_department_access
     ADD CONSTRAINT user_department_access_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.system_users(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-03-18 17:05:28
+-- Completed on 2026-05-07 11:29:35
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Bz3edrXnJmQklv1mHv7z1Gwwcstu3Yicv9cBMESxW5rrfHlbZJmDauvQzUgmSKi
+\unrestrict QUJT1iJ6CShGC6RcUFi5ZTg7VVbhJitgJlPLjg6A33oy0eJ0CeTLRlEcHpE1jJp
 

@@ -9,6 +9,7 @@ Replace umlauts
 V3.0.0:
 Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans (similar to admin impersonation-mode)
 Fix error with vacation counter
+Turn emp text white on hover
 
 
 
