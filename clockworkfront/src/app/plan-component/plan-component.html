@@ -17,9 +17,9 @@
     <a class="button-primary u action" (click)="setEntry('U')">Urlaub</a>
     <a class="button-primary h action" (click)="setEntry('H')">alt. Telearbeit</a>
     <a class="button-primary k action" (click)="setEntry('K')">Krank</a>
-    <a class="button-primary l action" (click)="setEntry('L')">Lehrgang</a>
     <a class="button-primary g action" (click)="setEntry('G')">Gleitzeit</a>
     <a class="button-primary t action" (click)="setEntry('T')">Termin</a>
+    <a class="button-primary l action" (click)="setEntry('L')">Lehrgang</a>
     <a class="button-primary o action" (click)="setEntry('O')">Anderes</a>
     <a class="button-primary" (click)="editNote()">Notiz</a>
     <hr class="vertical" class="vbb">
@@ -96,9 +96,9 @@
     </a>
     <hr class="vbb">
     }
-    <a class="button-primary" [routerLink]="['logs']">Logs anzeigen</a>
+    <a class="button-primary" [routerLink]="['logs']">Planlogs</a>
     <a class="button-primary" (click)="openPlanOptions()">
-      Optionen & Tastenkürzel öffnen
+      Optionen & Tastenkürzel
     </a>
     @if (canGoNext) {
     <hr class="vbb">
@@ -154,6 +154,6 @@
 </div>
 <div class="comp-wrap">
   @if (planId === null) {
-  <h1 class="page-header">Lade Dienstplan...</h1>
+  <p class="page-header">Lade Dienstplan...</p>
   }
 </div>

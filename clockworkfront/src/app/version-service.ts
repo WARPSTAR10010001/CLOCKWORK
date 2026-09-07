@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private version: string = "2.2.0";
+  private version: string = "2.2.1";
   private summary: string = "Der Bedienung im Planviewer wurde erneut optimiert & verbessert, die Links in der Monatsübersicht, den Planlogs und dem Planviewer wurden nun noch klarer markiert, zusätzlich dazu wurde das Dashboard erweitert.";
   private versionKey = 'last_logged_version';
 

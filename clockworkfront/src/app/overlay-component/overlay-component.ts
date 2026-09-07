@@ -261,6 +261,13 @@ export class OverlayComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown.enter', ['$event'])
+  onEnterHandler(event: Event) {
+    if (this.overlayState.show && this.overlayState.type === 'passwordReset') {
+      this.saveNewPassword();
+    }
+  }
+
   changeTheme(theme: Theme) { this.theme.setTheme(theme); }
   changeOutline(outline: Outline) { this.theme.setOutline(outline); }
   changeColor(color: Color) { this.theme.setColor(color); }

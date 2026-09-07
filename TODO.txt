@@ -1,18 +1,14 @@
 V2.3.0:
-Replace browser default "confirm" overlay with custom overlay (delete feedback, change password, delete employee)
 Fix routerlink and articlelink not working in documentation
-Extend dashboard with documentation articles
-Press enter on password change
-Replace umlauts
+Rewrite documentation and keep changelog up to date
+Enable way to reset password of leaders
 
 
-V3.0.0:
-Add role "leader" for users that appear in multiple plans with implemented sync and overview about all plans (similar to admin impersonation-mode)
+V2.4.0:
+Implement leader plan sync
 Fix error with vacation counter
-Turn emp text white on hover
 
 
-
-V4.0.0:
+V2.5.0:
 Ability to delete plans
 Show and edit status for plans

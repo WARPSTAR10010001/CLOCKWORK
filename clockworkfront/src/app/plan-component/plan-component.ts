@@ -905,7 +905,7 @@ export class PlanComponent implements OnInit {
       this.loadPrevPlan();
     }
   }
-
+  
   loadNextPlan(): void {
     const currentYear = Number(this.activatedRoute.snapshot.paramMap.get("year"));
     const currentMonth = Number(this.activatedRoute.snapshot.paramMap.get("month"));

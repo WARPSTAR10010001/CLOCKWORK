@@ -26,6 +26,8 @@ export class DocumentationComponent implements OnInit {
   viewMode: ViewMode = 'overview';
   currentSection: DocSection | null = null;
   currentPage: DocPage | null = null;
+  
+  isUpToDate!: boolean;
 
   searchTerm = '';
   searchResults: SearchResult[] = [];
@@ -38,6 +40,8 @@ export class DocumentationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isUpToDate = false;
+
     this.buildSearchIndex();
 
     this.route.paramMap.subscribe(params => {

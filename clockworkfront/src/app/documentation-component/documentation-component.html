@@ -8,6 +8,14 @@
       }
     </div>
   </div>
+
+  @if (!isUpToDate) {
+  <div class="doc-hint">
+    <h1><span class="emp">Hinweis:</span> Nicht alle Informationen sind aktuell, da die Dokumentation im Moment
+      überarbeitet wird.</h1>
+  </div>
+  }
+
   @if (isSearching && searchResults.length > 0) {
   <div class="search-results">
     <h2>Suchergebnisse ({{ searchResults.length }})</h2>
@@ -39,7 +47,7 @@
     <a class="doc-tile" [routerLink]="['/docs', section.id]">
       <h2>{{ section.title }}</h2>
       @if (section.description) {
-        <hr>
+      <hr>
       <p>{{ section.description }}</p>
       }
     </a>
@@ -57,7 +65,7 @@
     <a class="doc-tile" [routerLink]="['/docs', currentSection.id, page.id]">
       <h3>{{ page.title }}</h3>
       @if (page.description) {
-        <hr>
+      <hr>
       <p>{{ page.description }}</p>
       }
     </a>

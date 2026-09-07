@@ -150,3 +150,8 @@ hr {
 #deletesearch {
     margin-left: 20px;
 }
+
+.doc-hint {
+    margin-top: -50px;
+    margin-bottom: 50px;
+}
